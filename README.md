@@ -1,9 +1,9 @@
-![Bot](https://github.com/sanyarnd/java-course-2023-backend-template/actions/workflows/bot.yml/badge.svg)
-![Scrapper](https://github.com/sanyarnd/java-course-2023-backend-template/actions/workflows/scrapper.yml/badge.svg)
+![Bot](https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester/actions/workflows/bot.yml/badge.svg)
+![Scrapper](https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester/actions/workflows/scrapper.yml/badge.svg)
 
 # Link Tracker
 
-ФИО: ...
+ФИО: Березин Михаил Александрович   
 
 Приложение для отслеживания обновлений контента по ссылкам.
 При появлении новых событий отправляется уведомление в Telegram.
