@@ -9,8 +9,8 @@ import java.util.List;
  * Class list command.
  */
 public final class ListCommand implements Command {
-    private static final String EMPTY_LIST_SITES = "Вы не отслеживаете ни одну ссылку";
-    private static final String UNKNOWN_USER =
+    public static final String EMPTY_LIST_SITES = "Вы не отслеживаете ни одну ссылку";
+    public static final String UNKNOWN_USER =
         "Необходимо зарегистрироваться для просмотра списка отслеживаемых ссылок";
     private static final String USER_TRACK_SITES_MESSAGE = "Вы отслеживаете %d сайтов\n";
     private static final String LIST_TRACK_SEPARATOR = "\n";
