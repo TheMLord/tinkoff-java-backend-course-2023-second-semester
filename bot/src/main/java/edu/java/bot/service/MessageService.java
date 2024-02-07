@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+/**
+ * Bots message service
+ */
 @Service
 public class MessageService {
 //    private static final Logger MESSAGE_SERVICE_LOGGER = LogManager.getLogger(MessageService.class.getName());
@@ -29,6 +32,9 @@ public class MessageService {
     private final UserRepository userRepository;
     private final UrlProcessor urlProcessor;
 
+    /**
+     * Class constructor.
+     */
     public MessageService(
         CommandHandler commandHandler,
         UserRepository userRepository,
@@ -39,6 +45,9 @@ public class MessageService {
         this.urlProcessor = urlProcessor;
     }
 
+    /**
+     * Method update processing and generating a response to the user.
+     */
     public String prepareResponseMessage(Update update) {
         var chatId = update.message().chat().id();
         var textMessage = update.message().text();
@@ -50,6 +59,9 @@ public class MessageService {
 //        MESSAGE_SERVICE_LOGGER.info("Команда распознана, выполняется: " + textMessage);
     }
 
+    /**
+     * Method that generates a response to a message that does not contain a bot command
+     */
     private String processNonCommandMessage(Long chatId, String text) {
         var userOptional = userRepository.findUserById(chatId);
         if (userOptional.isEmpty()) {
@@ -66,6 +78,9 @@ public class MessageService {
         }
     }
 
+    /**
+     * Method that handles the case of waiting for a link from the user
+     */
     private String processStateUserMessage(User user, URI uri) {
         if (user.getState().equals(SessionState.WAIT_URI_FOR_TRACKING)) {
             return prepareWaitTrackingMessage(user, uri);
@@ -77,6 +92,9 @@ public class MessageService {
         return INVALID_COMMAND_MESSAGE;
     }
 
+    /**
+     * Method reply to the user with the WAIT_URI_FOR_TRACKING status to the message.
+     */
     private String prepareWaitTrackingMessage(User user, URI url) {
         if (urlProcessor.isValidUrl(url)) {
             return (updateUserTrackingSites(user, url)) ? SUCCESS_TRACK_SITE_MESSAGE
@@ -86,6 +104,9 @@ public class MessageService {
         return INVALID_FOR_TRACK_SITE_MESSAGE;
     }
 
+    /**
+     * Method reply to the user with the WAIT_URI_FOR_UNTRACKING status to the message.
+     */
     private String prepareWaitUnTrackingMessage(User user, URI url) {
         if (urlProcessor.isValidUrl(url)) {
             return (deleteTrackingSites(user, url)) ? SUCCESS_UNTRACKING_SITE_MESSAGE
@@ -94,6 +115,11 @@ public class MessageService {
         return INVALID_FOR_TRACK_SITE_MESSAGE;
     }
 
+    /**
+     * Method that changes the user by adding the site to the tracking
+     *
+     * @return true if it possible and false in another case.
+     */
     private boolean updateUserTrackingSites(User user, URI uri) {
         List<URI> trackSites = new ArrayList<>(user.getSites());
         if (trackSites.contains(uri)) {
@@ -105,6 +131,11 @@ public class MessageService {
         return true;
     }
 
+    /**
+     * Method that changes the user by removing the site from tracking
+     *
+     * @return true if it possible and false in another case.
+     */
     private boolean deleteTrackingSites(User user, URI uri) {
         List<URI> trackSites = new ArrayList<>(user.getSites());
         if (!trackSites.contains(uri)) {
@@ -116,6 +147,9 @@ public class MessageService {
         return true;
     }
 
+    /**
+     * Method that makes commit to the user in the database
+     */
     private void updateTrackSitesAndCommit(User user, List<URI> trackSites) {
         user.setSites(trackSites);
         user.setState(SessionState.BASE_STATE);
