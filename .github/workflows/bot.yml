@@ -2,6 +2,7 @@ name: Bot Build
 
 on:
   workflow_dispatch:
+  pull_request:
   push:
     paths:
       - .github/workflows/bot.yml
@@ -27,7 +28,7 @@ jobs:
 
       - id: jacoco
         uses: madrapps/jacoco-report@v1.6.1
-#        if: ( github.event_name != 'workflow_dispatch' )
+        if: ( github.event_name != 'workflow_dispatch' )
         with:
           paths: ${{ github.workspace }}/bot/target/site/jacoco/jacoco.xml
           token: ${{ secrets.GITHUB_TOKEN }}
