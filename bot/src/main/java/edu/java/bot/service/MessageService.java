@@ -22,6 +22,8 @@ public class MessageService {
     public static final String SUCCESS_TRACK_SITE_MESSAGE = "Сайт успешно добавлен в отслеживание";
     public static final String DUPLICATE_TRACKING_MESSAGE = "Этот сайт уже отслеживается";
     public static final String INVALID_FOR_TRACK_SITE_MESSAGE = "Отслеживание ресурса с этого сайта не поддерживается";
+    public static final String SUCCESS_UNTRACKING_SITE_MESSAGE = "Ресурс успешно удален из отслеживания";
+    public static final String UNSUCCESSFUL_UNTRACKING_SITE_MESSAGE = "Вы не отслеживаете этот ресурс";
 
     private final CommandHandler commandHandler;
     private final UserRepository userRepository;
@@ -86,9 +88,8 @@ public class MessageService {
 
     private String prepareWaitUnTrackingMessage(User user, URI url) {
         if (urlProcessor.isValidUrl(url)) {
-            return (deleteTrackingSites(user, url)) ? "Ресурс успешно удален из отслеживания"
-                : "Вы не отслеживаете этот ресурс";
-
+            return (deleteTrackingSites(user, url)) ? SUCCESS_UNTRACKING_SITE_MESSAGE
+                : UNSUCCESSFUL_UNTRACKING_SITE_MESSAGE;
         }
         return INVALID_FOR_TRACK_SITE_MESSAGE;
     }
