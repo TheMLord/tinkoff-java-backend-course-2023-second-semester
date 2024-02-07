@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.BotApplication;
 import edu.java.bot.model.SessionState;
 import edu.java.bot.model.commands.Command;
+import edu.java.bot.model.commands.ListCommand;
 import edu.java.bot.model.commands.StartCommand;
 import edu.java.bot.model.commands.TrackCommand;
 import edu.java.bot.model.commands.UnTrackCommand;
@@ -45,7 +46,8 @@ public class CommandTest {
             assertThat(userRepository.findUserById(id_user)).isEmpty();
 
             mockSetUp(id_user);
-            start.execute(update);
+            var actualMessage = start.execute(update);
+            assertThat(actualMessage).isEqualTo(StartCommand.REGISTRATION_MESSAGE_SUCCESS);
 
             var actualSaveUser = userRepository.findUserById(id_user);
             assertThat(actualSaveUser).isPresent();
@@ -59,7 +61,8 @@ public class CommandTest {
             prepareUser(id_user, List.of());
 
             mockSetUp(id_user);
-            start.execute(update);
+            var actualMessage = start.execute(update);
+            assertThat(actualMessage).isEqualTo(StartCommand.ALREADY_EXIST_MESSAGE);
 
             var actualSaveUser = userRepository.findUserById(id_user);
             assertThat(actualSaveUser).isPresent();
@@ -72,8 +75,8 @@ public class CommandTest {
     @Nested
     @DisplayName("Test command /track and /untrack")
     class TrackAndUntrackCommandTest {
-        Command track = commandHandler.getCommand("/track").get();
-        Command untrack = commandHandler.getCommand("/untrack").get();
+        private final Command track = commandHandler.getCommand("/track").get();
+        private final Command untrack = commandHandler.getCommand("/untrack").get();
 
         @Test
         @DisplayName("Test that using the command changes the state returned the correct state")
@@ -122,6 +125,88 @@ public class CommandTest {
             var actualUnTrackResponse = untrack.execute(update);
             assertThat(actualUnTrackResponse).isEqualTo(UnTrackCommand.UNKNOWN_USER);
         }
+    }
+
+    @Nested
+    @DisplayName("Test command /help")
+    class HelpCommandTest {
+        private final Command help = commandHandler.getCommand("/help").get();
+        private final String exceptedMessage = "Команды бота:\n" +
+            "/start - зарегистрировать пользователя\n" +
+            "/list - команда показать список отслеживаемых ссылок\n" +
+            "/track - начать отслеживание ссылки\n" +
+            "/untrack - прекратить отслеживание ссылки\n";
+
+        @Test
+        @DisplayName("Test that command help returned correct list command and descriptions")
+        void testThatCommandHelpReturnedCorrectListCommandAndDescriptions() {
+            mockSetUp(1L);
+            prepareUser(1L, List.of());
+
+            var actualMessage = help.execute(update);
+
+            assertThat(exceptedMessage).isEqualTo(actualMessage);
+        }
+
+        @Test
+        @DisplayName("Test that the team returned the message to all users")
+        void testThatTheTeamReturnedTheMessageToAllUsers() {
+            mockSetUp(1L);
+            prepareUser(1L, List.of()); //register user
+            var actualMessageForRegisterUser = help.execute(update);
+
+            mockSetUp(2L); //unregister user
+            var actualMessageForUnRegisterUser = help.execute(update);
+
+            assertThat(exceptedMessage).isEqualTo(actualMessageForRegisterUser);
+            assertThat(exceptedMessage).isEqualTo(actualMessageForUnRegisterUser);
+        }
+    }
+
+    @Nested
+    @DisplayName("Test command /list")
+    class ListCommandTest {
+        private final Command list = commandHandler.getCommand("/list").get();
+
+        @Test
+        @DisplayName("Test that the command returned a special message for a user with an empty list of links")
+        void testThatTheCommandReturnedASpecialMessageForAUserWithAnEmptyListOfLinks() {
+            var exceptedSpecialMessage = ListCommand.EMPTY_LIST_SITES;
+            long user_id = 1L;
+            mockSetUp(user_id);
+            prepareUser(user_id, List.of());
+
+            var actualMessage = list.execute(update);
+
+            assertThat(actualMessage).isEqualTo(exceptedSpecialMessage);
+        }
+
+        @Test
+        @DisplayName(
+            "Test that the command returned a excepted list sites message for a user with an non-empty list of links")
+        void testThatTheCommandReturnedAExceptedListSitesMessageForAUserWithAnNonEmptyListOfLinks() {
+            var exceptedMessage = "Вы отслеживаете 1 сайтов\n" +
+                "https://github.com/sanyarnd/tinkoff-java-course-2023/\n";
+            long user_id = 1L;
+            mockSetUp(user_id);
+            prepareUser(user_id, List.of(URI.create("https://github.com/sanyarnd/tinkoff-java-course-2023/")));
+
+            var actualMessage = list.execute(update);
+
+            assertThat(actualMessage).isEqualTo(exceptedMessage);
+        }
+
+        @Test
+        @DisplayName("Test that the command returned correct message to an unregistered user")
+        void testThatTheCommandReturnedCorrectMessageToAnUnregisteredUser() {
+            long user_id = 116L;
+            mockSetUp(user_id);
+
+            var actualMessage = list.execute(update);
+
+            assertThat(actualMessage).isEqualTo(ListCommand.UNKNOWN_USER);
+        }
+
     }
 
     private void prepareUser(long id, List<URI> listSites) {
