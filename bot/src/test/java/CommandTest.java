@@ -134,10 +134,11 @@ public class CommandTest {
     class HelpCommandTest {
         private final Command help = commandMap.get("/help");
         private final String exceptedMessage = "Команды бота:\n" +
-            "/start - зарегистрировать пользователя\n" +
             "/list - команда показать список отслеживаемых ссылок\n" +
+            "/start - зарегистрировать пользователя\n" +
             "/track - начать отслеживание ссылки\n" +
-            "/untrack - прекратить отслеживание ссылки\n";
+            "/untrack - прекратить отслеживание ссылки\n" +
+            "/help - вывести окно с командами\n";
 
         @Test
         @DisplayName("Test that command help returned correct list command and descriptions")
