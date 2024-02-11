@@ -1,5 +1,5 @@
 import edu.java.bot.BotApplication;
-import edu.java.bot.processor.url_processor.UrlProcessor;
+import edu.java.bot.processor.UrlProcessor;
 import java.net.URI;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;

@@ -4,10 +4,14 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.model.SessionState;
 import edu.java.bot.model.db_entities.User;
 import edu.java.bot.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 /**
  * Class track command.
  */
+@Component("/track")
+@Qualifier("action_command")
 public final class TrackCommand implements Command {
     public static final String TRACK_MESSAGE = "укажите ссылку на интересующий ресурс";
     public static final String UNKNOWN_USER = "Необходимо зарегистрироваться чтобы отслеживать ссылки";

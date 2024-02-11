@@ -2,14 +2,15 @@ package edu.java.bot.service;
 
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.model.SessionState;
+import edu.java.bot.model.commands.Command;
 import edu.java.bot.model.db_entities.User;
-import edu.java.bot.processor.CommandHandler;
-import edu.java.bot.processor.url_processor.UrlProcessor;
+import edu.java.bot.processor.UrlProcessor;
 import edu.java.bot.repository.UserRepository;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,7 +29,8 @@ public class MessageService {
     public static final String SUCCESS_UNTRACKING_SITE_MESSAGE = "Ресурс успешно удален из отслеживания";
     public static final String UNSUCCESSFUL_UNTRACKING_SITE_MESSAGE = "Вы не отслеживаете этот ресурс";
 
-    private final CommandHandler commandHandler;
+    //    private final CommandHandler commandHandler;
+    private final Map<String, Command> commandMap;
     private final UserRepository userRepository;
     private final UrlProcessor urlProcessor;
 
@@ -36,11 +38,13 @@ public class MessageService {
      * Class constructor.
      */
     public MessageService(
-        CommandHandler commandHandler,
+//        CommandHandler commandHandler,
+        Map<String, Command> commandMap,
         UserRepository userRepository,
         UrlProcessor urlProcessor
     ) {
-        this.commandHandler = commandHandler;
+//        this.commandHandler = commandHandler;
+        this.commandMap = commandMap;
         this.userRepository = userRepository;
         this.urlProcessor = urlProcessor;
     }
@@ -52,10 +56,12 @@ public class MessageService {
         var chatId = update.message().chat().id();
         var textMessage = update.message().text();
 
-        var botCommand = commandHandler.getCommand(textMessage);
+        var botCommand = commandMap.get(textMessage);
         //            MESSAGE_SERVICE_LOGGER.info("Неизвестная команда, проверка ввода" + textMessage);
-        return botCommand.map(command -> command.execute(update))
-            .orElseGet(() -> processNonCommandMessage(chatId, textMessage));
+        return (botCommand != null) ? botCommand.execute(update) : processNonCommandMessage(chatId, textMessage);
+//
+//            .map(command -> command.execute(update))
+//            .orElseGet(() -> processNonCommandMessage(chatId, textMessage));
 //        MESSAGE_SERVICE_LOGGER.info("Команда распознана, выполняется: " + textMessage);
     }
 

@@ -1,4 +1,4 @@
-package edu.java.bot.processor.url_processor;
+package edu.java.bot.processor;
 
 import java.net.URI;
 

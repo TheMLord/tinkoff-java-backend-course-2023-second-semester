@@ -4,10 +4,15 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.repository.UserRepository;
 import java.net.URI;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 /**
  * Class list command.
  */
+
+@Component("/list")
+@Qualifier("action_command")
 public final class ListCommand implements Command {
     public static final String EMPTY_LIST_SITES = "Вы не отслеживаете ни одну ссылку";
     public static final String UNKNOWN_USER =

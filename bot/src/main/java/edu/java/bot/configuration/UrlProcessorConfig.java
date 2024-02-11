@@ -1,8 +1,8 @@
 package edu.java.bot.configuration;
 
-import edu.java.bot.processor.url_processor.GitHubUrlProcessor;
-import edu.java.bot.processor.url_processor.StackOverflowUrlProcessor;
-import edu.java.bot.processor.url_processor.UrlProcessor;
+import edu.java.bot.processor.GitHubUrlProcessor;
+import edu.java.bot.processor.StackOverflowUrlProcessor;
+import edu.java.bot.processor.UrlProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -9,10 +9,10 @@ import edu.java.bot.model.commands.StartCommand;
 import edu.java.bot.model.commands.TrackCommand;
 import edu.java.bot.model.commands.UnTrackCommand;
 import edu.java.bot.model.db_entities.User;
-import edu.java.bot.processor.CommandHandler;
 import edu.java.bot.repository.UserRepository;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,8 +28,10 @@ public class CommandTest {
     @MockBean
     Update update;
 
+    //    @Autowired
+//    CommandHandler commandHandler;
     @Autowired
-    CommandHandler commandHandler;
+    Map<String, Command> commandMap;
 
     @Autowired
     UserRepository userRepository;
@@ -75,8 +77,8 @@ public class CommandTest {
     @Nested
     @DisplayName("Test command /track and /untrack")
     class TrackAndUntrackCommandTest {
-        private final Command track = commandHandler.getCommand("/track").get();
-        private final Command untrack = commandHandler.getCommand("/untrack").get();
+        private final Command track = commandMap.get("/track");
+        private final Command untrack = commandMap.get("/untrack");
 
         @Test
         @DisplayName("Test that using the command changes the state returned the correct state")
@@ -130,7 +132,7 @@ public class CommandTest {
     @Nested
     @DisplayName("Test command /help")
     class HelpCommandTest {
-        private final Command help = commandHandler.getCommand("/help").get();
+        private final Command help = commandMap.get("/help");
         private final String exceptedMessage = "Команды бота:\n" +
             "/start - зарегистрировать пользователя\n" +
             "/list - команда показать список отслеживаемых ссылок\n" +
@@ -166,7 +168,7 @@ public class CommandTest {
     @Nested
     @DisplayName("Test command /list")
     class ListCommandTest {
-        private final Command list = commandHandler.getCommand("/list").get();
+        private final Command list = commandMap.get("/list");
 
         @Test
         @DisplayName("Test that the command returned a special message for a user with an empty list of links")

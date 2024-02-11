@@ -4,10 +4,14 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.model.SessionState;
 import edu.java.bot.model.db_entities.User;
 import edu.java.bot.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 /**
  * Class untrack command.
  */
+@Component("/untrack")
+@Qualifier("action_command")
 public final class UnTrackCommand implements Command {
     public static final String UNTRACK_MESSAGE = "укажите ссылку на ресурс, который больше не хотите отслеживать";
     public static final String UNKNOWN_USER = "Необходимо зарегистрироваться чтобы удалять отслеживаемые ссылки";
