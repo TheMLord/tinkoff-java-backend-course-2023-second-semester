@@ -6,7 +6,6 @@ import edu.java.bot.model.db_entities.User;
 import edu.java.bot.repository.UserRepository;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**

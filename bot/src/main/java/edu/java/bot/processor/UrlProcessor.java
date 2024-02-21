@@ -1,7 +1,7 @@
 package edu.java.bot.processor;
 
-import lombok.AllArgsConstructor;
 import java.net.URI;
+import lombok.AllArgsConstructor;
 
 /**
  * Abstract class url processing.
