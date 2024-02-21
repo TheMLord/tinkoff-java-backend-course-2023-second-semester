@@ -28,8 +28,6 @@ public class CommandTest {
     @MockBean
     Update update;
 
-    //    @Autowired
-//    CommandHandler commandHandler;
     @Autowired
     Map<String, Command> commandMap;
 

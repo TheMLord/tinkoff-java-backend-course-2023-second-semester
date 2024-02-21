@@ -5,6 +5,7 @@ import edu.java.bot.model.SessionState;
 import edu.java.bot.model.db_entities.User;
 import edu.java.bot.repository.UserRepository;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -12,24 +13,24 @@ import org.springframework.stereotype.Component;
  * Class start command
  */
 @Component("/start")
-@Qualifier("action_command")
+@AllArgsConstructor
 public final class StartCommand implements Command {
     public static final String REGISTRATION_MESSAGE_SUCCESS = "Вы успешно зарегистрировались!";
     public static final String ALREADY_EXIST_MESSAGE = "Вы уже зарегистрированный";
-    private final UserRepository userRepository;
 
-    public StartCommand(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private static final String NAME_COMMAND = "/start";
+    private static final String DESCRIPTION_COMMAND = "зарегистрировать пользователя";
+
+    private final UserRepository userRepository;
 
     @Override
     public String nameCommand() {
-        return "/start";
+        return NAME_COMMAND;
     }
 
     @Override
     public String description() {
-        return "зарегистрировать пользователя";
+        return DESCRIPTION_COMMAND;
     }
 
     @Override

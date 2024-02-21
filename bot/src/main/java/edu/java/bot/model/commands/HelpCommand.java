@@ -2,7 +2,8 @@ package edu.java.bot.model.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Qualifier;
+import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,23 +11,28 @@ import org.springframework.stereotype.Component;
  */
 
 @Component("/help")
+@AllArgsConstructor
 public final class HelpCommand implements Command {
     private static final String STRING_COMMANDS_BOT = "Команды бота:\n";
     private static final String STRING_COMMANDS_ENUMERATION = "%s - %s\n";
+    private static final String NAME_COMMAND = "/help";
+    private static final String DESCRIPTION_COMMAND = "вывести окно с командами";
+
     private final List<Command> commandList;
 
-    public HelpCommand(@Qualifier("action_command") List<Command> commandList) {
-        this.commandList = commandList;
+    @PostConstruct
+    private void addCommandHelp() {
+        this.commandList.add(this);
     }
 
     @Override
     public String nameCommand() {
-        return "/help";
+        return NAME_COMMAND;
     }
 
     @Override
     public String description() {
-        return "вывести окно с командами";
+        return DESCRIPTION_COMMAND;
     }
 
     @Override
@@ -47,7 +53,6 @@ public final class HelpCommand implements Command {
                 STRING_COMMANDS_ENUMERATION.formatted(command.nameCommand(), command.description())
             )
         );
-        commandListString.append(STRING_COMMANDS_ENUMERATION.formatted(this.nameCommand(), this.description()));
-        return new String(commandListString);
+        return commandListString.toString();
     }
 }

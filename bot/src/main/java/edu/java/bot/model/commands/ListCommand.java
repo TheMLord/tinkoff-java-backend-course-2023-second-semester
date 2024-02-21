@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.repository.UserRepository;
 import java.net.URI;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -12,28 +13,26 @@ import org.springframework.stereotype.Component;
  */
 
 @Component("/list")
-@Qualifier("action_command")
+@AllArgsConstructor
 public final class ListCommand implements Command {
     public static final String EMPTY_LIST_SITES = "Вы не отслеживаете ни одну ссылку";
     public static final String UNKNOWN_USER =
         "Необходимо зарегистрироваться для просмотра списка отслеживаемых ссылок";
     private static final String USER_TRACK_SITES_MESSAGE = "Вы отслеживаете %d сайтов\n";
     private static final String LIST_TRACK_SEPARATOR = "\n";
+    private static final String NAME_COMMAND = "/list";
+    private static final String DESCRIPTION_COMMAND = "команда показать список отслеживаемых ссылок";
 
     private final UserRepository userRepository;
 
-    public ListCommand(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     @Override
     public String nameCommand() {
-        return "/list";
+        return NAME_COMMAND;
     }
 
     @Override
     public String description() {
-        return "команда показать список отслеживаемых ссылок";
+        return DESCRIPTION_COMMAND;
     }
 
     @Override
@@ -63,6 +62,6 @@ public final class ListCommand implements Command {
             sitesString.append(uri.toString()).append(LIST_TRACK_SEPARATOR);
         }
 
-        return new String(sitesString);
+        return sitesString.toString();
     }
 }

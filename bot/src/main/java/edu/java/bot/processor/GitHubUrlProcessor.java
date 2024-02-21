@@ -9,5 +9,4 @@ public final class GitHubUrlProcessor extends UrlProcessor {
     protected String getValidHostName() {
         return "github.com";
     }
-
 }

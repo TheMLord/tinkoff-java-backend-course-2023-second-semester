@@ -4,31 +4,33 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.model.SessionState;
 import edu.java.bot.model.db_entities.User;
 import edu.java.bot.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import java.util.NoSuchElementException;
 
 /**
  * Class track command.
  */
 @Component("/track")
-@Qualifier("action_command")
+@AllArgsConstructor
 public final class TrackCommand implements Command {
     public static final String TRACK_MESSAGE = "укажите ссылку на интересующий ресурс";
     public static final String UNKNOWN_USER = "Необходимо зарегистрироваться чтобы отслеживать ссылки";
-    private final UserRepository userRepository;
 
-    public TrackCommand(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private static final String NAME_COMMAND = "/track";
+    private static final String DESCRIPTION_COMMAND = "начать отслеживание ссылки";
+
+    private final UserRepository userRepository;
 
     @Override
     public String nameCommand() {
-        return "/track";
+        return NAME_COMMAND;
     }
 
     @Override
     public String description() {
-        return "начать отслеживание ссылки";
+        return DESCRIPTION_COMMAND;
     }
 
     @Override
@@ -44,15 +46,12 @@ public final class TrackCommand implements Command {
      * @param chatId user id.
      */
     private String prepareTrackMessage(long chatId) {
-        var userOptional = userRepository.findUserById(chatId);
-
-        if (userOptional.isPresent()) {
-            var user = userOptional.get();
-            changeStatusUserAndSave(user);
-
+        try {
+            changeStatusUserAndSave(userRepository.findUserById(chatId).orElseThrow());
             return TRACK_MESSAGE;
+        } catch (NoSuchElementException e) {
+            return UNKNOWN_USER;
         }
-        return UNKNOWN_USER;
     }
 
     /**

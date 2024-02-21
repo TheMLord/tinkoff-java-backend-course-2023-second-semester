@@ -4,31 +4,33 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.model.SessionState;
 import edu.java.bot.model.db_entities.User;
 import edu.java.bot.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import java.util.NoSuchElementException;
 
 /**
  * Class untrack command.
  */
 @Component("/untrack")
-@Qualifier("action_command")
+@AllArgsConstructor
 public final class UnTrackCommand implements Command {
     public static final String UNTRACK_MESSAGE = "укажите ссылку на ресурс, который больше не хотите отслеживать";
     public static final String UNKNOWN_USER = "Необходимо зарегистрироваться чтобы удалять отслеживаемые ссылки";
-    private final UserRepository userRepository;
 
-    public UnTrackCommand(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private static final String NAME_COMMAND = "/untrack";
+    private static final String DESCRIPTION_COMMAND = "прекратить отслеживание ссылки";
+
+    private final UserRepository userRepository;
 
     @Override
     public String nameCommand() {
-        return "/untrack";
+        return NAME_COMMAND;
     }
 
     @Override
     public String description() {
-        return "прекратить отслеживание ссылки";
+        return DESCRIPTION_COMMAND;
     }
 
     @Override
@@ -43,15 +45,13 @@ public final class UnTrackCommand implements Command {
      *
      * @param chatId user id.
      */
-    private String prepareUnTrackMessage(Long chatId) {
-        var userOptional = userRepository.findUserById(chatId);
-
-        if (userOptional.isPresent()) {
-            var user = userOptional.get();
-            changeStatusUserAndSave(user);
+    private String prepareUnTrackMessage(long chatId) {
+        try {
+            changeStatusUserAndSave(userRepository.findUserById(chatId).orElseThrow());
             return UNTRACK_MESSAGE;
+        } catch (NoSuchElementException e) {
+            return UNKNOWN_USER;
         }
-        return UNKNOWN_USER;
     }
 
     /**

@@ -11,15 +11,16 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
  * Bots message service
  */
 @Service
+@AllArgsConstructor
 public class MessageService {
-//    private static final Logger MESSAGE_SERVICE_LOGGER = LogManager.getLogger(MessageService.class.getName());
-
     public static final String DO_REGISTRATION_MESSAGE = "Необходимо зарегистрироваться";
     public static final String INVALID_UTI_MESSAGE = "Неверно указан URI";
     public static final String INVALID_COMMAND_MESSAGE = "Некорректная команда";
@@ -29,25 +30,9 @@ public class MessageService {
     public static final String SUCCESS_UNTRACKING_SITE_MESSAGE = "Ресурс успешно удален из отслеживания";
     public static final String UNSUCCESSFUL_UNTRACKING_SITE_MESSAGE = "Вы не отслеживаете этот ресурс";
 
-    //    private final CommandHandler commandHandler;
     private final Map<String, Command> commandMap;
     private final UserRepository userRepository;
     private final UrlProcessor urlProcessor;
-
-    /**
-     * Class constructor.
-     */
-    public MessageService(
-//        CommandHandler commandHandler,
-        Map<String, Command> commandMap,
-        UserRepository userRepository,
-        UrlProcessor urlProcessor
-    ) {
-//        this.commandHandler = commandHandler;
-        this.commandMap = commandMap;
-        this.userRepository = userRepository;
-        this.urlProcessor = urlProcessor;
-    }
 
     /**
      * Method update processing and generating a response to the user.
@@ -57,28 +42,20 @@ public class MessageService {
         var textMessage = update.message().text();
 
         var botCommand = commandMap.get(textMessage);
-        //            MESSAGE_SERVICE_LOGGER.info("Неизвестная команда, проверка ввода" + textMessage);
         return (botCommand != null) ? botCommand.execute(update) : processNonCommandMessage(chatId, textMessage);
-//
-//            .map(command -> command.execute(update))
-//            .orElseGet(() -> processNonCommandMessage(chatId, textMessage));
-//        MESSAGE_SERVICE_LOGGER.info("Команда распознана, выполняется: " + textMessage);
     }
 
     /**
      * Method that generates a response to a message that does not contain a bot command
      */
     private String processNonCommandMessage(Long chatId, String text) {
-        var userOptional = userRepository.findUserById(chatId);
-        if (userOptional.isEmpty()) {
-            return DO_REGISTRATION_MESSAGE;
-        }
-
-        var user = userOptional.get();
         try {
-            var url = new URI(text);
-            return processStateUserMessage(user, url);
-
+            return processStateUserMessage(
+                userRepository.findUserById(chatId).orElseThrow(),
+                new URI(text)
+            );
+        } catch (NoSuchElementException e) {
+            return DO_REGISTRATION_MESSAGE;
         } catch (URISyntaxException e) {
             return INVALID_UTI_MESSAGE;
         }
@@ -88,11 +65,11 @@ public class MessageService {
      * Method that handles the case of waiting for a link from the user
      */
     private String processStateUserMessage(User user, URI uri) {
-        if (user.getState().equals(SessionState.WAIT_URI_FOR_TRACKING)) {
+        if (user.isWaitingTrack()) {
             return prepareWaitTrackingMessage(user, uri);
         }
 
-        if (user.getState().equals(SessionState.WAIT_URI_FOR_UNTRACKING)) {
+        if (user.isWaitingUntrack()) {
             return prepareWaitUnTrackingMessage(user, uri);
         }
         return INVALID_COMMAND_MESSAGE;
@@ -131,7 +108,6 @@ public class MessageService {
         if (trackSites.contains(uri)) {
             return false;
         }
-
         trackSites.add(uri);
         updateTrackSitesAndCommit(user, trackSites);
         return true;
@@ -161,5 +137,4 @@ public class MessageService {
         user.setState(SessionState.BASE_STATE);
         userRepository.saveUser(user);
     }
-
 }

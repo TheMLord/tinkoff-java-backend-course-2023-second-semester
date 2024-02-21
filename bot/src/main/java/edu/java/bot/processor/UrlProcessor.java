@@ -1,19 +1,14 @@
 package edu.java.bot.processor;
 
+import lombok.AllArgsConstructor;
 import java.net.URI;
 
 /**
  * Abstract class url processing.
  */
+@AllArgsConstructor
 public abstract class UrlProcessor {
     protected UrlProcessor nextProcessor;
-
-    /**
-     * Class constructor.
-     */
-    public UrlProcessor(UrlProcessor processor) {
-        this.nextProcessor = processor;
-    }
 
     /**
      * Method that returns a valid handler host.
