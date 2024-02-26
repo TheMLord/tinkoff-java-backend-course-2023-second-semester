@@ -49,16 +49,21 @@ public class MessageService {
      * Method that generates a response to a message that does not contain a bot command
      */
     private String processNonCommandMessage(Long chatId, String text) {
-        try {
-            return processStateUserMessage(
-                userRepository.findUserById(chatId).orElseThrow(),
-                new URI(text)
-            );
-        } catch (NoSuchElementException e) {
-            return DO_REGISTRATION_MESSAGE;
-        } catch (URISyntaxException e) {
-            return INVALID_UTI_MESSAGE;
-        }
+        return userRepository.findUserById(chatId).map(user -> {
+                try {
+                    if (!text.startsWith("http")) {
+                        return INVALID_COMMAND_MESSAGE;
+                    }
+
+                    return processStateUserMessage(
+                        user,
+                        new URI(text)
+                    );
+                } catch (URISyntaxException e) {
+                    return INVALID_UTI_MESSAGE;
+                }
+            }
+        ).orElse(DO_REGISTRATION_MESSAGE);
     }
 
     /**

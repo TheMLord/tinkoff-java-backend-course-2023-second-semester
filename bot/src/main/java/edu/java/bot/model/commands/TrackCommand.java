@@ -45,12 +45,10 @@ public final class TrackCommand implements Command {
      * @param chatId user id.
      */
     private String prepareTrackMessage(long chatId) {
-        try {
-            changeStatusUserAndSave(userRepository.findUserById(chatId).orElseThrow());
+        return userRepository.findUserById(chatId).map(user -> {
+            changeStatusUserAndSave(user);
             return TRACK_MESSAGE;
-        } catch (NoSuchElementException e) {
-            return UNKNOWN_USER;
-        }
+        }).orElse(UNKNOWN_USER);
     }
 
     /**
