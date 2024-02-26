@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.model.SessionState;
 import edu.java.bot.model.db_entities.User;
 import edu.java.bot.repository.UserRepository;
-import java.util.NoSuchElementException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -45,12 +44,10 @@ public final class UnTrackCommand implements Command {
      * @param chatId user id.
      */
     private String prepareUnTrackMessage(long chatId) {
-        try {
-            changeStatusUserAndSave(userRepository.findUserById(chatId).orElseThrow());
+        return userRepository.findUserById(chatId).map(user -> {
+            changeStatusUserAndSave(user);
             return UNTRACK_MESSAGE;
-        } catch (NoSuchElementException e) {
-            return UNKNOWN_USER;
-        }
+        }).orElse(UNKNOWN_USER);
     }
 
     /**
