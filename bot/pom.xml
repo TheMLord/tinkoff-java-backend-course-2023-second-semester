@@ -211,6 +211,7 @@
                             <apiPackage>api</apiPackage>
                             <modelPackage>model</modelPackage>
                             <configOptions>
+                                <reactive>true</reactive>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useSpringBoot3>true</useSpringBoot3>
                             </configOptions>
