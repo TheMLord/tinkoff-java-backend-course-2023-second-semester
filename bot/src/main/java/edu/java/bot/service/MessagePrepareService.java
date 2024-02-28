@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @AllArgsConstructor
-public class MessageService {
+public class MessagePrepareService {
     public static final String DO_REGISTRATION_MESSAGE = "Необходимо зарегистрироваться";
     public static final String INVALID_UTI_MESSAGE = "Неверно указан URI";
     public static final String INVALID_COMMAND_MESSAGE = "Некорректная команда";

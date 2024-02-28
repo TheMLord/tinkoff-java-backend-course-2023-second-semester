@@ -8,7 +8,7 @@ import edu.java.bot.model.commands.TrackCommand;
 import edu.java.bot.model.commands.UnTrackCommand;
 import edu.java.bot.model.db_entities.User;
 import edu.java.bot.repository.UserRepository;
-import edu.java.bot.service.MessageService;
+import edu.java.bot.service.MessagePrepareService;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;
@@ -28,17 +28,17 @@ import static org.mockito.Mockito.when;
 class MessageServiceTest {
     @MockBean Update update;
 
-    @Autowired MessageService messageService;
+    @Autowired MessagePrepareService messageService;
 
     @Autowired UserRepository userRepository;
 
     private static Stream<Arguments> unregisterUserCommands() {
         return Stream.of(
-            Arguments.of(77L, "привет", MessageService.DO_REGISTRATION_MESSAGE),
+            Arguments.of(77L, "привет", MessagePrepareService.DO_REGISTRATION_MESSAGE),
             Arguments.of(89L, "/list", ListCommand.UNKNOWN_USER),
             Arguments.of(83L, "/track", TrackCommand.UNKNOWN_USER),
             Arguments.of(82L, "/untrack", UnTrackCommand.UNKNOWN_USER),
-            Arguments.of(821L, "other message", MessageService.DO_REGISTRATION_MESSAGE)
+            Arguments.of(821L, "other message", MessagePrepareService.DO_REGISTRATION_MESSAGE)
         );
     }
 
@@ -66,7 +66,7 @@ class MessageServiceTest {
         prepareUserForTest(user_id, List.of(), SessionState.WAIT_URI_FOR_TRACKING);
 
         var actualResponse = messageService.prepareResponseMessage(update);
-        assertThat(actualResponse).isEqualTo(MessageService.SUCCESS_TRACK_SITE_MESSAGE);
+        assertThat(actualResponse).isEqualTo(MessagePrepareService.SUCCESS_TRACK_SITE_MESSAGE);
 
         assertThat(userRepository.findUserById(user_id).get().getSites()).containsOnly(URI.create(exceptedURI));
     }
@@ -81,7 +81,7 @@ class MessageServiceTest {
         prepareUserForTest(user_id, List.of(URI.create(exceptedURI)), SessionState.WAIT_URI_FOR_TRACKING);
 
         var actualResponse = messageService.prepareResponseMessage(update);
-        assertThat(actualResponse).isEqualTo(MessageService.DUPLICATE_TRACKING_MESSAGE);
+        assertThat(actualResponse).isEqualTo(MessagePrepareService.DUPLICATE_TRACKING_MESSAGE);
 
         assertThat(userRepository.findUserById(user_id).get().getSites().size()).isEqualTo(exceptedSizeListSitesUser);
     }
@@ -96,7 +96,7 @@ class MessageServiceTest {
         prepareUserForTest(user_id, List.of(URI.create(exceptedURI)), SessionState.WAIT_URI_FOR_UNTRACKING);
 
         var actualResponse = messageService.prepareResponseMessage(update);
-        assertThat(actualResponse).isEqualTo(MessageService.SUCCESS_UNTRACKING_SITE_MESSAGE);
+        assertThat(actualResponse).isEqualTo(MessagePrepareService.SUCCESS_UNTRACKING_SITE_MESSAGE);
 
         assertThat(userRepository.findUserById(user_id).get().getSites().size()).isEqualTo(exceptedSizeListSitesUser);
     }
@@ -109,7 +109,7 @@ class MessageServiceTest {
         prepareUserForTest(user_id, List.of(), SessionState.WAIT_URI_FOR_UNTRACKING);
 
         var actualResponse = messageService.prepareResponseMessage(update);
-        assertThat(actualResponse).isEqualTo(MessageService.UNSUCCESSFUL_UNTRACKING_SITE_MESSAGE);
+        assertThat(actualResponse).isEqualTo(MessagePrepareService.UNSUCCESSFUL_UNTRACKING_SITE_MESSAGE);
     }
 
     private void setUpMockUpdate(long id, String text) {

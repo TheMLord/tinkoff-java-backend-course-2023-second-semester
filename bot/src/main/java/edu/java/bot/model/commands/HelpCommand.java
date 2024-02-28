@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Update;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component("/help")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public final class HelpCommand implements Command {
     private static final String STRING_COMMANDS_BOT = "Команды бота:\n";
     private static final String STRING_COMMANDS_ENUMERATION = "%s - %s\n";

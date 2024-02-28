@@ -7,6 +7,7 @@ app:
   client-base-url:
     github-url: https://api.github.com/repos/
     stackoverflow-url: https://api.stackexchange.com/2.3/questions/
+    bot-url: http://localhost:8090
 
 spring:
   application:

@@ -1,16 +1,16 @@
 package edu.java.bot.listener;
 
-import com.pengrad.telegrambot.Callback;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.SendResponse;
-import edu.java.bot.service.MessageService;
-import java.io.IOException;
+import edu.java.bot.exceptions.InvalidUpdateException;
+import edu.java.bot.model.TelegramMessage;
+import edu.java.bot.sender.BotMessageSender;
+import edu.java.bot.service.MessagePrepareService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 /**
  * Class message controller for telegram bot.
@@ -18,13 +18,17 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class MessageListener implements UpdatesListener {
-    private final TelegramBot telegramBot;
-    private final MessageService messageService;
+    private final MessagePrepareService messageService;
+    private final BotMessageSender botMessageSender;
 
-    public MessageListener(TelegramBot telegramBot, MessageService messageService) {
+    public MessageListener(
+        TelegramBot telegramBot,
+        MessagePrepareService messageService,
+        BotMessageSender botMessageSender
+    ) {
         telegramBot.setUpdatesListener(this);
-        this.telegramBot = telegramBot;
         this.messageService = messageService;
+        this.botMessageSender = botMessageSender;
     }
 
     /**
@@ -32,36 +36,24 @@ public class MessageListener implements UpdatesListener {
      */
     @Override
     public int process(List<Update> list) {
-        list.forEach(update -> {
+        var messages = Flux.fromIterable(list)
+            .flatMap(update -> {
                 try {
-                    var message = new SendMessage(
-                        update.message().chat().id(),
-                        messageService.prepareResponseMessage(update)
-                    );
-
-                    telegramBot.execute(
-                        message,
-                        new Callback<SendMessage, SendResponse>() {
-                            @Override
-                            public void onResponse(SendMessage request, SendResponse response) {
-                                log.info("Отправка ответа %s на запрос  %s".formatted(
-                                    request.toString(),
-                                    response.message().text()
-                                ));
-                            }
-
-                            @Override
-                            public void onFailure(SendMessage request, IOException e) {
-                                log.error("Ошибка выполнения запроса: " + e.getMessage());
-                            }
-                        }
-                    );
-
+                    var chatId = update.message().chat().id();
+                    var response = messageService.prepareResponseMessage(update);
+                    return Flux.just(new TelegramMessage(response, chatId));
                 } catch (Exception e) {
-                    log.info(e.getMessage());
+                    log.error("Error preparing update: {}", e.getMessage());
+                    return Flux.empty();
                 }
-            }
-        );
+            });
+
+        try {
+            botMessageSender.sendMessage(messages);
+        } catch (InvalidUpdateException e) {
+            log.error("Error sending update: {}", e.getMessage());
+        }
+
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 }

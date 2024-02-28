@@ -27,4 +27,12 @@ public class ClientConfiguration {
             .baseUrl(Objects.requireNonNullElse(configUrl, STACKOVERFLOW_URI))
             .build();
     }
+
+    @Bean
+    public WebClient botClient(ApplicationConfig appConfig) {
+        return WebClient
+            .builder()
+            .baseUrl(appConfig.clientBaseUrl().botUrl())
+            .build();
+    }
 }
