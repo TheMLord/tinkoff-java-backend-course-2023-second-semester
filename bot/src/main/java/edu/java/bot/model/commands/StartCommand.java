@@ -45,13 +45,10 @@ public final class StartCommand implements Command {
      * @param chatId user id.
      */
     private String registerUser(long chatId) {
-        var userOptional = userRepository.findUserById(chatId);
-
-        if (userOptional.isEmpty()) {
-            var user = new User(chatId, List.of(), SessionState.BASE_STATE);
-            userRepository.saveUser(user);
-            return REGISTRATION_MESSAGE_SUCCESS;
-        }
-        return ALREADY_EXIST_MESSAGE;
+        return userRepository.findUserById(chatId).map(user -> ALREADY_EXIST_MESSAGE)
+            .orElseGet(() -> {
+                userRepository.saveUser(new User(chatId, List.of(), SessionState.BASE_STATE));
+                return ALREADY_EXIST_MESSAGE;
+            });
     }
 }

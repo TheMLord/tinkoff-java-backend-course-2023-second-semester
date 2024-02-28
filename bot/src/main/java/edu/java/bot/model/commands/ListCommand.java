@@ -38,16 +38,13 @@ public final class ListCommand implements Command {
     public String execute(Update update) {
         var chatId = update.message().chat().id();
 
-        var userOptional = userRepository.findUserById(chatId);
-
-        if (userOptional.isPresent()) {
-            var listSites = userOptional.get().getSites();
-            if (!listSites.isEmpty()) {
-                return prepareListSitesMessage(listSites);
+        return userRepository.findUserById(chatId).map(user -> {
+            if (!user.getSites().isEmpty()) {
+                return prepareListSitesMessage(user.getSites());
             }
             return EMPTY_LIST_SITES;
-        }
-        return UNKNOWN_USER;
+        }).orElse(UNKNOWN_USER);
+
     }
 
     /**
