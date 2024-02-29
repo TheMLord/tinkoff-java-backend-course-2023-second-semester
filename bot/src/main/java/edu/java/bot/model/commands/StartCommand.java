@@ -46,6 +46,7 @@ public final class StartCommand implements Command {
      *
      * @param chatId user id.
      */
+<<<<<<< HEAD
     private Mono<String> registerUser(long chatId) {
         return userRepository.findUserById(chatId)
             .map(user -> Mono.just(ALREADY_EXIST_MESSAGE))
@@ -57,5 +58,13 @@ public final class StartCommand implements Command {
                     }))
                     .onErrorReturn("Ошибка регистрации")
             );
+=======
+    private String registerUser(long chatId) {
+        return userRepository.findUserById(chatId).map(user -> ALREADY_EXIST_MESSAGE)
+            .orElseGet(() -> {
+                userRepository.saveUser(new User(chatId, List.of(), SessionState.BASE_STATE));
+                return REGISTRATION_MESSAGE_SUCCESS;
+            });
+>>>>>>> 0324ae74b0d6229eb873263ab38894f697bf8895
     }
 }

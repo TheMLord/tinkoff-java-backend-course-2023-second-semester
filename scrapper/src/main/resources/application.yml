@@ -5,9 +5,10 @@ app:
     force-check-delay: 10s
 
   client-base-url:
-    github-url: https://api.github.com/repos/
-    stackoverflow-url: https://api.stackexchange.com/2.3/questions/
+    github-uri: https://api.github.com
+    stackoverflow-uri: https://api.stackexchange.com/2.3
     bot-url: http://localhost:8090
+
 
 spring:
   application:
