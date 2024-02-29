@@ -10,11 +10,11 @@ public class ClientConfiguration {
 
     @Bean
     public GithubProxy githubProxy(ApplicationConfig applicationConfig) {
-        return new GithubProxy(applicationConfig.clientBaseUrl().githubUrl());
+        return new GithubProxy(applicationConfig.clientBaseUrl().githubBaseUrl());
     }
 
     @Bean
     public StackoverflowProxy stackoverflowProxy(ApplicationConfig applicationConfig) {
-        return new StackoverflowProxy(applicationConfig.clientBaseUrl().stackoverflowUrl());
+        return new StackoverflowProxy(applicationConfig.clientBaseUrl().stackoverBaseflowUrl());
     }
 }

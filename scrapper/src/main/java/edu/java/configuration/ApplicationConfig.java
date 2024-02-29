@@ -20,6 +20,6 @@ public record ApplicationConfig(
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
 
-    public record ClientBaseUrl(String githubUrl, String stackoverflowUrl) {
+    public record ClientBaseUrl(String githubBaseUrl, String stackoverBaseflowUrl) {
     }
 }
