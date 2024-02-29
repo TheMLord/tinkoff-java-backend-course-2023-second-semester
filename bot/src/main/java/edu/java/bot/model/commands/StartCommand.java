@@ -48,7 +48,7 @@ public final class StartCommand implements Command {
         return userRepository.findUserById(chatId).map(user -> ALREADY_EXIST_MESSAGE)
             .orElseGet(() -> {
                 userRepository.saveUser(new User(chatId, List.of(), SessionState.BASE_STATE));
-                return ALREADY_EXIST_MESSAGE;
+                return REGISTRATION_MESSAGE_SUCCESS;
             });
     }
 }
