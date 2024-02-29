@@ -5,8 +5,8 @@ app:
     force-check-delay: 10s
 
   client-base-url:
-    github-url: http://localhost:8080/repos/
-    stackoverflow-url: http://localhost:8080/2.3/questions/
+    github-url: http://localhost:8080
+    stackoverflow-url: http://localhost:8080/2.3
 
 spring:
   application:
