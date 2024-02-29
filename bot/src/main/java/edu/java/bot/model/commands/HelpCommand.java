@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 /**
  * Class help command;
@@ -37,8 +38,8 @@ public final class HelpCommand implements Command {
     }
 
     @Override
-    public String execute(Update update) {
-        return prepareHelpCommandDescription();
+    public Mono<String> execute(Update update) {
+        return Mono.just(prepareHelpCommandDescription());
 
     }
 

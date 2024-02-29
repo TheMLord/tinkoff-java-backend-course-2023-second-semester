@@ -17,50 +17,50 @@ import reactor.core.publisher.Mono;
 public class ScrapperProxy {
     private final WebClient scrapperClient;
 
-    public Mono<ApiErrorResponse> registerChat(long chatId) {
+    public Mono<Void> registerChat(long chatId) {
         return scrapperClient
-                .post()
-                .uri("/tg-chat/{id}", chatId)
-                .retrieve()
-                .onStatus(HttpStatusCode::is2xxSuccessful, response -> Mono.empty())
-                .bodyToMono(ApiErrorResponse.class);
+            .post()
+            .uri("/tg-chat/{id}", chatId)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
+            .bodyToMono(Void.class);
     }
 
     public Mono<Void> deleteChat(long chatId) {
         return scrapperClient
-                .delete()
-                .uri("/tg-chat/{id}", chatId)
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
-                .bodyToMono(Void.class);
+            .delete()
+            .uri("/tg-chat/{id}", chatId)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
+            .bodyToMono(Void.class);
     }
 
     public Mono<ListLinksResponse> getListLinks() {
         return scrapperClient
-                .get()
-                .uri("/links")
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
-                .bodyToMono(ListLinksResponse.class);
+            .get()
+            .uri("/links")
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
+            .bodyToMono(ListLinksResponse.class);
     }
 
     public Mono<LinkResponse> addLink(AddLinkRequest addLinkRequest) {
         return scrapperClient
-                .post()
-                .uri("/links")
-                .body(Mono.just(addLinkRequest), AddLinkRequest.class)
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
-                .bodyToMono(LinkResponse.class);
+            .post()
+            .uri("/links")
+            .body(Mono.just(addLinkRequest), AddLinkRequest.class)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
+            .bodyToMono(LinkResponse.class);
     }
 
     public Mono<LinkResponse> deleteLink(RemoveLinkRequest removeLinkRequest) {
         return scrapperClient
-                .method(HttpMethod.DELETE)
-                .uri("/links")
-                .body(Mono.just(removeLinkRequest), RemoveLinkRequest.class)
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
-                .bodyToMono(LinkResponse.class);
+            .method(HttpMethod.DELETE)
+            .uri("/links")
+            .body(Mono.just(removeLinkRequest), RemoveLinkRequest.class)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
+            .bodyToMono(LinkResponse.class);
     }
 }

@@ -1,8 +1,6 @@
 package edu.java.bot.model.db_entities;
 
 import edu.java.bot.model.SessionState;
-import java.net.URI;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +15,6 @@ import lombok.NoArgsConstructor;
 public class User {
     //PK entity
     private Long id;
-    private List<URI> sites;
     private SessionState state;
 
     public boolean isWaitingTrack() {

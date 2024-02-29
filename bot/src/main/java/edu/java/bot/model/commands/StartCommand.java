@@ -3,10 +3,11 @@ package edu.java.bot.model.commands;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.model.SessionState;
 import edu.java.bot.model.db_entities.User;
+import edu.java.bot.proxy.ScrapperProxy;
 import edu.java.bot.repository.UserRepository;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 /**
  * Class start command
@@ -21,6 +22,7 @@ public final class StartCommand implements Command {
     private static final String DESCRIPTION_COMMAND = "зарегистрировать пользователя";
 
     private final UserRepository userRepository;
+    private final ScrapperProxy scrapperProxy;
 
     @Override
     public String nameCommand() {
@@ -33,7 +35,7 @@ public final class StartCommand implements Command {
     }
 
     @Override
-    public String execute(Update update) {
+    public Mono<String> execute(Update update) {
         var chatId = update.message().chat().id();
 
         return registerUser(chatId);
@@ -44,11 +46,16 @@ public final class StartCommand implements Command {
      *
      * @param chatId user id.
      */
-    private String registerUser(long chatId) {
-        return userRepository.findUserById(chatId).map(user -> ALREADY_EXIST_MESSAGE)
-            .orElseGet(() -> {
-                userRepository.saveUser(new User(chatId, List.of(), SessionState.BASE_STATE));
-                return ALREADY_EXIST_MESSAGE;
-            });
+    private Mono<String> registerUser(long chatId) {
+        return userRepository.findUserById(chatId)
+            .map(user -> Mono.just(ALREADY_EXIST_MESSAGE))
+            .orElseGet(() ->
+                scrapperProxy.registerChat(chatId)
+                    .then(Mono.defer(() -> {
+                        userRepository.saveUser(new User(chatId, SessionState.BASE_STATE));
+                        return Mono.just(REGISTRATION_MESSAGE_SUCCESS);
+                    }))
+                    .onErrorReturn("Ошибка регистрации")
+            );
     }
 }

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 /**
  * Bots message service
@@ -36,12 +37,13 @@ public class MessagePrepareService {
     /**
      * Method update processing and generating a response to the user.
      */
-    public String prepareResponseMessage(Update update) {
+    public Mono<String> prepareResponseMessage(Update update) {
         var chatId = update.message().chat().id();
         var textMessage = update.message().text();
 
         var botCommand = commandMap.get(textMessage);
-        return (botCommand != null) ? botCommand.execute(update) : processNonCommandMessage(chatId, textMessage);
+        return (botCommand != null) ? botCommand.execute(update) :
+            Mono.just(processNonCommandMessage(chatId, textMessage));
     }
 
     /**
