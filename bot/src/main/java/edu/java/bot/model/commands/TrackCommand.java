@@ -6,6 +6,7 @@ import edu.java.bot.model.db_entities.User;
 import edu.java.bot.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 /**
  * Class track command.
@@ -32,10 +33,10 @@ public final class TrackCommand implements Command {
     }
 
     @Override
-    public String execute(Update update) {
+    public Mono<String> execute(Update update) {
         var chatId = update.message().chat().id();
 
-        return prepareTrackMessage(chatId);
+        return Mono.just(prepareTrackMessage(chatId));
     }
 
     /**

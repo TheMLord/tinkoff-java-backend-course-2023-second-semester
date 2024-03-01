@@ -1,6 +1,7 @@
 package edu.java.bot.model.commands;
 
 import com.pengrad.telegrambot.model.Update;
+import reactor.core.publisher.Mono;
 
 /**
  * Contract of the bot commands.
@@ -23,5 +24,5 @@ public interface Command {
      * @param update the update that came to the telegram bot.
      * @return response message to the executed command.
      */
-    String execute(Update update);
+    Mono<String> execute(Update update);
 }

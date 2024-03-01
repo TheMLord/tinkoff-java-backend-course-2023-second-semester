@@ -13,13 +13,14 @@ import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 /**
  * Bots message service
  */
 @Service
 @AllArgsConstructor
-public class MessageService {
+public class MessagePrepareService {
     public static final String DO_REGISTRATION_MESSAGE = "Необходимо зарегистрироваться";
     public static final String INVALID_UTI_MESSAGE = "Неверно указан URI";
     public static final String INVALID_COMMAND_MESSAGE = "Некорректная команда";
@@ -36,12 +37,13 @@ public class MessageService {
     /**
      * Method update processing and generating a response to the user.
      */
-    public String prepareResponseMessage(Update update) {
+    public Mono<String> prepareResponseMessage(Update update) {
         var chatId = update.message().chat().id();
         var textMessage = update.message().text();
 
         var botCommand = commandMap.get(textMessage);
-        return (botCommand != null) ? botCommand.execute(update) : processNonCommandMessage(chatId, textMessage);
+        return (botCommand != null) ? botCommand.execute(update) :
+            Mono.just(processNonCommandMessage(chatId, textMessage));
     }
 
     /**

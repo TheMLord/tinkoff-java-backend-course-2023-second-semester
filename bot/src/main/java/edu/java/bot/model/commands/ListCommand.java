@@ -1,11 +1,14 @@
 package edu.java.bot.model.commands;
 
 import com.pengrad.telegrambot.model.Update;
+import edu.java.bot.proxy.ScrapperProxy;
 import edu.java.bot.repository.UserRepository;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 /**
  * Class list command.
@@ -22,6 +25,7 @@ public final class ListCommand implements Command {
     private static final String NAME_COMMAND = "/list";
     private static final String DESCRIPTION_COMMAND = "команда показать список отслеживаемых ссылок";
 
+    private final ScrapperProxy scrapperProxy;
     private final UserRepository userRepository;
 
     @Override
@@ -35,16 +39,21 @@ public final class ListCommand implements Command {
     }
 
     @Override
-    public String execute(Update update) {
+    public Mono<String> execute(Update update) {
         var chatId = update.message().chat().id();
 
-        return userRepository.findUserById(chatId).map(user -> {
-            if (!user.getSites().isEmpty()) {
-                return prepareListSitesMessage(user.getSites());
-            }
-            return EMPTY_LIST_SITES;
-        }).orElse(UNKNOWN_USER);
+        return userRepository.findUserById(chatId).map(
+                user -> scrapperProxy.getListLinks()
+                    .map(listLinksResponse -> {
+                        var userList = listLinksResponse.getLinks()
+                            .stream()
+                            .filter(linkResponse -> linkResponse.getId().equals(chatId))
+                            .flatMap(linkResponse -> Stream.of(linkResponse.getUrl())).toList();
 
+                        return prepareListSitesMessage(userList);
+                    })
+                    .onErrorReturn("Ошибка сервера"))
+            .orElse(Mono.just(UNKNOWN_USER));
     }
 
     /**
