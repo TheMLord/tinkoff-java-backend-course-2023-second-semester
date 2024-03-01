@@ -1,12 +1,12 @@
 app:
   scheduler:
     enable: true
-    interval: 5s
+    interval: 10s
     force-check-delay: 10s
 
   client-base-url:
-    github-uri: https://api.github.com
-    stackoverflow-uri: https://api.stackexchange.com/2.3
+    github-uri: http://localhost:8080
+    stackoverflow-uri: http://localhost:8080/2.3
 
 spring:
   application:
