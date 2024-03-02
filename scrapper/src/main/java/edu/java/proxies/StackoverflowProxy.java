@@ -10,9 +10,8 @@ public class StackoverflowProxy {
 
     private final WebClient stackoverflowClient;
 
-    public StackoverflowProxy(String baseUri) {
-        this.stackoverflowClient = WebClient
-            .builder()
+    public StackoverflowProxy(WebClient.Builder webClientBuilder, String baseUri) {
+        this.stackoverflowClient = webClientBuilder
             .baseUrl(Objects.requireNonNullElse(baseUri, STACKOVERFLOW_BASE_URI))
             .build();
     }

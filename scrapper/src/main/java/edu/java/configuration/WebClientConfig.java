@@ -7,16 +7,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
-public class ClientConfiguration {
+public class WebClientConfig {
 
     @Bean
-    public GithubProxy githubProxy(ApplicationConfig applicationConfig) {
-        return new GithubProxy(applicationConfig.clientBaseUrl().githubUri());
+    public GithubProxy githubProxy(
+        WebClient.Builder webClientBuilder,
+        ApplicationConfig applicationConfig
+    ) {
+        return new GithubProxy(webClientBuilder, applicationConfig.clientBaseUrl().githubUri());
     }
 
     @Bean
-    public StackoverflowProxy stackoverflowProxy(ApplicationConfig applicationConfig) {
-        return new StackoverflowProxy(applicationConfig.clientBaseUrl().stackoverflowUri());
+    public StackoverflowProxy stackoverflowProxy(
+        WebClient.Builder webClientBuilder,
+        ApplicationConfig applicationConfig
+    ) {
+        return new StackoverflowProxy(webClientBuilder, applicationConfig.clientBaseUrl().stackoverflowUri());
     }
 
     @Bean

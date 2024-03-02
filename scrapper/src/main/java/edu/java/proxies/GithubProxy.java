@@ -9,9 +9,8 @@ public class GithubProxy {
     private static final String GITHUB_BASE_URI = "https://api.github.com";
     private final WebClient githubClient;
 
-    public GithubProxy(String baseUri) {
-        this.githubClient = WebClient
-            .builder()
+    public GithubProxy(WebClient.Builder webClientBuilder, String baseUri) {
+        this.githubClient = webClientBuilder
             .baseUrl(Objects.requireNonNullElse(baseUri, GITHUB_BASE_URI))
             .build();
     }
