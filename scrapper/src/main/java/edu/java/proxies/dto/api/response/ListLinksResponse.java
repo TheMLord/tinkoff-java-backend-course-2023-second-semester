@@ -1,4 +1,4 @@
-package edu.java.dto.response;
+package edu.java.proxies.dto.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;

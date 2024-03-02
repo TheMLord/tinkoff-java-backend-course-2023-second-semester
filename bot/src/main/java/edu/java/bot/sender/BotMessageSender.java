@@ -5,7 +5,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import edu.java.bot.exceptions.InvalidUpdateException;
-import edu.java.bot.model.TelegramMessage;
+import edu.java.bot.models.dto.TelegramMessage;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

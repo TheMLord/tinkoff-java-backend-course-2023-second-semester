@@ -1,8 +1,8 @@
-package edu.java.bot.model.commands;
+package edu.java.bot.models.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.model.SessionState;
-import edu.java.bot.model.db_entities.User;
+import edu.java.bot.models.db_entities.SessionState;
+import edu.java.bot.models.db_entities.User;
 import edu.java.bot.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,9 +1,8 @@
-package edu.java.bot.model.commands;
+package edu.java.bot.models.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;

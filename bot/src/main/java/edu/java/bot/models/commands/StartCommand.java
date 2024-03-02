@@ -1,11 +1,13 @@
-package edu.java.bot.model.commands;
+package edu.java.bot.models.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.model.SessionState;
-import edu.java.bot.model.db_entities.User;
+import edu.java.bot.models.db_entities.SessionState;
+import edu.java.bot.models.db_entities.User;
+import edu.java.bot.models.dto.api.response.ApiErrorResponse;
 import edu.java.bot.proxy.ScrapperProxy;
 import edu.java.bot.repository.UserRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -13,10 +15,11 @@ import reactor.core.publisher.Mono;
  * Class start command
  */
 @Component("/start")
-@AllArgsConstructor
+@Slf4j
+@RequiredArgsConstructor
 public final class StartCommand implements Command {
     public static final String REGISTRATION_MESSAGE_SUCCESS = "Вы успешно зарегистрировались!";
-    public static final String ALREADY_EXIST_MESSAGE = "Вы уже зарегистрированный";
+    public static final String ALREADY_EXIST_MESSAGE = "Вы уже зарегистрированы";
 
     private static final String NAME_COMMAND = "/start";
     private static final String DESCRIPTION_COMMAND = "зарегистрировать пользователя";
@@ -46,25 +49,22 @@ public final class StartCommand implements Command {
      *
      * @param chatId user id.
      */
-<<<<<<< HEAD
     private Mono<String> registerUser(long chatId) {
         return userRepository.findUserById(chatId)
             .map(user -> Mono.just(ALREADY_EXIST_MESSAGE))
             .orElseGet(() ->
                 scrapperProxy.registerChat(chatId)
-                    .then(Mono.defer(() -> {
-                        userRepository.saveUser(new User(chatId, SessionState.BASE_STATE));
-                        return Mono.just(REGISTRATION_MESSAGE_SUCCESS);
-                    }))
-                    .onErrorReturn("Ошибка регистрации")
+                    .map(response -> {
+                        if (response instanceof ApiErrorResponse errorResponse) {
+                            log.error("запрос на регистрацию вернулся с кодом {}", errorResponse.getCode());
+                            return errorResponse.getDescription();
+                        } else {
+                            userRepository.saveUser(new User(chatId, SessionState.BASE_STATE));
+                            return REGISTRATION_MESSAGE_SUCCESS;
+                        }
+                    })
+                    .flatMap(Mono::just)
             );
-=======
-    private String registerUser(long chatId) {
-        return userRepository.findUserById(chatId).map(user -> ALREADY_EXIST_MESSAGE)
-            .orElseGet(() -> {
-                userRepository.saveUser(new User(chatId, List.of(), SessionState.BASE_STATE));
-                return REGISTRATION_MESSAGE_SUCCESS;
-            });
->>>>>>> 0324ae74b0d6229eb873263ab38894f697bf8895
+
     }
 }

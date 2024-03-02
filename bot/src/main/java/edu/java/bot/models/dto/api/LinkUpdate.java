@@ -1,4 +1,4 @@
-package edu.java.bot.controller.dto;
+package edu.java.bot.models.dto.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;

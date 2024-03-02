@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.exceptions.InvalidUpdateException;
-import edu.java.bot.model.TelegramMessage;
+import edu.java.bot.models.dto.TelegramMessage;
 import edu.java.bot.sender.BotMessageSender;
 import edu.java.bot.service.MessagePrepareService;
 import java.util.List;

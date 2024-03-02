@@ -1,4 +1,4 @@
-package edu.java.bot.controller.dto;
+package edu.java.proxies.dto.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,29 +6,27 @@ import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-import lombok.Value;
+import lombok.RequiredArgsConstructor;
 
 /**
  * ApiErrorResponse
  */
 
-@EqualsAndHashCode(callSuper = true) @Value
 @Builder
+@RequiredArgsConstructor
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-27T07:36:33.430797072Z[UTC]")
-public class ApiErrorResponse extends Throwable {
+public class ApiErrorResponse {
 
-    String description;
+    private final String description;
 
-    String code;
+    private final String code;
 
-    String exceptionName;
+    private final String exceptionName;
 
-    String exceptionMessage;
+    private final String exceptionMessage;
 
     @Valid
-    List<String> stacktrace;
+    private final List<String> stacktrace;
 
     @Schema(name = "description", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("description")
@@ -59,6 +57,4 @@ public class ApiErrorResponse extends Throwable {
     public List<String> getStacktrace() {
         return stacktrace;
     }
-
 }
-

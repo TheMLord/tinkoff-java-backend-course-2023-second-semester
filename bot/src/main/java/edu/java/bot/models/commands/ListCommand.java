@@ -1,12 +1,15 @@
-package edu.java.bot.model.commands;
+package edu.java.bot.models.commands;
 
 import com.pengrad.telegrambot.model.Update;
+import edu.java.bot.models.dto.api.response.ApiErrorResponse;
+import edu.java.bot.models.dto.api.response.ListLinksResponse;
 import edu.java.bot.proxy.ScrapperProxy;
 import edu.java.bot.repository.UserRepository;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -15,6 +18,7 @@ import reactor.core.publisher.Mono;
  */
 
 @Component("/list")
+@Slf4j
 @AllArgsConstructor
 public final class ListCommand implements Command {
     public static final String EMPTY_LIST_SITES = "Вы не отслеживаете ни одну ссылку";
@@ -43,11 +47,16 @@ public final class ListCommand implements Command {
         var chatId = update.message().chat().id();
 
         return userRepository.findUserById(chatId).map(
-                user -> scrapperProxy.getListLinks()
-                    .map(listLinksResponse -> {
-                        var userList = listLinksResponse.getLinks()
-                            .stream()
-                            .filter(linkResponse -> linkResponse.getId().equals(chatId))
+                user -> scrapperProxy.getListLinks(chatId)
+                    .map(response -> {
+                        if (response instanceof ApiErrorResponse errorResponse) {
+                            log.error("запрос на получение ссылок вернулся с кодом {} и описанием {}",
+                                errorResponse.getCode(), errorResponse.getDescription()
+                            );
+                            return errorResponse.getDescription();
+                        }
+                        var linksResponse = (ListLinksResponse) response;
+                        var userList = linksResponse.getLinks().stream()
                             .flatMap(linkResponse -> Stream.of(linkResponse.getUrl())).toList();
 
                         return prepareListSitesMessage(userList);

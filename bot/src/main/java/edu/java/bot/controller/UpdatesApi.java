@@ -6,8 +6,8 @@
 
 package edu.java.bot.controller;
 
-import edu.java.bot.controller.dto.ApiErrorResponse;
-import edu.java.bot.controller.dto.LinkUpdate;
+import edu.java.bot.models.dto.api.response.ApiErrorResponse;
+import edu.java.bot.models.dto.api.LinkUpdate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,8 +16,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,24 +52,10 @@ public interface UpdatesApi {
         produces = {"application/json"},
         consumes = {"application/json"}
     )
-
-    default Mono<ResponseEntity<Void>> updatesPost(
+    Mono<ResponseEntity<Void>> updatesPost(
         @Parameter(name = "LinkUpdate", description = "", required = true) @Valid @RequestBody
         Mono<LinkUpdate> linkUpdate,
         @Parameter(hidden = true) final ServerWebExchange exchange
-    ) {
-        Mono<Void> result = Mono.empty();
-        exchange.getResponse().setStatusCode(HttpStatus.NOT_IMPLEMENTED);
-        for (MediaType mediaType : exchange.getRequest().getHeaders().getAccept()) {
-            if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                String exampleString =
-                    "{ \"code\" : \"code\", \"stacktrace\" : [ \"stacktrace\", \"stacktrace\" ], \"description\" : \"description\", \"exceptionMessage\" : \"exceptionMessage\", \"exceptionName\" : \"exceptionName\" }";
-                result = api.ApiUtil.getExampleResponse(exchange, MediaType.valueOf("application/json"), exampleString);
-                break;
-            }
-        }
-        return result.then(linkUpdate).then(Mono.empty());
-
-    }
+    );
 
 }

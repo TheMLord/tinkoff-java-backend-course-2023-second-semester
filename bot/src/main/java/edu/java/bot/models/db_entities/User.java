@@ -1,6 +1,5 @@
-package edu.java.bot.model.db_entities;
+package edu.java.bot.models.db_entities;
 
-import edu.java.bot.model.SessionState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

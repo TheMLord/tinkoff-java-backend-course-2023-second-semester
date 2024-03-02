@@ -1,66 +1,64 @@
 package edu.java.bot.proxy;
 
-import edu.java.bot.controller.dto.ApiErrorResponse;
-import edu.java.bot.controller.dto.request.AddLinkRequest;
-import edu.java.bot.controller.dto.request.RemoveLinkRequest;
-import edu.java.bot.controller.dto.response.LinkResponse;
-import edu.java.bot.controller.dto.response.ListLinksResponse;
+import edu.java.bot.models.dto.api.request.AddLinkRequest;
+import edu.java.bot.models.dto.api.request.RemoveLinkRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-@Component
 @RequiredArgsConstructor
 public class ScrapperProxy {
     private final WebClient scrapperClient;
 
-    public Mono<Void> registerChat(long chatId) {
+    public ScrapperProxy(WebClient.Builder webClientBuilder, String baseUri) {
+        this.scrapperClient = webClientBuilder
+            .baseUrl(baseUri)
+            .build();
+    }
+
+    public Mono<?> registerChat(long chatId) {
         return scrapperClient
             .post()
             .uri("/tg-chat/{id}", chatId)
             .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
-            .bodyToMono(Void.class);
+            .bodyToMono(Object.class);
     }
 
-    public Mono<Void> deleteChat(long chatId) {
+    public Mono<?> deleteChat(long chatId) {
         return scrapperClient
             .delete()
             .uri("/tg-chat/{id}", chatId)
             .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
-            .bodyToMono(Void.class);
+            .bodyToMono(Object.class);
     }
 
-    public Mono<ListLinksResponse> getListLinks() {
+    public Mono<?> getListLinks(long tgChatId) {
         return scrapperClient
             .get()
             .uri("/links")
+            .header("Tg-Chat-Id", String.valueOf(tgChatId))
             .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
-            .bodyToMono(ListLinksResponse.class);
+            .bodyToMono(Object.class);
     }
 
-    public Mono<LinkResponse> addLink(AddLinkRequest addLinkRequest) {
+    public Mono<?> addLink(AddLinkRequest addLinkRequest, long tgChatId) {
         return scrapperClient
             .post()
             .uri("/links")
+            .header("Tg-Chat-Id", String.valueOf(tgChatId))
             .body(Mono.just(addLinkRequest), AddLinkRequest.class)
             .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
-            .bodyToMono(LinkResponse.class);
+            .bodyToMono(Object.class);
     }
 
-    public Mono<LinkResponse> deleteLink(RemoveLinkRequest removeLinkRequest) {
+    public Mono<?> deleteLink(RemoveLinkRequest removeLinkRequest, long tgChatId) {
         return scrapperClient
             .method(HttpMethod.DELETE)
             .uri("/links")
+            .header("Tg-Chat-Id", String.valueOf(tgChatId))
             .body(Mono.just(removeLinkRequest), RemoveLinkRequest.class)
             .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, response -> response.bodyToMono(ApiErrorResponse.class))
-            .bodyToMono(LinkResponse.class);
+            .bodyToMono(Object.class);
     }
 }

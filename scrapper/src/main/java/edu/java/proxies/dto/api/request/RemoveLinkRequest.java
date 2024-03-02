@@ -1,11 +1,11 @@
-package edu.java.bot.controller.dto.request;
+package edu.java.proxies.dto.api.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
-import java.net.URI;
 import lombok.Setter;
+import java.net.URI;
 
 /**
  * RemoveLinkRequest
