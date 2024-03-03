@@ -6,27 +6,25 @@ import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
 
 /**
  * ApiErrorResponse
  */
 
-@RequiredArgsConstructor
 @Builder
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-27T07:36:33.430797072Z[UTC]")
 public class ApiErrorResponse {
 
-    private final String description;
+    private String description;
 
-    private final String code;
+    private String code;
 
-    private final String exceptionName;
+    private String exceptionName;
 
-    private final String exceptionMessage;
+    private String exceptionMessage;
 
     @Valid
-    private final List<String> stacktrace;
+    private List<String> stacktrace;
 
     @Schema(name = "description", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("description")

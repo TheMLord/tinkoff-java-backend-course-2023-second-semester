@@ -1,6 +1,6 @@
 package edu.java.proxies;
 
-import edu.java.proxies.dto.GithubDTO;
+import edu.java.models.dto.GithubDTO;
 import java.util.Objects;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;

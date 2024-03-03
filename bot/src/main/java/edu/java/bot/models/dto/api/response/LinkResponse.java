@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
 import java.net.URI;
-import java.util.Objects;
 import lombok.Setter;
 
 /**

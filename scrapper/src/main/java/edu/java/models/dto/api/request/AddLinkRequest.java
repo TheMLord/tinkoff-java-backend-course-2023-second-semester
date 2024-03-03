@@ -1,4 +1,4 @@
-package edu.java.proxies.dto.api.request;
+package edu.java.models.dto.api.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,8 +11,8 @@ import lombok.Setter;
  * AddLinkRequest
  */
 
-@Setter
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-27T07:36:33.430797072Z[UTC]")
+@Setter
 public class AddLinkRequest {
 
     private URI link;
@@ -23,6 +23,5 @@ public class AddLinkRequest {
     public URI getLink() {
         return link;
     }
-
 }
 

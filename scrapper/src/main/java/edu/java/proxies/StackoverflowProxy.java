@@ -1,6 +1,6 @@
 package edu.java.proxies;
 
-import edu.java.proxies.dto.StackoverflowDTO;
+import edu.java.models.dto.StackoverflowDTO;
 import java.util.Objects;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;

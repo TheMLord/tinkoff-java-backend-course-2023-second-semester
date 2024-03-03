@@ -3,12 +3,13 @@ package edu.java.bot.models.commands;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.models.db_entities.SessionState;
 import edu.java.bot.models.db_entities.User;
-import edu.java.bot.models.dto.api.response.ApiErrorResponse;
 import edu.java.bot.proxy.ScrapperProxy;
 import edu.java.bot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 /**
@@ -54,17 +55,22 @@ public final class StartCommand implements Command {
             .map(user -> Mono.just(ALREADY_EXIST_MESSAGE))
             .orElseGet(() ->
                 scrapperProxy.registerChat(chatId)
-                    .map(response -> {
-                        if (response instanceof ApiErrorResponse errorResponse) {
-                            log.error("запрос на регистрацию вернулся с кодом {}", errorResponse.getCode());
-                            return errorResponse.getDescription();
-                        } else {
-                            userRepository.saveUser(new User(chatId, SessionState.BASE_STATE));
-                            return REGISTRATION_MESSAGE_SUCCESS;
+                    .then(Mono.fromCallable(() -> {
+                        userRepository.saveUser(new User(chatId, SessionState.BASE_STATE));
+                        return REGISTRATION_MESSAGE_SUCCESS;
+                    }))
+                    .onErrorResume(throwable -> {
+                        if (throwable instanceof WebClientResponseException exception) {
+                            if (exception.getStatusCode().isSameCodeAs(HttpStatus.BAD_REQUEST)) {
+                                log.info("Некорректные параметры запроса");
+                                return Mono.just("Ошибка сервера");
+                            }
+                            if (exception.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                                return Mono.just("Чат уже зарегистрирован");
+                            }
                         }
+                        return Mono.just("Неизвестная ошибка");
                     })
-                    .flatMap(Mono::just)
             );
-
     }
 }

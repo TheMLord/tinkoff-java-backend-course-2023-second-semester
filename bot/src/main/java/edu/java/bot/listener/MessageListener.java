@@ -11,7 +11,6 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 /**
  * Class message controller for telegram bot.
@@ -40,9 +39,9 @@ public class MessageListener implements UpdatesListener {
         var messages = Flux.fromIterable(list)
             .flatMap(update -> {
                 try {
-                    var chatId = Mono.just(update.message().chat().id());
+                    var chatId = update.message().chat().id();
                     var response = messageService.prepareResponseMessage(update);
-                    return response.flatMapMany(r -> chatId.map(ch -> new TelegramMessage(r, ch)));
+                    return response.map(r -> new TelegramMessage(r, chatId));
                 } catch (Exception e) {
                     log.error("Error preparing update: {}", e.getMessage());
                     return Flux.empty();

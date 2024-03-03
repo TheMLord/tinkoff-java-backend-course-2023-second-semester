@@ -1,8 +1,6 @@
 package edu.java.bot.models.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.models.dto.api.response.ApiErrorResponse;
-import edu.java.bot.models.dto.api.response.ListLinksResponse;
 import edu.java.bot.proxy.ScrapperProxy;
 import edu.java.bot.repository.UserRepository;
 import java.net.URI;
@@ -49,16 +47,8 @@ public final class ListCommand implements Command {
         return userRepository.findUserById(chatId).map(
                 user -> scrapperProxy.getListLinks(chatId)
                     .map(response -> {
-                        if (response instanceof ApiErrorResponse errorResponse) {
-                            log.error("запрос на получение ссылок вернулся с кодом {} и описанием {}",
-                                errorResponse.getCode(), errorResponse.getDescription()
-                            );
-                            return errorResponse.getDescription();
-                        }
-                        var linksResponse = (ListLinksResponse) response;
-                        var userList = linksResponse.getLinks().stream()
+                        var userList = response.getLinks().stream()
                             .flatMap(linkResponse -> Stream.of(linkResponse.getUrl())).toList();
-
                         return prepareListSitesMessage(userList);
                     })
                     .onErrorReturn("Ошибка сервера"))

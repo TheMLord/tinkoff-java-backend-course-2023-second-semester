@@ -6,8 +6,8 @@
 
 package edu.java.bot.controller;
 
-import edu.java.bot.models.dto.api.response.ApiErrorResponse;
 import edu.java.bot.models.dto.api.LinkUpdate;
+import edu.java.bot.models.dto.api.response.ApiErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,7 +21,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-27T07:34:30.177106031Z[UTC]")
@@ -52,10 +51,8 @@ public interface UpdatesApi {
         produces = {"application/json"},
         consumes = {"application/json"}
     )
-    Mono<ResponseEntity<Void>> updatesPost(
+    ResponseEntity<Void> updatesPost(
         @Parameter(name = "LinkUpdate", description = "", required = true) @Valid @RequestBody
-        Mono<LinkUpdate> linkUpdate,
-        @Parameter(hidden = true) final ServerWebExchange exchange
-    );
+        Mono<LinkUpdate> linkUpdate);
 
 }

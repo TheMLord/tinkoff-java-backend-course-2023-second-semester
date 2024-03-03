@@ -6,7 +6,6 @@ import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 /**
  * AddLinkRequest

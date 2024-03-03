@@ -1,4 +1,4 @@
-package edu.java.proxies.dto.api;
+package edu.java.models.dto.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,24 +6,24 @@ import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * LinkUpdate
  */
 
-@Setter
+@RequiredArgsConstructor
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-27T07:34:30.177106031Z[UTC]")
 public class LinkUpdate {
 
-    private Long id;
+    private final Long id;
 
-    private URI url;
+    private final URI url;
 
-    private String description;
+    private final String description;
 
     @Valid
-    private List<Long> tgChatIds;
+    private final List<Long> tgChatIds;
 
     @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("id")

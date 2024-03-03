@@ -6,7 +6,6 @@ import edu.java.bot.sender.BotMessageSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -16,7 +15,7 @@ public class UpdateController implements UpdatesApi {
     private final BotMessageSender botMessageSender;
 
     @Override
-    public Mono<ResponseEntity<Void>> updatesPost(Mono<LinkUpdate> linkUpdate, ServerWebExchange exchange) {
+    public ResponseEntity<Void> updatesPost(Mono<LinkUpdate> linkUpdate) {
         botMessageSender.sendMessage(
             linkUpdate.flatMapMany(update -> {
                 var listId = update.getTgChatIds();
@@ -27,10 +26,8 @@ public class UpdateController implements UpdatesApi {
                     new TelegramMessage("%s. Ссылка %s".formatted(description, uri), id));
             })
         );
-        return Mono.just(
-            ResponseEntity
+        return ResponseEntity
                 .ok()
-                .build()
-        );
+                .build();
     }
 }
