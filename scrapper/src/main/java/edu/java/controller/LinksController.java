@@ -1,37 +1,52 @@
 package edu.java.controller;
 
-import api.LinksApi;
-import model.AddLinkRequest;
-import model.LinkResponse;
-import model.ListLinksResponse;
-import model.RemoveLinkRequest;
+import edu.java.models.dto.api.request.AddLinkRequest;
+import edu.java.models.dto.api.request.RemoveLinkRequest;
+import edu.java.models.dto.api.response.LinkResponse;
+import edu.java.models.dto.api.response.ListLinksResponse;
+import edu.java.services.LinkService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class LinksController implements LinksApi {
+    private final LinkService linkService;
+
     @Override
-    public Mono<ResponseEntity<LinkResponse>> linksDelete(
+    public ResponseEntity<LinkResponse> linksDelete(
         Long tgChatId,
-        Mono<RemoveLinkRequest> removeLinkRequest,
-        ServerWebExchange exchange
+        RemoveLinkRequest removeLinkRequest
     ) {
-        return LinksApi.super.linksDelete(tgChatId, removeLinkRequest, exchange);
+        var linkResponse = linkService.deleteLink(
+            tgChatId,
+            removeLinkRequest.getLink()
+        );
+
+        return ResponseEntity.ok()
+            .body(linkResponse);
     }
 
     @Override
-    public Mono<ResponseEntity<ListLinksResponse>> linksGet(Long tgChatId, ServerWebExchange exchange) {
-        return LinksApi.super.linksGet(tgChatId, exchange);
+    public ResponseEntity<ListLinksResponse> linksGet(Long tgChatId) {
+        var linksResponse = linkService.prepareUserLinks(tgChatId);
+
+        return ResponseEntity.ok()
+            .body(linksResponse);
     }
 
     @Override
-    public Mono<ResponseEntity<LinkResponse>> linksPost(
+    public ResponseEntity<LinkResponse> linksPost(
         Long tgChatId,
-        Mono<AddLinkRequest> addLinkRequest,
-        ServerWebExchange exchange
+        AddLinkRequest addLinkRequest
     ) {
-        return LinksApi.super.linksPost(tgChatId, addLinkRequest, exchange);
+        var linkResponse = linkService.addLink(
+            tgChatId,
+            addLinkRequest.getLink()
+        );
+
+        return ResponseEntity.ok()
+            .body(linkResponse);
     }
 }

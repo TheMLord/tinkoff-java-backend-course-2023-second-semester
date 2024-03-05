@@ -1,6 +1,6 @@
 package edu.java.bot.repository;
 
-import edu.java.bot.model.db_entities.User;
+import edu.java.bot.models.db_entities.User;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

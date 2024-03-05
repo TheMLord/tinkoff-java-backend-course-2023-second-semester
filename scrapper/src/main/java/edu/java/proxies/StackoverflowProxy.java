@@ -1,6 +1,6 @@
 package edu.java.proxies;
 
-import edu.java.proxies.dto.StackoverflowDTO;
+import edu.java.models.dto.StackoverflowDTO;
 import java.util.Objects;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -10,9 +10,8 @@ public class StackoverflowProxy {
 
     private final WebClient stackoverflowClient;
 
-    public StackoverflowProxy(String baseUri) {
-        this.stackoverflowClient = WebClient
-            .builder()
+    public StackoverflowProxy(WebClient.Builder webClientBuilder, String baseUri) {
+        this.stackoverflowClient = webClientBuilder
             .baseUrl(Objects.requireNonNullElse(baseUri, STACKOVERFLOW_BASE_URI))
             .build();
     }

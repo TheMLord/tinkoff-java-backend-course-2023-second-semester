@@ -1,20 +1,29 @@
 package edu.java.controller;
 
-import api.TgChatApi;
+import edu.java.services.ChatService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class ChatController implements TgChatApi {
+    private final ChatService chatService;
+
     @Override
-    public Mono<ResponseEntity<Void>> tgChatIdDelete(Long id, ServerWebExchange exchange) {
-        return TgChatApi.super.tgChatIdDelete(id, exchange);
+    public ResponseEntity<Void> tgChatIdDelete(Long id) {
+        chatService.deleteUser(id);
+        return ResponseEntity
+            .ok()
+            .build();
+
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> tgChatIdPost(Long id, ServerWebExchange exchange) {
-        return TgChatApi.super.tgChatIdPost(id, exchange);
+    public ResponseEntity<Void> tgChatIdPost(Long id) {
+        chatService.registerUser(id);
+        return ResponseEntity
+            .ok()
+            .build();
     }
 }
