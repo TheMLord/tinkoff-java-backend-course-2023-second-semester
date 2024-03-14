@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.CHAT_ALREADY_REGISTER_DESCRIPTION;
-import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.CHAT_IS_NOT_EXIST_DESCRIPTION;
+import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.CHAT_NOT_REGISTER_DESCRIPTION;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-03-02T09:28:12.239297169Z[UTC]")
 @Validated
@@ -44,7 +44,7 @@ public interface TgChatApi {
             @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
             }),
-            @ApiResponse(responseCode = "404", description = CHAT_IS_NOT_EXIST_DESCRIPTION, content = {
+            @ApiResponse(responseCode = "404", description = CHAT_NOT_REGISTER_DESCRIPTION, content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
             })
         }

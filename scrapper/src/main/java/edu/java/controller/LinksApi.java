@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.LINK_ALREADY_TRACKED_DESCRIPTION;
 import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.LINK_NOT_FOUND_DESCRIPTION;
-import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.USER_NOT_FOUND_DESCRIPTION;
+import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.CHAT_NOT_REGISTER_DESCRIPTION;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-03-02T09:28:12.239297169Z[UTC]")
 @Validated
@@ -90,7 +90,7 @@ public interface LinksApi {
             @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
             }),
-            @ApiResponse(responseCode = "404", description = USER_NOT_FOUND_DESCRIPTION, content = {
+            @ApiResponse(responseCode = "404", description = CHAT_NOT_REGISTER_DESCRIPTION, content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
             })
         }

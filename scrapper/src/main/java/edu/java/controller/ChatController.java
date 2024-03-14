@@ -12,7 +12,7 @@ public class ChatController implements TgChatApi {
 
     @Override
     public ResponseEntity<Void> tgChatIdDelete(Long id) {
-        chatService.deleteUser(id);
+        chatService.unRegister(id);
         return ResponseEntity
             .ok()
             .build();
@@ -21,7 +21,7 @@ public class ChatController implements TgChatApi {
 
     @Override
     public ResponseEntity<Void> tgChatIdPost(Long id) {
-        chatService.registerUser(id);
+        chatService.register(id);
         return ResponseEntity
             .ok()
             .build();

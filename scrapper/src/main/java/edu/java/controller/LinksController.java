@@ -19,21 +19,14 @@ public class LinksController implements LinksApi {
         Long tgChatId,
         RemoveLinkRequest removeLinkRequest
     ) {
-        var linkResponse = linkService.deleteLink(
-            tgChatId,
-            removeLinkRequest.getLink()
-        );
-
         return ResponseEntity.ok()
-            .body(linkResponse);
+            .body(linkService.removeLink(tgChatId, removeLinkRequest.getLink()));
     }
 
     @Override
     public ResponseEntity<ListLinksResponse> linksGet(Long tgChatId) {
-        var linksResponse = linkService.prepareUserLinks(tgChatId);
-
         return ResponseEntity.ok()
-            .body(linksResponse);
+            .body(linkService.getListLinks(tgChatId));
     }
 
     @Override
@@ -41,12 +34,7 @@ public class LinksController implements LinksApi {
         Long tgChatId,
         AddLinkRequest addLinkRequest
     ) {
-        var linkResponse = linkService.addLink(
-            tgChatId,
-            addLinkRequest.getLink()
-        );
-
         return ResponseEntity.ok()
-            .body(linkResponse);
+            .body(linkService.addLink(tgChatId, addLinkRequest.getLink()));
     }
 }

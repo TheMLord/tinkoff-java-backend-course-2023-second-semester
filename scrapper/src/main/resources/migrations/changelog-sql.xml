@@ -9,4 +9,18 @@
         <sqlFile path="sql/v-1-0/table-link.sql" relativeToChangelogFile="true"/>
         <sqlFile path="sql/v-1-0/relation.sql" relativeToChangelogFile="true"/>
     </changeSet>
+
+    <changeSet id="trigger for double insert in relation table and delete link trigger" author="themord">
+        <sqlFile path="sql/v-1-1/relation-trigger.sql" relativeToChangelogFile="true"/>
+        <sqlFile path="sql/v-1-1/untrack-uri-trigger.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="link content attribute" author="themord">
+        <sqlFile path="sql/v-1-2/new-link-attribute.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="link last modifying attribute" author="themord">
+        <sqlFile path="sql/v-1-3/last-modifying-attribute.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
 </databaseChangeLog>
