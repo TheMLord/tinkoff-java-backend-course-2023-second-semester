@@ -1,15 +1,22 @@
 package edu.java.processors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.java.models.dto.GithubDTO;
 import edu.java.models.pojo.GithubUriArg;
+import edu.java.models.pojo.LinkChanges;
 import edu.java.proxies.GithubProxy;
 import java.net.URI;
+import java.util.Objects;
+import java.util.Optional;
 
 public class GithubProcessor extends UriProcessor {
     private final GithubProxy githubProxy;
+    private final ObjectMapper objectMapper;
 
-    public GithubProcessor(UriProcessor nextProcessor, GithubProxy githubProxy) {
+    public GithubProcessor(UriProcessor nextProcessor, GithubProxy githubProxy, ObjectMapper objectMapper) {
         super(nextProcessor);
         this.githubProxy = githubProxy;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -18,13 +25,24 @@ public class GithubProcessor extends UriProcessor {
     }
 
     @Override
-    protected Object prepareLinkContent(Object args) {
-        var githubApiArg = (GithubUriArg) args;
+    protected Object prepareLinkContent(Object apiArgs) {
+        var githubApiArg = (GithubUriArg) apiArgs;
         return githubProxy.getRepositoryRequest(githubApiArg.repositoryOwner(), githubApiArg.repositoryName()).block();
     }
 
     @Override
     protected Object parseUriArgs(String[] uriPaths) {
         return new GithubUriArg(uriPaths[1], uriPaths[2]);
+    }
+
+    @Override
+    public Optional<LinkChanges> compareContent(URI nameLink, String prevContent) {
+        var prevDto = objectMapper.convertValue(prevContent, GithubDTO.class);
+        var newDto = (GithubDTO) processUri(nameLink);
+
+        if (!prevDto.pushedAt().equals(Objects.requireNonNull(newDto).pushedAt())) {
+            return Optional.of(new LinkChanges(nameLink, "Есть изменения"));
+        }
+        return Optional.empty();
     }
 }

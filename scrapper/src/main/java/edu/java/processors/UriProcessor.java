@@ -1,6 +1,8 @@
 package edu.java.processors;
 
+import edu.java.models.pojo.LinkChanges;
 import java.net.URI;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -9,7 +11,7 @@ public abstract class UriProcessor {
 
     protected abstract boolean isProcessingUri(URI uri);
 
-    protected abstract Object prepareLinkContent(Object dto);
+    protected abstract Object prepareLinkContent(Object apiArgs);
 
     protected abstract Object parseUriArgs(String[] uriPaths);
 
@@ -30,5 +32,7 @@ public abstract class UriProcessor {
         }
         return null;
     }
+
+    public abstract Optional<LinkChanges> compareContent(URI nameLink, String prevContent);
 
 }
