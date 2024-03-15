@@ -71,7 +71,7 @@ class WebClientTest {
         var exceptedTimeUpdatedAt = OffsetDateTime.parse("2024-02-05T09:25:22Z");
         var exceptedTimePushedAt = OffsetDateTime.parse("2024-02-13T13:34:39Z");
 
-        setUpServer("/repos/TheMLord/tinkoff-java-backend-course-2023-second-semester", GITHUB_ANSWER_BODY);
+        setUpServer("/repos/.*", GITHUB_ANSWER_BODY);
 
         var response =
             githubProxy.getRepositoryRequest("TheMLord", "tinkoff-java-backend-course-2023-second-semester").block();
@@ -91,7 +91,7 @@ class WebClientTest {
         var exceptedOwnerName = "Stu Thompson";
         int exceptedCountAnswer = 8;
 
-        setUpServer("/2\\.3/questions/82223/", STACKOVERFLOW_ANSWER_BODY);
+        setUpServer("/2\\.3/questions/.*", STACKOVERFLOW_ANSWER_BODY);
 
         var response = stackoverflowProxy.getQuestionRequest("82223")
             .block();

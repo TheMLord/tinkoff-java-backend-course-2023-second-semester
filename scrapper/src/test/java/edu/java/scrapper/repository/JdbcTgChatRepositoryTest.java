@@ -1,0 +1,75 @@
+package edu.java.scrapper.repository;
+
+import edu.java.exceptions.DoubleRegistrationException;
+import edu.java.exceptions.NotExistTgChatException;
+import edu.java.repository.TgChatRepository;
+import edu.java.scrapper.IntegrationTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@SpringBootTest
+@TestPropertySource(locations = "classpath:test")
+public class JdbcTgChatRepositoryTest extends IntegrationTest {
+    @Autowired TgChatRepository jdbcTgChatRepository;
+
+    @Test
+    @DisplayName("Test that the chat is being added successfully returned the chat with the correct id")
+    @Transactional
+    @Rollback
+    void testThatTheChatIsBeingAddedSuccessfullyReturnedTheChatWithTheCorrectId() {
+        var exceptedId = 30L;
+
+        jdbcTgChatRepository.add(exceptedId);
+        var actualChatEntity = jdbcTgChatRepository.findById(exceptedId);
+
+        assertThat(actualChatEntity).isPresent();
+        assertThat(actualChatEntity.get().getChatId()).isEqualTo(exceptedId);
+    }
+
+    @Test
+    @DisplayName("Test that the chat cannot be registered twice and returned a correct error")
+    @Transactional
+    @Rollback
+    void testThatTheChatCannotBeRegisteredTwiceAndReturnedACorrectError() {
+        var existChat1 = 31L;
+
+        jdbcTgChatRepository.add(existChat1);
+
+        assertThatThrownBy(() -> jdbcTgChatRepository.add(existChat1))
+            .isInstanceOf(DoubleRegistrationException.class);
+    }
+
+    @Test
+    @DisplayName("Test that the chat is being deleted successfully")
+    @Transactional
+    @Rollback
+    void testThatTheChatIsBeingDeletedSuccessfully() {
+        var idChatToDelete = 32L;
+
+        jdbcTgChatRepository.add(idChatToDelete);
+        assertThat(jdbcTgChatRepository.findById(idChatToDelete)).isPresent();
+
+        jdbcTgChatRepository.remove(idChatToDelete);
+        assertThat(jdbcTgChatRepository.findById(idChatToDelete)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Test that it is impossible to delete a non-existent chat and returned the correct error")
+    @Transactional
+    @Rollback
+    void testThatItIsImpossibleToDeleteANonExistentChatAndReturnedTheCorrectError() {
+        var idChatToDelete = 33L;
+
+        assertThat(jdbcTgChatRepository.findById(idChatToDelete)).isEmpty();
+
+        assertThatThrownBy(() -> jdbcTgChatRepository.remove(idChatToDelete))
+            .isInstanceOf(NotExistTgChatException.class);
+    }
+}

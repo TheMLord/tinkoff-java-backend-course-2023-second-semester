@@ -12,7 +12,6 @@ spring:
   application:
     name: scrapper
 
-
 server:
   port: 8080
 
