@@ -12,9 +12,8 @@ import edu.java.processors.UriProcessor;
 import edu.java.repository.LinkDao;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.TgChatRepository;
+import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
 import java.net.URI;
-import java.sql.ResultSet;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -87,7 +86,7 @@ public class JdbcLinkDao implements LinkDao {
         var tgChat = getChatIfExist(chatId);
         return jdbcTemplate.query(
             "SELECT * FROM link WHERE id IN (SELECT relation.link_id FROM relation WHERE chat_id = (?))",
-            this::mapRowToLink,
+            JdbcRowMapperUtil::mapRowToLink,
             tgChat.getChatId()
         );
     }
@@ -96,7 +95,7 @@ public class JdbcLinkDao implements LinkDao {
     public List<Long> findAllIdTgChatWhoTrackLink(Long uriId) {
         return jdbcTemplate.query(
             "SELECT chat_id FROM tgChat WHERE chat_id IN (SELECT chat_id FROM relation WHERE link_id = (?))",
-            this::mapRowToChatId,
+            JdbcRowMapperUtil::mapRowToChatId,
             uriId
         );
     }
@@ -154,7 +153,7 @@ public class JdbcLinkDao implements LinkDao {
     private Optional<Relation> findRelationBetweenTgChatAndLink(Long chatId, Long uriId) {
         var resultRelations = jdbcTemplate.query(
             "SELECT * FROM relation WHERE chat_id = (?) and link_id = (?)",
-            this::mapRowToRelation,
+            JdbcRowMapperUtil::mapRowToRelation,
             chatId, uriId
         );
         return resultRelations.isEmpty() ? Optional.empty() : Optional.of(resultRelations.getFirst());
@@ -187,58 +186,5 @@ public class JdbcLinkDao implements LinkDao {
             linkContent
         );
         return getLinkIfExist(linkName);
-    }
-
-    /*
-    Mappers from strings from a query to objects.
-     */
-
-    /**
-     * Method of mapping the string received from the query to the Link entity.
-     *
-     * @param row    row set from the table.
-     * @param rowNum number row from the received data from the query.
-     * @return Link entity.
-     */
-    @SneakyThrows
-    private Link mapRowToLink(ResultSet row, int rowNum) {
-        return new Link(
-            row.getLong("id"),
-            URI.create(row.getString("link_name")),
-            OffsetDateTime.parse(row.getString("created_at")),
-            row.getString("created_by"),
-            row.getString("content"),
-            OffsetDateTime.parse(row.getString("last_modifying"))
-        );
-    }
-
-    /**
-     * Method of mapping the string received from the query to the Relation entity.
-     *
-     * @param row    row set from the table.
-     * @param rowNum number row from the received data from the query.
-     * @return Relation entity.
-     */
-    @SneakyThrows
-    private Relation mapRowToRelation(ResultSet row, int rowNum) {
-        return new Relation(
-            row.getLong("id"),
-            row.getLong("chat_id"),
-            row.getLong("link_id"),
-            row.getObject("created_at", OffsetDateTime.class),
-            row.getString("created_by")
-        );
-    }
-
-    /**
-     * Mapping method the term of the database query to the chat ID from the tgchat table.
-     *
-     * @param row    row set from the table.
-     * @param rowNum number row from the received data from the query.
-     * @return id chat.
-     */
-    @SneakyThrows
-    private Long mapRowToChatId(ResultSet row, int rowNum) {
-        return row.getLong("chat_id");
     }
 }

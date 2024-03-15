@@ -46,8 +46,8 @@ public class StackoverflowProcessor extends UriProcessor {
         var prevDto = objectMapper.readValue(prevContent, StackoverflowDTO.class);
         var newDto = (StackoverflowDTO) processUri(nameLink);
 
-        if (prevDto.items().getFirst().answerCount() !=
-            Objects.requireNonNull(newDto).items().getFirst().answerCount()) {
+        if (prevDto.items().getFirst().answerCount()
+            != Objects.requireNonNull(newDto).items().getFirst().answerCount()) {
             return Optional.of(
                 new LinkChanges(
                     nameLink,

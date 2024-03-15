@@ -1,10 +1,10 @@
 package edu.java.proxies;
 
 import edu.java.models.dto.api.LinkUpdate;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import java.util.Objects;
 
 @Slf4j
 public class BotProxy {

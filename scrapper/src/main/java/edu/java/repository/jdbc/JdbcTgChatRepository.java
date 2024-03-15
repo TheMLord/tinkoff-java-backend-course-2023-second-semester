@@ -4,11 +4,9 @@ import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.models.entities.TgChat;
 import edu.java.repository.TgChatRepository;
-import java.sql.ResultSet;
-import java.time.OffsetDateTime;
+import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +28,7 @@ public class JdbcTgChatRepository implements TgChatRepository {
     public Optional<TgChat> findById(Long chatId) {
         var resultChats = jdbcTemplate.query(
             "SELECT * FROM tgchat WHERE chat_id = (?)",
-            this::mapRowToTgChat,
+            JdbcRowMapperUtil::mapRowToTgChat,
             chatId
         );
         return resultChats.isEmpty() ? Optional.empty() : Optional.of(resultChats.getFirst());
@@ -42,14 +40,5 @@ public class JdbcTgChatRepository implements TgChatRepository {
             throw new NotExistTgChatException();
         }
         jdbcTemplate.update("DELETE FROM tgchat WHERE chat_id = (?)", chatId);
-    }
-
-    @SneakyThrows
-    private TgChat mapRowToTgChat(ResultSet row, int rowNum) {
-        return new TgChat(
-            row.getLong("chat_id"),
-            row.getObject("created_at", OffsetDateTime.class),
-            row.getString("created_by")
-        );
     }
 }
