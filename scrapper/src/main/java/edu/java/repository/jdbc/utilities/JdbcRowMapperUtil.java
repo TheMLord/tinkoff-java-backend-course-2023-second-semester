@@ -14,8 +14,8 @@ import lombok.SneakyThrows;
 public final class JdbcRowMapperUtil {
     private static final String LINK_TABLE_COLUMN_ID = "id";
     private static final String LINK_TABLE_COLUMN_LINK_NAME = "link_name";
-    private static final String LINK_TABLE_COLUMN_CREATE_AT = "create_at";
-    private static final String LINK_TABLE_COLUMN_CREATE_BY = "create_by";
+    private static final String LINK_TABLE_COLUMN_CREATE_AT = "created_at";
+    private static final String LINK_TABLE_COLUMN_CREATE_BY = "created_by";
     private static final String LINK_TABLE_COLUMN_CONTENT = "content";
     private static final String LINK_TABLE_COLUMN_LAST_MODIFYING = "last_modifying";
 
