@@ -10,12 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:test")
+@Sql(value = "classpath:sql/clearDB.sql",
+     executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 public class JdbcTgChatRepositoryTest extends IntegrationTest {
     @Autowired TgChatRepository jdbcTgChatRepository;
 

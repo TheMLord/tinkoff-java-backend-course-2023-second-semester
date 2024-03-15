@@ -17,6 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Sql(value = "classpath:sql/jdbcservice-insert-test.sql",
      executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql(value = "classpath:sql/clearDB.sql",
+     executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
 public class JdbcLinkServiceTest extends IntegrationTest {
     @Autowired LinkService jdbcLinkService;
