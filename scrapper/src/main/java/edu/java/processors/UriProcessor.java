@@ -4,8 +4,10 @@ import edu.java.models.pojo.LinkChanges;
 import java.net.URI;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
+@Slf4j
 public abstract class UriProcessor {
     protected final UriProcessor nextProcessor;
 
@@ -15,7 +17,9 @@ public abstract class UriProcessor {
 
     protected abstract Object parseUriArgs(String[] uriPaths);
 
-    protected String[] splitUriPath(URI uri) {
+    protected abstract Optional<LinkChanges> prepareUpdate(URI nameLink, String prevContent);
+
+    protected final String[] splitUriPath(URI uri) {
         return uri.getPath().split("/");
     }
 
@@ -33,6 +37,14 @@ public abstract class UriProcessor {
         return null;
     }
 
-    public abstract Optional<LinkChanges> compareContent(URI nameLink, String prevContent);
-
+    public final Optional<LinkChanges> compareContent(URI nameLink, String prevContent) {
+        log.info("checking for {} updates", nameLink.toString());
+        if (isProcessingUri(nameLink)) {
+            return prepareUpdate(nameLink, prevContent);
+        }
+        if (this.nextProcessor != null) {
+            return nextProcessor.compareContent(nameLink, prevContent);
+        }
+        return Optional.empty();
+    }
 }

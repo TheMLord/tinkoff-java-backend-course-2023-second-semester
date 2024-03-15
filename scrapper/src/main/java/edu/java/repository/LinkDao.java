@@ -48,4 +48,12 @@ public interface LinkDao {
      * @throws NotExistTgChatException if the chat is not registered.
      */
     List<Link> getAllLinkInRelation(Long chatId) throws NotExistTgChatException;
+
+    /**
+     * Method searches for all users who are tracking the link
+     *
+     * @param uriId the ID of the link for which you need to find the chats tracking it.
+     * @return list of chat IDs from the tgChat table that track this link.
+     */
+    List<Long> findAllIdTgChatWhoTrackLink(Long uriId);
 }

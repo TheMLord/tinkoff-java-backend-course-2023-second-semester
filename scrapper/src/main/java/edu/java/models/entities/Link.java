@@ -15,4 +15,6 @@ public class Link {
     private final URI linkName;
     private final OffsetDateTime createdAt;
     private final String createdBy;
+    private final String content;
+    private final OffsetDateTime lastModifying;
 }

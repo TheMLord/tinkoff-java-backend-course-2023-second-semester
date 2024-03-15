@@ -8,6 +8,7 @@ import edu.java.proxies.StackoverflowProxy;
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.SneakyThrows;
 
 public class StackoverflowProcessor extends UriProcessor {
     private final StackoverflowProxy stackoverflowProxy;
@@ -39,14 +40,21 @@ public class StackoverflowProcessor extends UriProcessor {
         return new StackoverflowUriArg(uriPaths[2]);
     }
 
+    @SneakyThrows
     @Override
-    public Optional<LinkChanges> compareContent(URI nameLink, String prevContent) {
-        var prevDto = objectMapper.convertValue(prevContent, StackoverflowDTO.class);
+    protected Optional<LinkChanges> prepareUpdate(URI nameLink, String prevContent) {
+        var prevDto = objectMapper.readValue(prevContent, StackoverflowDTO.class);
         var newDto = (StackoverflowDTO) processUri(nameLink);
 
         if (prevDto.items().getFirst().answerCount() !=
             Objects.requireNonNull(newDto).items().getFirst().answerCount()) {
-            return Optional.of(new LinkChanges(nameLink, "Есть изменения"));
+            return Optional.of(
+                new LinkChanges(
+                    nameLink,
+                    "Есть изменения",
+                    objectMapper.writeValueAsString(newDto)
+                )
+            );
         }
         return Optional.empty();
     }

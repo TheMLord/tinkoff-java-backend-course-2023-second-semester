@@ -8,6 +8,7 @@ import edu.java.proxies.GithubProxy;
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.SneakyThrows;
 
 public class GithubProcessor extends UriProcessor {
     private final GithubProxy githubProxy;
@@ -35,13 +36,20 @@ public class GithubProcessor extends UriProcessor {
         return new GithubUriArg(uriPaths[1], uriPaths[2]);
     }
 
+    @SneakyThrows
     @Override
-    public Optional<LinkChanges> compareContent(URI nameLink, String prevContent) {
-        var prevDto = objectMapper.convertValue(prevContent, GithubDTO.class);
+    protected Optional<LinkChanges> prepareUpdate(URI nameLink, String prevContent) {
+        var prevDto = objectMapper.readValue(prevContent, GithubDTO.class);
         var newDto = (GithubDTO) processUri(nameLink);
 
         if (!prevDto.pushedAt().equals(Objects.requireNonNull(newDto).pushedAt())) {
-            return Optional.of(new LinkChanges(nameLink, "Есть изменения"));
+            return Optional.of(
+                new LinkChanges(
+                    nameLink,
+                    "Есть изменения",
+                    objectMapper.writeValueAsString(newDto)
+                )
+            );
         }
         return Optional.empty();
     }
