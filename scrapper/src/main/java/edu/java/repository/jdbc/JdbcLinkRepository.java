@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+/**
+ * jdbc implementation link repository
+ */
 @Repository
 @RequiredArgsConstructor
 public class JdbcLinkRepository implements LinkRepository {
@@ -72,5 +75,4 @@ public class JdbcLinkRepository implements LinkRepository {
         );
         return resultLinks.isEmpty() ? Optional.empty() : Optional.of(resultLinks.getFirst());
     }
-
 }

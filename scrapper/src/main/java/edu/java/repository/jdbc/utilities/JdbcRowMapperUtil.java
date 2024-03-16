@@ -9,6 +9,9 @@ import java.time.OffsetDateTime;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
+/**
+ * Class with utilities method for mapper entities.
+ */
 @SuppressWarnings("MultipleStringLiterals")
 @NoArgsConstructor
 public final class JdbcRowMapperUtil {
@@ -78,6 +81,13 @@ public final class JdbcRowMapperUtil {
         return row.getLong(TG_CHAT_TABLE_COLUMN_ID);
     }
 
+    /**
+     * Mapping method the term of the database query to the entity TgChat from the tgchat table.
+     *
+     * @param row    row set from the table.
+     * @param rowNum number row from the received data from the query.
+     * @return TgChat entity from table tgchat.
+     */
     @SneakyThrows
     public static TgChat mapRowToTgChat(ResultSet row, int rowNum) {
         return new TgChat(

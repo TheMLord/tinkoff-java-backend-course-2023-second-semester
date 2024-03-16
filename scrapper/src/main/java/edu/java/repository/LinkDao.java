@@ -7,7 +7,6 @@ import edu.java.exceptions.NotTrackLinkException;
 import edu.java.models.entities.Link;
 import java.net.URI;
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Interface describing the LinkDao contract.
@@ -23,7 +22,6 @@ public interface LinkDao {
      * @throws NotExistTgChatException   if the chat is not registered.
      * @throws AlreadyTrackLinkException if the chat is already tracking this link.
      */
-    @Transactional
     Link add(Long chatId, URI uri) throws NotExistTgChatException, AlreadyTrackLinkException;
 
     /**
@@ -37,7 +35,6 @@ public interface LinkDao {
      * @throws NotExistLinkException   if there is no such link in the database.
      * @throws NotTrackLinkException   if the chat does not track such a link
      */
-    @Transactional
     Link remove(Long chatId, URI uri) throws NotExistTgChatException, NotExistLinkException, NotTrackLinkException;
 
     /**

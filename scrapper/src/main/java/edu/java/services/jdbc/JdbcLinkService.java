@@ -7,6 +7,7 @@ import edu.java.services.LinkService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the jdbc link service.
@@ -17,18 +18,21 @@ public class JdbcLinkService implements LinkService {
     private final LinkDao linkDao;
 
     @Override
+    @Transactional
     public LinkResponse addLink(long chatId, URI linkUri) {
         var link = linkDao.add(chatId, linkUri);
         return new LinkResponse(link.getId(), link.getLinkName());
     }
 
     @Override
+    @Transactional
     public LinkResponse removeLink(long chatId, URI linkUri) {
         var link = linkDao.remove(chatId, linkUri);
         return new LinkResponse(link.getId(), link.getLinkName());
     }
 
     @Override
+    @Transactional
     public ListLinksResponse getListLinks(long chatId) {
         var links = linkDao.getAllLinkInRelation(chatId);
 

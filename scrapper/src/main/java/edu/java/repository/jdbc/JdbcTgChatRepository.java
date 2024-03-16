@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+/**
+ * jdbc implementation chat repository.
+ */
 @Repository
 @RequiredArgsConstructor
 public class JdbcTgChatRepository implements TgChatRepository {

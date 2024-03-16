@@ -2,14 +2,30 @@ package edu.java.repository;
 
 import edu.java.models.entities.TgChat;
 import java.util.Optional;
-import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * contract tg chat repository.
+ */
 public interface TgChatRepository {
-    @Transactional
+    /**
+     * Method for adding a new chat to the tgChat table.
+     *
+     * @param chatId id chat to add.
+     */
     void add(Long chatId);
 
+    /**
+     * Method searching tg chat entity by id.
+     *
+     * @param chatId id chat to search.
+     * @return if the chat finds it, it returns the chat entity otherwise empty Optional.
+     */
     Optional<TgChat> findById(Long chatId);
 
-    @Transactional
+    /**
+     * Method for deleting a chat from the tgChat table.
+     *
+     * @param chatId id chat to removing.
+     */
     void remove(Long chatId);
 }
