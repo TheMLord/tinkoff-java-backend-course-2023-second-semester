@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class StartContainerTest extends IntegrationTest {
+public class StartContainerTest extends IntegrationEnvironment {
     @Test
     @DisplayName("test that the container is running successfully")
     void testThatTheContainerIsRunningSuccessfully() {

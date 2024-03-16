@@ -2,7 +2,7 @@ package edu.java.schedulers;
 
 import edu.java.proxies.BotProxy;
 import edu.java.repository.LinkRepository;
-import edu.java.services.LinkUpdateService;
+import edu.java.services.jdbc.JdbcLinkUpdateService;
 import java.time.OffsetDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public final class LinkUpdaterScheduler {
-    private final LinkUpdateService linkUpdateService;
+    private final JdbcLinkUpdateService linkUpdateService;
     private final LinkRepository linkRepository;
     private final BotProxy botProxy;
 

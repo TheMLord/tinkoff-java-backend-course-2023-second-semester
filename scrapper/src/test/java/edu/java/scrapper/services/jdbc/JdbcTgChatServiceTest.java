@@ -1,7 +1,7 @@
 package edu.java.scrapper.services.jdbc;
 
 import edu.java.repository.TgChatRepository;
-import edu.java.scrapper.IntegrationTest;
+import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.ChatService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
-public class JdbcTgChatServiceTest extends IntegrationTest {
+public class JdbcTgChatServiceTest extends IntegrationEnvironment {
     @Autowired ChatService jdbcChatService;
     @Autowired TgChatRepository jdbcTgChatRepository;
 

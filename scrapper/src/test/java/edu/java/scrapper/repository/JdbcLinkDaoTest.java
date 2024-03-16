@@ -8,7 +8,7 @@ import edu.java.exceptions.NotTrackLinkException;
 import edu.java.repository.LinkDao;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.TgChatRepository;
-import edu.java.scrapper.IntegrationTest;
+import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @TestPropertySource(locations = "classpath:test")
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
-public class JdbcLinkDaoTest extends IntegrationTest {
+public class JdbcLinkDaoTest extends IntegrationEnvironment {
     @Autowired TgChatRepository jdbcTgChatRepository;
     @Autowired LinkDao jdbcLinkDao;
     @Autowired LinkRepository jdbcLinkRepository;

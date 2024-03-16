@@ -1,7 +1,7 @@
 package edu.java.scrapper.repository;
 
 import edu.java.repository.LinkRepository;
-import edu.java.scrapper.IntegrationTest;
+import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
-public class JdbcLinkRepositoryTest extends IntegrationTest {
+public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired LinkRepository jdbcLinkRepository;
 
     @Test

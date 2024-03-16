@@ -3,7 +3,7 @@ package edu.java.scrapper.repository;
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.repository.TgChatRepository;
-import edu.java.scrapper.IntegrationTest;
+import edu.java.scrapper.IntegrationEnvironment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @TestPropertySource(locations = "classpath:test")
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
-public class JdbcTgChatRepositoryTest extends IntegrationTest {
+public class JdbcTgChatRepositoryTest extends IntegrationEnvironment {
     @Autowired TgChatRepository jdbcTgChatRepository;
 
     @Test

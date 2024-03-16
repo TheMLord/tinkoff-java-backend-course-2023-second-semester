@@ -18,7 +18,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
-import static edu.java.scrapper.IntegrationTest.POSTGRES;
+import static edu.java.scrapper.IntegrationEnvironment.POSTGRES;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest

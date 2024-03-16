@@ -1,7 +1,7 @@
 package edu.java.scrapper.services.jdbc;
 
 import edu.java.repository.LinkRepository;
-import edu.java.scrapper.IntegrationTest;
+import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.LinkService;
 import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
-public class JdbcLinkServiceTest extends IntegrationTest {
+public class JdbcLinkServiceTest extends IntegrationEnvironment {
     @Autowired LinkService jdbcLinkService;
     @Autowired LinkRepository jdbcLinkRepository;
 
