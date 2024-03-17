@@ -1,7 +1,7 @@
 package edu.java.services;
 
+import edu.java.domain.jooq.tables.pojos.Link;
 import edu.java.models.dto.api.LinkUpdate;
-import edu.java.models.entities.Link;
 import java.util.Optional;
 
 public interface LinkUpdateService {

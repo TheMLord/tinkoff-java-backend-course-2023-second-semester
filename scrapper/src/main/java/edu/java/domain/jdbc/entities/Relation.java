@@ -1,4 +1,4 @@
-package edu.java.models.entities;
+package edu.java.domain.jdbc.entities;
 
 import java.time.OffsetDateTime;
 import lombok.AccessLevel;
@@ -9,10 +9,10 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
-public class TgChat {
-
+public class Relation {
+    private final Long id;
     private final Long chatId;
+    private final Long linkId;
     private final OffsetDateTime createdAt;
-    private final String createdBy;
-
+    private final String createdAd;
 }

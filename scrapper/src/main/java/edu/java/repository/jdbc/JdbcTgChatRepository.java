@@ -1,8 +1,8 @@
 package edu.java.repository.jdbc;
 
+import edu.java.domain.jooq.tables.pojos.Tgchat;
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
-import edu.java.models.entities.TgChat;
 import edu.java.repository.TgChatRepository;
 import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
 import java.util.Optional;
@@ -28,7 +28,7 @@ public class JdbcTgChatRepository implements TgChatRepository {
     }
 
     @Override
-    public Optional<TgChat> findById(Long chatId) {
+    public Optional<Tgchat> findById(Long chatId) {
         var resultChats = jdbcTemplate.query(
             "SELECT * FROM tgchat WHERE chat_id = (?)",
             JdbcRowMapperUtil::mapRowToTgChat,

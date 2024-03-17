@@ -1,5 +1,6 @@
 package edu.java.scrapper.repository;
 
+import edu.java.domain.jooq.tables.pojos.Link;
 import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
@@ -36,7 +37,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
         assertThat(actualAllLinks.size()).isEqualTo(exceptedCountLinks);
 
-        var actualListLinkName = actualAllLinks.stream().map(link -> link.getLinkName().toString()).toList();
+        var actualListLinkName = actualAllLinks.stream().map(Link::getLinkName).toList();
         assertThat(actualListLinkName).containsOnly(
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff1",
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff2",
@@ -59,7 +60,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         var actualLinks = jdbcLinkRepository.findAllByTime(timePredicate);
 
         assertThat(actualLinks.size()).isEqualTo(exceptedContLink);
-        var actualListLinkName = actualLinks.stream().map(link -> link.getLinkName().toString()).toList();
+        var actualListLinkName = actualLinks.stream().map(Link::getLinkName).toList();
         assertThat(actualListLinkName).containsOnly(
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff2",
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff3"

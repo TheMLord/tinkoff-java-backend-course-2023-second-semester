@@ -1,6 +1,7 @@
 package edu.java.repository;
 
-import edu.java.models.entities.Link;
+//import edu.java.models.entities.Link;
+import edu.java.domain.jooq.tables.pojos.Link;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;

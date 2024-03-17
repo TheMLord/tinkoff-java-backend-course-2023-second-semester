@@ -1,7 +1,7 @@
 package edu.java.scrapper.services.jdbc;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import edu.java.models.entities.Link;
+import edu.java.domain.jooq.tables.pojos.Link;
 import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.LinkUpdateService;
@@ -42,7 +42,7 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
 
     private static final Link Link1 = new Link(
         1L,
-        URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester"),
+        "https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester",
         null,
         null,
         GITHUB_ANSWER_BODY,
@@ -51,7 +51,7 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
 
     private static final Link Link2 = new Link(
         2L,
-        URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester2"),
+        "https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester2",
         null,
         null,
         """

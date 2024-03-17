@@ -1,13 +1,13 @@
 package edu.java.repository.jdbc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.java.domain.jooq.tables.pojos.Link;
+import edu.java.domain.jooq.tables.pojos.Relation;
+import edu.java.domain.jooq.tables.pojos.Tgchat;
 import edu.java.exceptions.AlreadyTrackLinkException;
 import edu.java.exceptions.NotExistLinkException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.exceptions.NotTrackLinkException;
-import edu.java.models.entities.Link;
-import edu.java.models.entities.Relation;
-import edu.java.models.entities.TgChat;
 import edu.java.processors.UriProcessor;
 import edu.java.repository.LinkDao;
 import edu.java.repository.LinkRepository;
@@ -113,7 +113,7 @@ public class JdbcLinkDao implements LinkDao {
      * @param id entity id.
      * @return TgChat by id if it exists, otherwise throws a NotExistTgChatException.
      */
-    private TgChat getChatIfExist(Long id) {
+    private Tgchat getChatIfExist(Long id) {
         return chatRepository.findById(id).orElseThrow(NotExistTgChatException::new);
     }
 

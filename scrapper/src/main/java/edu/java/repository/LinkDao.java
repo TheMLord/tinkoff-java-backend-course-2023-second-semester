@@ -1,10 +1,10 @@
 package edu.java.repository;
 
+import edu.java.domain.jooq.tables.pojos.Link;
 import edu.java.exceptions.AlreadyTrackLinkException;
 import edu.java.exceptions.NotExistLinkException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.exceptions.NotTrackLinkException;
-import edu.java.models.entities.Link;
 import java.net.URI;
 import java.util.List;
 

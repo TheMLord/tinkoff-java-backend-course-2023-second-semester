@@ -1,4 +1,4 @@
-package edu.java.models.entities;
+package edu.java.domain.jdbc.entities;
 
 import java.net.URI;
 import java.time.OffsetDateTime;

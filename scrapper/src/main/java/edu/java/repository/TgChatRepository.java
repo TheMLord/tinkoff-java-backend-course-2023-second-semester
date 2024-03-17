@@ -1,6 +1,6 @@
 package edu.java.repository;
 
-import edu.java.models.entities.TgChat;
+import edu.java.domain.jooq.tables.pojos.Tgchat;
 import java.util.Optional;
 
 /**
@@ -20,7 +20,7 @@ public interface TgChatRepository {
      * @param chatId id chat to search.
      * @return if the chat finds it, it returns the chat entity otherwise empty Optional.
      */
-    Optional<TgChat> findById(Long chatId);
+    Optional<Tgchat> findById(Long chatId);
 
     /**
      * Method for deleting a chat from the tgChat table.

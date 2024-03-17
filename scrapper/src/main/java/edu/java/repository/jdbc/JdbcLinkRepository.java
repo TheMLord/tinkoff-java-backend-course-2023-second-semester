@@ -1,6 +1,7 @@
 package edu.java.repository.jdbc;
 
-import edu.java.models.entities.Link;
+//import edu.java.models.entities.Link;
+import edu.java.domain.jooq.tables.pojos.Link;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
 import java.net.URI;
