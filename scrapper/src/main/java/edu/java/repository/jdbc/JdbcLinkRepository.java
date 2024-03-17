@@ -1,6 +1,7 @@
 package edu.java.repository.jdbc;
 
 //import edu.java.models.entities.Link;
+
 import edu.java.domain.jooq.tables.pojos.Link;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
@@ -10,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 
 /**
  * jdbc implementation link repository

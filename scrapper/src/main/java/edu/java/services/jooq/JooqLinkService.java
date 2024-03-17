@@ -1,4 +1,4 @@
-package edu.java.services.jdbc;
+package edu.java.services.jooq;
 
 import edu.java.models.dto.api.response.LinkResponse;
 import edu.java.models.dto.api.response.ListLinksResponse;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 
 @RequiredArgsConstructor
-public class JdbcLinkService implements LinkService {
+public class JooqLinkService implements LinkService {
     private final LinkDao linkDao;
 
     @Override

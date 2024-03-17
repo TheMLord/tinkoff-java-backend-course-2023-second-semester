@@ -22,6 +22,7 @@ public class ServicesConfig {
     ) {
         return switch (applicationConfig.dataAccessTechnology()) {
             case "JDBC" -> new JdbcChatService(tgChatRepository);
+            case "JOOQ" -> new JdbcChatService(tgChatRepository);
             default -> throw new IllegalStateException("Unexpected value: " + applicationConfig.dataAccessTechnology());
         };
     }
@@ -33,6 +34,7 @@ public class ServicesConfig {
     ) {
         return switch (applicationConfig.dataAccessTechnology()) {
             case "JDBC" -> new JdbcLinkService(linkDao);
+            case "JOOQ" -> new JdbcLinkService(linkDao);
             default -> throw new IllegalStateException("Unexpected value: " + applicationConfig.dataAccessTechnology());
         };
     }
@@ -46,6 +48,7 @@ public class ServicesConfig {
     ) {
         return switch (applicationConfig.dataAccessTechnology()) {
             case "JDBC" -> new JdbcLinkUpdateService(uriProcessor, linkDao, linkRepository);
+            case "JOOQ" -> new JdbcLinkUpdateService(uriProcessor, linkDao, linkRepository);
             default -> throw new IllegalStateException("Unexpected value: " + applicationConfig.dataAccessTechnology());
         };
     }

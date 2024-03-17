@@ -1,7 +1,7 @@
 package edu.java.scrapper.processors;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import edu.java.models.dto.GithubDTO;
+import edu.java.models.dto.GithubRepositoryDTO;
 import edu.java.models.dto.StackoverflowDTO;
 import edu.java.processors.UriProcessor;
 import java.net.URI;
@@ -120,9 +120,9 @@ public class UriProcessorsTest {
             var actualProcessObject = uriProcessor.processUri(githubRepositoryLink);
 
             assertThat(actualProcessObject).isNotNull();
-            assertThat(actualProcessObject).isInstanceOf(GithubDTO.class);
+            assertThat(actualProcessObject).isInstanceOf(GithubRepositoryDTO.class);
 
-            var githubDTO = (GithubDTO) actualProcessObject;
+            var githubDTO = (GithubRepositoryDTO) actualProcessObject;
 
             assertThat(githubDTO).isNotNull();
             assertThat(githubDTO.owner().id()).isEqualTo(exceptedOwnerId);

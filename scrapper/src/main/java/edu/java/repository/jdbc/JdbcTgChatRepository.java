@@ -8,7 +8,6 @@ import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 
 /**
  * jdbc implementation chat repository.

@@ -1,4 +1,4 @@
-package edu.java.services.jdbc;
+package edu.java.services.jooq;
 
 import edu.java.repository.TgChatRepository;
 import edu.java.services.ChatService;
@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Implementation of the jdbc chat service.
  */
 @RequiredArgsConstructor
-public class JdbcChatService implements ChatService {
+public class JooqChatService implements ChatService {
     private final TgChatRepository tgChatRepository;
 
     @Override
