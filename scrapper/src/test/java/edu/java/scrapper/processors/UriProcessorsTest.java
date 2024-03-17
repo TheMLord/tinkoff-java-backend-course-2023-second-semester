@@ -2,7 +2,7 @@ package edu.java.scrapper.processors;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.models.dto.GithubRepositoryDTO;
-import edu.java.models.dto.StackoverflowDTO;
+import edu.java.models.dto.StackoverflowQuestionDTO;
 import edu.java.processors.UriProcessor;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -146,9 +146,9 @@ public class UriProcessorsTest {
             var actualProcessObject = uriProcessor.processUri(stackoverflowQuestionLink);
 
             assertThat(actualProcessObject).isNotNull();
-            assertThat(actualProcessObject).isInstanceOf(StackoverflowDTO.class);
+            assertThat(actualProcessObject).isInstanceOf(StackoverflowQuestionDTO.class);
 
-            var stackoverflowDTO = ((StackoverflowDTO) actualProcessObject).items().getFirst();
+            var stackoverflowDTO = ((StackoverflowQuestionDTO) actualProcessObject).items().getFirst();
 
             assertThat(stackoverflowDTO.owner().accountId()).isEqualTo(exceptedOwnerId);
             assertThat(stackoverflowDTO.owner().displayName()).isEqualTo(exceptedOwnerName);
