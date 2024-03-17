@@ -8,12 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest()
 @Sql(value = "classpath:sql/jdbcservice-insert-test.sql",
      executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(value = "classpath:sql/clearDB.sql",
@@ -45,5 +47,10 @@ public class JdbcTgChatServiceTest extends IntegrationEnvironment {
         assertThat(jdbcTgChatRepository.findById(existChat)).isPresent();
         jdbcChatService.unRegister(existChat);
         assertThat(jdbcTgChatRepository.findById(existChat)).isEmpty();
+    }
+
+    @DynamicPropertySource
+    static void jdbcProperties(DynamicPropertyRegistry registry) {
+        registry.add("app.data-access-technology", () -> "JDBC");
     }
 }

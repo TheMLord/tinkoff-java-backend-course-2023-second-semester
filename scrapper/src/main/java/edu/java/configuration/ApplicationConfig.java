@@ -13,6 +13,8 @@ public record ApplicationConfig(
     @NotNull
     Scheduler scheduler,
 
+    String dataAccessTechnology,
+
     ClientBaseUrl clientBaseUrl
 
 ) {

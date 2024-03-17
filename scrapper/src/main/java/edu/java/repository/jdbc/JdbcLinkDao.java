@@ -24,7 +24,6 @@ import org.springframework.stereotype.Repository;
 /**
  * jdbc implementation link dao.
  */
-@Repository
 @RequiredArgsConstructor
 public class JdbcLinkDao implements LinkDao {
     private final JdbcTemplate jdbcTemplate;

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 /**
  * jdbc implementation link repository
  */
-@Repository
 @RequiredArgsConstructor
 public class JdbcLinkRepository implements LinkRepository {
     private final JdbcTemplate jdbcTemplate;

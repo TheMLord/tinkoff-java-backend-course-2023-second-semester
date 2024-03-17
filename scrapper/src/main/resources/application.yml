@@ -4,6 +4,8 @@ app:
     interval: 5s
     force-check-delay: 10s
 
+  data-access-technology: JDBC # JDBC, JOOQ
+
   client-base-url:
     github-uri: https://api.github.com
     stackoverflow-uri: https://api.stackexchange.com/2.3

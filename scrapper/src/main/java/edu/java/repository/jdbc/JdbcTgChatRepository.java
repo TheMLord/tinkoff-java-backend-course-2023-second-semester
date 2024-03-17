@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 /**
  * jdbc implementation chat repository.
  */
-@Repository
 @RequiredArgsConstructor
 public class JdbcTgChatRepository implements TgChatRepository {
     private final JdbcTemplate jdbcTemplate;

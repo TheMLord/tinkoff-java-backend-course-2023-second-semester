@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Implementation of the jdbc chat service.
  */
-@Service
 @RequiredArgsConstructor
 public class JdbcChatService implements ChatService {
     private final TgChatRepository tgChatRepository;

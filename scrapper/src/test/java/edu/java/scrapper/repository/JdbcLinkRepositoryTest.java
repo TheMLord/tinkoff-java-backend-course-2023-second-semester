@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,5 +107,10 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         var actualContent = jdbcLinkRepository.findById(idLink).get().getContent();
 
         assertThat(exceptedContent).isEqualTo(actualContent);
+    }
+
+    @DynamicPropertySource
+    static void jdbcProperties(DynamicPropertyRegistry registry) {
+        registry.add("app.data-access-technology", () -> "JDBC");
     }
 }

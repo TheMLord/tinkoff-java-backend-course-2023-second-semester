@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Implementation of the jdbc link service.
  */
-@Service
+
 @RequiredArgsConstructor
 public class JdbcLinkService implements LinkService {
     private final LinkDao linkDao;
