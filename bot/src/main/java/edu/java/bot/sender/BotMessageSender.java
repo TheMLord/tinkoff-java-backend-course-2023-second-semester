@@ -31,7 +31,10 @@ public class BotMessageSender {
                     @Override
                     public void onFailure(SendMessage sendMessage, IOException e) {
                         log.error("Ошибка отправки сообщения: " + e.getMessage());
-                        throw new InvalidUpdateException(e);
+                        throw new InvalidUpdateException("Ошибка отправки сообщения %s чату %d ".formatted(
+                            message.message(),
+                            message.chatId()
+                        ));
                     }
                 }
             );
