@@ -1,7 +1,7 @@
 package edu.java.services;
 
 import edu.java.exceptions.DoubleRegistrationException;
-import edu.java.exceptions.RemoveUserException;
+import edu.java.exceptions.NotTrackLinkException;
 import edu.java.models.User;
 import edu.java.repository.UserRepository;
 import java.util.List;
@@ -30,7 +30,7 @@ public class ChatService {
         try {
             userRepository.deleteByIdUser(id);
         } catch (Exception e) {
-            throw new RemoveUserException(e);
+            throw new NotTrackLinkException();
         }
     }
 }

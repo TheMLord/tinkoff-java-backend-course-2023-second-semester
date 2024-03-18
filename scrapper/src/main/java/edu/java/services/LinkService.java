@@ -2,7 +2,7 @@ package edu.java.services;
 
 import edu.java.exceptions.AlreadyTrackLinkException;
 import edu.java.exceptions.NotExistLinkException;
-import edu.java.exceptions.NotFoundUserException;
+import edu.java.exceptions.NotExistTgChatException;
 import edu.java.models.dto.api.response.LinkResponse;
 import edu.java.models.dto.api.response.ListLinksResponse;
 import edu.java.repository.UserRepository;
@@ -26,7 +26,7 @@ public class LinkService {
                 linksUser.size()
             );
         } catch (Exception e) {
-            throw new NotFoundUserException(e);
+            throw new NotExistTgChatException(e);
         }
     }
 

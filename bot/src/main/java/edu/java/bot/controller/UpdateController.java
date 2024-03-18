@@ -18,11 +18,11 @@ public class UpdateController implements UpdatesApi {
     public ResponseEntity<Void> updatesPost(Mono<LinkUpdate> linkUpdate) {
         botMessageSender.sendMessage(
             linkUpdate.flatMapMany(update -> {
-                var listId = update.getTgChatIds();
+                var listIds = update.getTgChatIds();
                 var description = update.getDescription();
                 var uri = update.getUrl().toString();
 
-                return Flux.fromIterable(listId).map(id ->
+                return Flux.fromIterable(listIds).map(id ->
                     new TelegramMessage("%s. Ссылка %s".formatted(description, uri), id));
             })
         );
