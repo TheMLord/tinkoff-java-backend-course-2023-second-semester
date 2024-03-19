@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 @AllArgsConstructor
 public final class UnTrackCommand implements Command {
     public static final String UNTRACK_MESSAGE = "укажите ссылку на ресурс, который больше не хотите отслеживать";
-    public static final String UNKNOWN_USER = "Необходимо зарегистрироваться чтобы удалять отслеживаемые ссылки";
+    public static final String UNKNOWN_USER = "Чат не зарегистрирован";
 
     private static final String NAME_COMMAND = "/untrack";
     private static final String DESCRIPTION_COMMAND = "прекратить отслеживание ссылки";

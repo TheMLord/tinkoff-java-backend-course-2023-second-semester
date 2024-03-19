@@ -5,7 +5,7 @@ import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.models.dto.TelegramMessage;
 import edu.java.bot.sender.BotMessageSender;
-import edu.java.bot.service.MessagePrepareService;
+import edu.java.bot.service.MessageService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,12 +18,12 @@ import reactor.core.publisher.Mono;
 @Component
 @Slf4j
 public class MessageListener implements UpdatesListener {
-    private final MessagePrepareService messageService;
+    private final MessageService messageService;
     private final BotMessageSender botMessageSender;
 
     public MessageListener(
         TelegramBot telegramBot,
-        MessagePrepareService messageService,
+        MessageService messageService,
         BotMessageSender botMessageSender
     ) {
         telegramBot.setUpdatesListener(this);

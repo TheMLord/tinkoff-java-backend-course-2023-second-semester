@@ -19,13 +19,13 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 /**
- * Bots message service
+ * Service for preparing messages for chats.
  */
 @Service
 @Slf4j
 @RequiredArgsConstructor
 @SuppressWarnings("MultipleStringLiterals")
-public class MessagePrepareService {
+public class MessageService {
     public static final String DO_REGISTRATION_MESSAGE = "Необходимо зарегистрироваться";
     public static final String INVALID_URI_MESSAGE = "Неверно указан URI";
     public static final String INVALID_COMMAND_MESSAGE = "Некорректная команда";

@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 @AllArgsConstructor
 public final class TrackCommand implements Command {
     public static final String TRACK_MESSAGE = "укажите ссылку на интересующий ресурс";
-    public static final String UNKNOWN_USER = "Необходимо зарегистрироваться чтобы отслеживать ссылки";
+    public static final String UNKNOWN_USER = "Чат не зарегистрирован";
 
     private static final String NAME_COMMAND = "/track";
     private static final String DESCRIPTION_COMMAND = "начать отслеживание ссылки";
