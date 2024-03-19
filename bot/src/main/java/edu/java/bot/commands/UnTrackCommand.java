@@ -1,9 +1,9 @@
-package edu.java.bot.models.commands;
+package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.models.db_entities.SessionState;
-import edu.java.bot.models.db_entities.User;
-import edu.java.bot.repository.UserRepository;
+import edu.java.bot.domain.TgChat;
+import edu.java.bot.models.SessionState;
+import edu.java.bot.repository.TgChatRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -20,7 +20,7 @@ public final class UnTrackCommand implements Command {
     private static final String NAME_COMMAND = "/untrack";
     private static final String DESCRIPTION_COMMAND = "прекратить отслеживание ссылки";
 
-    private final UserRepository userRepository;
+    private final TgChatRepository tgChatRepository;
 
     @Override
     public String nameCommand() {
@@ -45,8 +45,8 @@ public final class UnTrackCommand implements Command {
      * @param chatId user id.
      */
     private String prepareUnTrackMessage(long chatId) {
-        return userRepository.findUserById(chatId).map(user -> {
-            changeStatusUserAndSave(user);
+        return tgChatRepository.findTgChatById(chatId).map(tgChat -> {
+            changeStatusUserAndSave(tgChat);
             return UNTRACK_MESSAGE;
         }).orElse(UNKNOWN_USER);
     }
@@ -54,8 +54,8 @@ public final class UnTrackCommand implements Command {
     /**
      * method that changes the user's state to waiting for the monitored site to be deleted from the list
      */
-    private void changeStatusUserAndSave(User user) {
-        user.setState(SessionState.WAIT_URI_FOR_UNTRACKING);
-        userRepository.saveUser(user);
+    private void changeStatusUserAndSave(TgChat tgChat) {
+        tgChat.setState(SessionState.WAIT_URI_FOR_UNTRACKING);
+        tgChatRepository.saveTgChat(tgChat);
     }
 }

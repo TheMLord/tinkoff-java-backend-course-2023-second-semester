@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.reactive.resource.NoResourceFoundException;
 
+/**
+ * Exception interceptor class that occurs on REST controllers.
+ */
 @RestControllerAdvice
 public class ExceptionBotControllerAdvice {
     private static final String INTERNAL_SERVER_ERROR_HTTP_CODE = "500";
@@ -36,6 +39,9 @@ public class ExceptionBotControllerAdvice {
             );
     }
 
+    /**
+     * Method that intercepts an exception that occurs when a request with incorrect arguments is received.
+     */
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<ApiErrorResponse> notSupportedContentType(HttpMediaTypeNotSupportedException e) {
         return ResponseEntity
@@ -50,6 +56,9 @@ public class ExceptionBotControllerAdvice {
             );
     }
 
+    /**
+     * Method that intercepts an exception that occurs when receiving unsupported requests.
+     */
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ApiErrorResponse> notSupportedRequestException(NoResourceFoundException e) {
         return ResponseEntity
@@ -64,6 +73,9 @@ public class ExceptionBotControllerAdvice {
             );
     }
 
+    /**
+     * Method for intercepting other non-specialized exceptions to wrap them in an ApiErrorResponse.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> otherExceptions(Exception e) {
         return ResponseEntity

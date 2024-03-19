@@ -1,6 +1,7 @@
 package edu.java.bot.sender;
 
 import com.pengrad.telegrambot.Callback;
+import com.pengrad.telegrambot.Cancellable;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
@@ -10,7 +11,7 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 @Slf4j
@@ -18,8 +19,8 @@ import reactor.core.publisher.Flux;
 public class BotMessageSender {
     private final TelegramBot telegramBot;
 
-    public void sendMessage(Flux<TelegramMessage> messageFlux) {
-        messageFlux.subscribe(message -> {
+    public Mono<Cancellable> sendMessage(TelegramMessage message) {
+        return Mono.fromCallable(() ->
             telegramBot.execute(
                 new SendMessage(message.chatId(), message.message()),
                 new Callback<SendMessage, SendResponse>() {
@@ -37,7 +38,7 @@ public class BotMessageSender {
                         ));
                     }
                 }
-            );
-        });
+            )
+        );
     }
 }

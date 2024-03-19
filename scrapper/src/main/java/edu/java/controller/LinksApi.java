@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import reactor.core.publisher.Mono;
 import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.CHAT_NOT_REGISTER_DESCRIPTION;
 import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.LINK_ALREADY_TRACKED_DESCRIPTION;
 import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.LINK_IS_NOT_TRACK_DESCRIPTION;
@@ -82,7 +83,7 @@ public interface LinksApi {
         produces = {"application/json"},
         consumes = {"application/json"}
     )
-    ResponseEntity<LinkResponse> linksDelete(
+    Mono<ResponseEntity<LinkResponse>> linksDelete(
         @NotNull @Parameter(name = "Tg-Chat-Id", description = "", required = true, in = ParameterIn.HEADER)
         @RequestHeader(value = "Tg-Chat-Id", required = true) Long tgChatId,
         @Parameter(name = "RemoveLinkRequest", description = "", required = true) @Valid @RequestBody
@@ -122,7 +123,7 @@ public interface LinksApi {
         value = "/links",
         produces = {"application/json"}
     )
-    ResponseEntity<ListLinksResponse> linksGet(
+    Mono<ResponseEntity<ListLinksResponse>> linksGet(
         @NotNull @Parameter(name = "Tg-Chat-Id", description = "", required = true, in = ParameterIn.HEADER)
         @RequestHeader(value = "Tg-Chat-Id", required = true) Long tgChatId
     );
@@ -165,7 +166,7 @@ public interface LinksApi {
         produces = {"application/json"},
         consumes = {"application/json"}
     )
-    ResponseEntity<LinkResponse> linksPost(
+    Mono<ResponseEntity<LinkResponse>> linksPost(
         @NotNull @Parameter(name = "Tg-Chat-Id", description = "", required = true, in = ParameterIn.HEADER)
         @RequestHeader(value = "Tg-Chat-Id", required = true) Long tgChatId,
         @Parameter(name = "AddLinkRequest", description = "", required = true) @Valid @RequestBody

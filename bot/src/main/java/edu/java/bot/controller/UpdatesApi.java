@@ -21,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import static edu.java.bot.controller.advice.ExceptionBotControllerAdvice.ERROR_SEND_UPDATE_DESCRIPTION;
 import static edu.java.bot.controller.advice.ExceptionBotControllerAdvice.INCORRECT_REQUEST_PARAM_DESCRIPTION;
@@ -64,8 +65,8 @@ public interface UpdatesApi {
         produces = {"application/json"},
         consumes = {"application/json"}
     )
-    ResponseEntity<Void> updatesPost(
+    Mono<ResponseEntity<Void>> updatesPost(
         @Parameter(name = "LinkUpdate", description = "", required = true) @Valid @RequestBody
-        Mono<LinkUpdate> linkUpdate
+        Flux<LinkUpdate> linkUpdate
     );
 }

@@ -3,7 +3,6 @@ package edu.java.bot.listener;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.exceptions.InvalidUpdateException;
 import edu.java.bot.models.dto.TelegramMessage;
 import edu.java.bot.sender.BotMessageSender;
 import edu.java.bot.service.MessagePrepareService;
@@ -11,6 +10,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Class message controller for telegram bot.
@@ -36,23 +36,28 @@ public class MessageListener implements UpdatesListener {
      */
     @Override
     public int process(List<Update> list) {
-        var messages = Flux.fromIterable(list)
+        Flux<TelegramMessage> messages = Flux.fromIterable(list)
             .flatMap(update -> {
                 try {
-                    var chatId = update.message().chat().id();
+                    long chatId = update.message().chat().id();
                     var response = messageService.prepareResponseMessage(update);
-                    return response.map(r -> new TelegramMessage(r, chatId));
+                    return response.map(r -> new TelegramMessage(r, chatId)).flux();
                 } catch (Exception e) {
                     log.error("Error preparing update: {}", e.getMessage());
                     return Flux.empty();
                 }
             });
 
-        try {
-            botMessageSender.sendMessage(messages);
-        } catch (InvalidUpdateException e) {
-            log.error("Error sending update: {}", e.getMessage());
-        }
+        messages.flatMap(message ->
+            botMessageSender.sendMessage(message)
+                .doOnSuccess(cancel -> log.info("Message sent successfully to chat {}", message.chatId()))
+                .doOnError(error -> log.error(
+                    "Error sending message to chat {}: {}",
+                    message.chatId(),
+                    error.getMessage()
+                ))
+                .onErrorResume(error -> Mono.empty())
+        ).subscribe();
 
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }

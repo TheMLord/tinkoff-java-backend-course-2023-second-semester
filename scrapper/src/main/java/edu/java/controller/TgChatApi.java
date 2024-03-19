@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import reactor.core.publisher.Mono;
 import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.CHAT_ALREADY_REGISTER_DESCRIPTION;
 import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.CHAT_NOT_REGISTER_DESCRIPTION;
 import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.SERVER_ERROR_DESCRIPTION;
@@ -63,7 +64,7 @@ public interface TgChatApi {
         value = "/tg-chat/{id}",
         produces = {"application/json"}
     )
-    ResponseEntity<Void> tgChatIdDelete(
+    Mono<ResponseEntity<Void>> tgChatIdDelete(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id
     );
 
@@ -98,7 +99,7 @@ public interface TgChatApi {
         value = "/tg-chat/{id}",
         produces = {"application/json"}
     )
-    ResponseEntity<Void> tgChatIdPost(
+    Mono<ResponseEntity<Void>> tgChatIdPost(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id
     );
 }

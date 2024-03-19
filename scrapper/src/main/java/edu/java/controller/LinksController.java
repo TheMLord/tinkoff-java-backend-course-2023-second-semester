@@ -8,6 +8,7 @@ import edu.java.services.LinkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,29 +16,35 @@ public class LinksController implements LinksApi {
     private final LinkService linkService;
 
     @Override
-    public ResponseEntity<LinkResponse> linksDelete(
+    public Mono<ResponseEntity<LinkResponse>> linksDelete(
         Long tgChatId,
         RemoveLinkRequest removeLinkRequest
     ) {
-        var linkResponse = linkService.deleteLink(
+        var linkResponse = linkService.removeLink(
             tgChatId,
             removeLinkRequest.getLink()
         );
 
-        return ResponseEntity.ok()
-            .body(linkResponse);
+        return Mono.just(
+            ResponseEntity
+                .ok()
+                .body(linkResponse)
+        );
     }
 
     @Override
-    public ResponseEntity<ListLinksResponse> linksGet(Long tgChatId) {
-        var linksResponse = linkService.prepareUserLinks(tgChatId);
+    public Mono<ResponseEntity<ListLinksResponse>> linksGet(Long tgChatId) {
+        var linksResponse = linkService.getListLinks(tgChatId);
 
-        return ResponseEntity.ok()
-            .body(linksResponse);
+        return Mono.just(
+            ResponseEntity
+                .ok()
+                .body(linksResponse)
+        );
     }
 
     @Override
-    public ResponseEntity<LinkResponse> linksPost(
+    public Mono<ResponseEntity<LinkResponse>> linksPost(
         Long tgChatId,
         AddLinkRequest addLinkRequest
     ) {
@@ -46,7 +53,9 @@ public class LinksController implements LinksApi {
             addLinkRequest.getLink()
         );
 
-        return ResponseEntity.ok()
-            .body(linkResponse);
+        return Mono.just(
+            ResponseEntity.ok()
+                .body(linkResponse)
+        );
     }
 }
