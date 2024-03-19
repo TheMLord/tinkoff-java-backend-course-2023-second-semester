@@ -19,8 +19,6 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public final class StartCommand implements Command {
     public static final String REGISTRATION_MESSAGE_SUCCESS = "Вы успешно зарегистрировались!";
-    public static final String ALREADY_EXIST_MESSAGE = "Вы уже зарегистрированы";
-
     private static final String NAME_COMMAND = "/start";
     private static final String DESCRIPTION_COMMAND = "зарегистрировать пользователя";
 
@@ -50,25 +48,22 @@ public final class StartCommand implements Command {
      * @param chatId user id.
      */
     private Mono<String> registerUser(long chatId) {
-        return tgChatRepository.findTgChatById(chatId)
-            .map(user -> Mono.just(ALREADY_EXIST_MESSAGE))
-            .orElseGet(() -> scrapperProxy.registerChat(chatId)
-                .then(Mono.fromCallable(() -> {
-                    tgChatRepository.saveTgChat(new TgChat(chatId, SessionState.BASE_STATE));
-                    return REGISTRATION_MESSAGE_SUCCESS;
-                }))
-                .onErrorResume(throwable -> {
-                    if (throwable instanceof ScrapperApiException exception) {
-                        log.info(
-                            "запрос на регистрацию вернулся с кодом {} и ошибкой {}",
-                            exception.getApiErrorResponse().getCode(),
-                            exception.getApiErrorResponse().getExceptionName()
-                        );
-                        return Mono.just(exception.getApiErrorResponse().getDescription());
-                    }
-                    log.error("неизвестная ошибка - {}", throwable.getMessage());
-                    return Mono.just("Неизвестная ошибка");
-                })
-            );
+        return scrapperProxy.registerChat(chatId)
+            .then(Mono.fromCallable(() -> {
+                tgChatRepository.saveTgChat(new TgChat(chatId, SessionState.BASE_STATE));
+                return REGISTRATION_MESSAGE_SUCCESS;
+            }))
+            .onErrorResume(throwable -> {
+                if (throwable instanceof ScrapperApiException exception) {
+                    log.info(
+                        "запрос на регистрацию вернулся с кодом {} и ошибкой {}",
+                        exception.getApiErrorResponse().getCode(),
+                        exception.getApiErrorResponse().getExceptionName()
+                    );
+                    return Mono.just(exception.getApiErrorResponse().getDescription());
+                }
+                log.error("неизвестная ошибка - {}", throwable.getMessage());
+                return Mono.just("Неизвестная ошибка");
+            });
     }
 }
