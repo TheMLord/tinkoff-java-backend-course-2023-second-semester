@@ -1,19 +1,19 @@
 package edu.java.repository;
 
-import edu.java.models.User;
+import edu.java.models.TgChat;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
-public class UserRepository {
-    private final Map<Long, User> userTable = new HashMap<>();
+@Repository
+public class InMemoryChatRepository {
+    private final Map<Long, TgChat> userTable = new HashMap<>();
 
-    public Optional<User> findUserById(long id) {
+    public Optional<TgChat> findUserById(long id) {
         return (userTable.containsKey(id)) ? Optional.of(userTable.get(id)) : Optional.empty();
     }
 
@@ -21,7 +21,7 @@ public class UserRepository {
         return userTable.get(id).getUriList();
     }
 
-    public void saveUser(User user) {
+    public void saveUser(TgChat user) {
         userTable.put(user.getId(), user);
     }
 

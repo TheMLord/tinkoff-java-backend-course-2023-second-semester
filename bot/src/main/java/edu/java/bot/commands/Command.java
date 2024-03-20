@@ -1,4 +1,4 @@
-package edu.java.bot.models.commands;
+package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import reactor.core.publisher.Mono;

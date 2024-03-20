@@ -9,25 +9,24 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Controller that receives information about content updates in links.
+ */
 @RestController
 @RequiredArgsConstructor
 public class UpdateController implements UpdatesApi {
     private final BotMessageSender botMessageSender;
 
     @Override
-    public ResponseEntity<Void> updatesPost(Mono<LinkUpdate> linkUpdate) {
-        botMessageSender.sendMessage(
-            linkUpdate.flatMapMany(update -> {
-                var listId = update.getTgChatIds();
+    public Mono<ResponseEntity<Void>> updatesPost(Flux<LinkUpdate> linkUpdate) {
+        return linkUpdate.flatMap(update -> {
+                var listIds = update.getTgChatIds();
                 var description = update.getDescription();
                 var uri = update.getUrl().toString();
 
-                return Flux.fromIterable(listId).map(id ->
-                    new TelegramMessage("%s. Ссылка %s".formatted(description, uri), id));
-            })
-        );
-        return ResponseEntity
-                .ok()
-                .build();
+                return Flux.fromIterable(listIds)
+                    .map(id -> new TelegramMessage("%s. Ссылка %s".formatted(description, uri), id));
+            }).map(botMessageSender::sendMessage)
+            .then(Mono.just(ResponseEntity.ok().build()));
     }
 }
