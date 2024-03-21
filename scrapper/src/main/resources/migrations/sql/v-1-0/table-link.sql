@@ -1,10 +1,10 @@
-CREATE TABLE link
+CREATE TABLE links
 (
-    id         BIGINT GENERATED ALWAYS AS IDENTITY,
-    link_name  TEXT                                        NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()      NOT NULL,
-    created_by TEXT                     DEFAULT 'themlord' NOT NULL,
+    id         BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    link_uri   TEXT                                NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE            NOT NULL,
+    created_by TEXT DEFAULT 'themlord'             NOT NULL,
 
     PRIMARY KEY (id),
-    UNIQUE (link_name)
+    UNIQUE (link_uri)
 )

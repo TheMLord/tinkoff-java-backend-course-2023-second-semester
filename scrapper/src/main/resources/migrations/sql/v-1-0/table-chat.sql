@@ -1,8 +1,8 @@
-CREATE TABLE tgChat
+CREATE TABLE tgchats
 (
-    chat_id    BIGINT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()      NOT NULL,
-    created_by TEXT                     DEFAULT 'themlord' NOT NULL,
+    id         BIGINT                   NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_by TEXT DEFAULT 'themlord'  NOT NULL,
 
-    PRIMARY KEY (chat_id)
+    PRIMARY KEY (id)
 )

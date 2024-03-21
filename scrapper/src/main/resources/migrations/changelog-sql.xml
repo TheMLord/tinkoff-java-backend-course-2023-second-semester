@@ -4,9 +4,18 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
+
+    <changeSet id="dropTables" author="themlord">
+        <tagDatabase tag="v1"/>
+    </changeSet>
     <changeSet id="init tables" author="themord">
         <sqlFile path="sql/v-1-0/table-chat.sql" relativeToChangelogFile="true"/>
         <sqlFile path="sql/v-1-0/table-link.sql" relativeToChangelogFile="true"/>
-        <sqlFile path="sql/v-1-0/relation.sql" relativeToChangelogFile="true"/>
+        <sqlFile path="sql/v-1-0/table-subscriptions.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <dropTable tableName="subscriptions"/>
+            <dropTable tableName="tgchats"/>
+            <dropTable tableName="links"/>
+        </rollback>
     </changeSet>
 </databaseChangeLog>

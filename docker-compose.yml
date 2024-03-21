@@ -26,5 +26,7 @@ services:
       - --username=postgres
       - --password=postgres
       - update
+    #      - rollback
+    #      - --tag=v1
     volumes:
       - ./scrapper/src/main/resources/migrations/:/liquibase/changelog/
