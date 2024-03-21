@@ -10,9 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class TgChat {
-
-    private final Long chatId;
+    private final Long id;
     private final OffsetDateTime createdAt;
     private final String createdBy;
-
 }

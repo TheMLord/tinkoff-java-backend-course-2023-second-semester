@@ -5,6 +5,7 @@ import edu.java.exceptions.NotExistTgChatException;
 import edu.java.models.entities.TgChat;
 import edu.java.repository.TgChatRepository;
 import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,7 +22,11 @@ public class JdbcTgChatRepository implements TgChatRepository {
     @Override
     public void add(Long chatId) {
         try {
-            jdbcTemplate.update("INSERT INTO tgchat (chat_id) VALUES (?)", chatId);
+            jdbcTemplate.update(
+                "INSERT INTO tgchats (id, created_at) VALUES (?, ?)",
+                chatId,
+                OffsetDateTime.now()
+            );
         } catch (Exception e) {
             throw new DoubleRegistrationException();
         }
@@ -30,7 +35,7 @@ public class JdbcTgChatRepository implements TgChatRepository {
     @Override
     public Optional<TgChat> findById(Long chatId) {
         var resultChats = jdbcTemplate.query(
-            "SELECT * FROM tgchat WHERE chat_id = (?)",
+            "SELECT * FROM tgchats WHERE id = (?)",
             JdbcRowMapperUtil::mapRowToTgChat,
             chatId
         );
@@ -42,6 +47,6 @@ public class JdbcTgChatRepository implements TgChatRepository {
         if (this.findById(chatId).isEmpty()) {
             throw new NotExistTgChatException();
         }
-        jdbcTemplate.update("DELETE FROM tgchat WHERE chat_id = (?)", chatId);
+        jdbcTemplate.update("DELETE FROM tgchats WHERE id = (?)", chatId);
     }
 }

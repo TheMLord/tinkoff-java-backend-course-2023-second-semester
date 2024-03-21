@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class Link {
     private final Long id;
-    private final URI linkName;
+    private final URI linkUri;
     private final OffsetDateTime createdAt;
     private final String createdBy;
     private final String content;

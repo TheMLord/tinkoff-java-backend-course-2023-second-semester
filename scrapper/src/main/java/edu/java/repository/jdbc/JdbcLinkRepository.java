@@ -22,7 +22,7 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public List<Link> findAll() {
         return jdbcTemplate.query(
-            "SELECT * FROM link",
+            "SELECT * FROM links",
             JdbcRowMapperUtil::mapRowToLink
         );
     }
@@ -30,7 +30,7 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public Optional<Link> findById(Long id) {
         var resultLinks = jdbcTemplate.query(
-            "SELECT * FROM link WHERE id = (?)",
+            "SELECT * FROM links WHERE id = (?)",
             JdbcRowMapperUtil::mapRowToLink,
             id
         );
@@ -40,7 +40,7 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public List<Link> findAllByTime(OffsetDateTime time) {
         return jdbcTemplate.query(
-            "SELECT * FROM link WHERE last_modifying < (?)",
+            "SELECT * FROM links WHERE last_modifying < (?)",
             JdbcRowMapperUtil::mapRowToLink,
             time
         );
@@ -49,7 +49,7 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public Link updateLastModifying(Long linkId, OffsetDateTime newLastModifyingTime) {
         jdbcTemplate.update(
-            "UPDATE link SET last_modifying = (?) WHERE id = (?)",
+            "UPDATE links SET last_modifying = (?) WHERE id = (?)",
             newLastModifyingTime,
             linkId
         );
@@ -59,7 +59,7 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public Link updateContent(Long linkId, String newContent) {
         jdbcTemplate.update(
-            "UPDATE link SET content = (?) WHERE id = (?)",
+            "UPDATE links SET content = (?) WHERE id = (?)",
             newContent,
             linkId
         );
@@ -69,7 +69,7 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public Optional<Link> findLinkByName(URI linkName) {
         var resultLinks = jdbcTemplate.query(
-            "SELECT * FROM link WHERE link_name = (?)",
+            "SELECT * FROM links WHERE link_uri = (?)",
             JdbcRowMapperUtil::mapRowToLink,
             linkName.toString()
         );

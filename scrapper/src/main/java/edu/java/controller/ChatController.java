@@ -4,6 +4,7 @@ import edu.java.services.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -11,19 +12,23 @@ public class ChatController implements TgChatApi {
     private final ChatService chatService;
 
     @Override
-    public ResponseEntity<Void> tgChatIdDelete(Long id) {
-        chatService.unRegister(id);
-        return ResponseEntity
-            .ok()
-            .build();
 
+    public Mono<ResponseEntity<Void>> tgChatIdDelete(Long id) {
+        chatService.unRegister(id);
+        return Mono.just(
+            ResponseEntity
+                .ok()
+                .build()
+        );
     }
 
     @Override
-    public ResponseEntity<Void> tgChatIdPost(Long id) {
+    public Mono<ResponseEntity<Void>> tgChatIdPost(Long id) {
         chatService.register(id);
-        return ResponseEntity
-            .ok()
-            .build();
+        return Mono.just(
+            ResponseEntity
+                .ok()
+                .build()
+        );
     }
 }

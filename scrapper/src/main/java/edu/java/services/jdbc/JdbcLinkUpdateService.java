@@ -24,7 +24,7 @@ public class JdbcLinkUpdateService implements LinkUpdateService {
     public Optional<LinkUpdate> prepareLinkUpdate(Link link) {
         var linkId = link.getId();
 
-        var updateOptional = uriProcessor.compareContent(link.getLinkName(), link.getContent());
+        var updateOptional = uriProcessor.compareContent(link.getLinkUri(), link.getContent());
         linkRepository.updateLastModifying(linkId, OffsetDateTime.now());
 
         return updateOptional

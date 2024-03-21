@@ -1,7 +1,7 @@
-package edu.java.bot.models.db_entities;
+package edu.java.bot.models;
 
 /**
- * User state enum
+ * TgChat state enum
  */
 public enum SessionState {
     BASE_STATE,

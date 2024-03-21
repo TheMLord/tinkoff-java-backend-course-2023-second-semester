@@ -1,17 +1,18 @@
-package edu.java.bot.models.db_entities;
+package edu.java.bot.domain;
 
+import edu.java.bot.models.SessionState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * User entity
+ * TgChat entity
  */
 //TODO разбить сущность на отдельные таблицы - пользователи, пользовательская активность
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class TgChat {
     //PK entity
     private Long id;
     private SessionState state;

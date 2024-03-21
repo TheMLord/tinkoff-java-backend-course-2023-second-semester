@@ -52,9 +52,9 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var actualLinkName = jdbcLinkDao.add(idChat, exceptedLinkName);
         var actualLinkInDB = jdbcLinkRepository.findLinkByName(exceptedLinkName);
 
-        assertThat(actualLinkName.getLinkName()).isEqualTo(exceptedLinkName);
+        assertThat(actualLinkName.getLinkUri()).isEqualTo(exceptedLinkName);
         assertThat(actualLinkInDB).isPresent();
-        assertThat(actualLinkInDB.get().getLinkName()).isEqualTo(exceptedLinkName);
+        assertThat(actualLinkInDB.get().getLinkUri()).isEqualTo(exceptedLinkName);
     }
 
     @Test

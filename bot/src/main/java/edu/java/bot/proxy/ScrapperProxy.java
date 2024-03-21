@@ -1,7 +1,9 @@
 package edu.java.bot.proxy;
 
+import edu.java.bot.exceptions.ScrapperApiException;
 import edu.java.bot.models.dto.api.request.AddLinkRequest;
 import edu.java.bot.models.dto.api.request.RemoveLinkRequest;
+import edu.java.bot.models.dto.api.response.ApiErrorResponse;
 import edu.java.bot.models.dto.api.response.LinkResponse;
 import edu.java.bot.models.dto.api.response.ListLinksResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,12 @@ public class ScrapperProxy {
             .post()
             .uri(TG_REQUEST_PATH, chatId)
             .retrieve()
+            .onStatus(
+                httpStatusCode -> httpStatusCode.is4xxClientError() || httpStatusCode.is5xxServerError(),
+                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
+                    .map(ScrapperApiException::new)
+                    .flatMap(Mono::error)
+            )
             .bodyToMono(Void.class);
     }
 
@@ -37,6 +45,12 @@ public class ScrapperProxy {
             .delete()
             .uri(TG_REQUEST_PATH, chatId)
             .retrieve()
+            .onStatus(
+                httpStatusCode -> httpStatusCode.is4xxClientError() || httpStatusCode.is5xxServerError(),
+                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
+                    .map(ScrapperApiException::new)
+                    .flatMap(Mono::error)
+            )
             .bodyToMono(Void.class);
     }
 
@@ -46,17 +60,28 @@ public class ScrapperProxy {
             .uri(LINK_REQUEST_PATH)
             .header(TG_HEADER, String.valueOf(tgChatId))
             .retrieve()
+            .onStatus(
+                httpStatusCode -> httpStatusCode.is4xxClientError() || httpStatusCode.is5xxServerError(),
+                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
+                    .map(ScrapperApiException::new)
+                    .flatMap(Mono::error)
+            )
             .bodyToMono(ListLinksResponse.class);
     }
 
     public Mono<LinkResponse> addLink(AddLinkRequest addLinkRequest, long tgChatId) {
-        log.info(addLinkRequest.getLink().toString());
         return scrapperClient
             .post()
             .uri(LINK_REQUEST_PATH)
             .header(TG_HEADER, String.valueOf(tgChatId))
             .body(Mono.just(addLinkRequest), AddLinkRequest.class)
             .retrieve()
+            .onStatus(
+                httpStatusCode -> httpStatusCode.is4xxClientError() || httpStatusCode.is5xxServerError(),
+                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
+                    .map(ScrapperApiException::new)
+                    .flatMap(Mono::error)
+            )
             .bodyToMono(LinkResponse.class);
     }
 
@@ -67,6 +92,12 @@ public class ScrapperProxy {
             .header(TG_HEADER, String.valueOf(tgChatId))
             .body(Mono.just(removeLinkRequest), RemoveLinkRequest.class)
             .retrieve()
+            .onStatus(
+                httpStatusCode -> httpStatusCode.is4xxClientError() || httpStatusCode.is5xxServerError(),
+                clientResponse -> clientResponse.bodyToMono(ApiErrorResponse.class)
+                    .map(ScrapperApiException::new)
+                    .flatMap(Mono::error)
+            )
             .bodyToMono(LinkResponse.class);
     }
 }

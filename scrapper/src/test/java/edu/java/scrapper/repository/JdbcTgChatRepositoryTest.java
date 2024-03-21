@@ -33,7 +33,7 @@ public class JdbcTgChatRepositoryTest extends IntegrationEnvironment {
         var actualChatEntity = jdbcTgChatRepository.findById(exceptedId);
 
         assertThat(actualChatEntity).isPresent();
-        assertThat(actualChatEntity.get().getChatId()).isEqualTo(exceptedId);
+        assertThat(actualChatEntity.get().getId()).isEqualTo(exceptedId);
     }
 
     @Test

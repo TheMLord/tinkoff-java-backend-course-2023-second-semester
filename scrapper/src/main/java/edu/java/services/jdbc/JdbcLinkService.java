@@ -21,14 +21,14 @@ public class JdbcLinkService implements LinkService {
     @Transactional
     public LinkResponse addLink(long chatId, URI linkUri) {
         var link = linkDao.add(chatId, linkUri);
-        return new LinkResponse(link.getId(), link.getLinkName());
+        return new LinkResponse(link.getId(), link.getLinkUri());
     }
 
     @Override
     @Transactional
     public LinkResponse removeLink(long chatId, URI linkUri) {
         var link = linkDao.remove(chatId, linkUri);
-        return new LinkResponse(link.getId(), link.getLinkName());
+        return new LinkResponse(link.getId(), link.getLinkUri());
     }
 
     @Override
@@ -37,7 +37,7 @@ public class JdbcLinkService implements LinkService {
         var links = linkDao.getAllLinkInRelation(chatId);
 
         return new ListLinksResponse(
-            links.stream().map(link -> new LinkResponse(link.getId(), link.getLinkName())).toList(),
+            links.stream().map(link -> new LinkResponse(link.getId(), link.getLinkUri())).toList(),
             links.size()
         );
     }

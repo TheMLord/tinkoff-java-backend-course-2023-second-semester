@@ -21,7 +21,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import static edu.java.bot.controller.advice.ExceptionBotControllerAdvice.ERROR_SEND_UPDATE_DESCRIPTION;
+import static edu.java.bot.controller.advice.ExceptionBotControllerAdvice.INCORRECT_REQUEST_PARAM_DESCRIPTION;
+import static edu.java.bot.controller.advice.ExceptionBotControllerAdvice.SERVER_ERROR_DESCRIPTION;
+import static edu.java.bot.controller.advice.ExceptionBotControllerAdvice.UNSUPPORTED_REQUEST_DESCRIPTION;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-27T07:34:30.177106031Z[UTC]")
 @Validated
@@ -40,7 +45,16 @@ public interface UpdatesApi {
         summary = "Отправить обновление",
         responses = {
             @ApiResponse(responseCode = "200", description = "Обновление обработано"),
-            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+            @ApiResponse(responseCode = "400", description = INCORRECT_REQUEST_PARAM_DESCRIPTION, content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "406", description = ERROR_SEND_UPDATE_DESCRIPTION, content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "500", description = SERVER_ERROR_DESCRIPTION, content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "502", description = UNSUPPORTED_REQUEST_DESCRIPTION, content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
             })
         }
@@ -51,8 +65,8 @@ public interface UpdatesApi {
         produces = {"application/json"},
         consumes = {"application/json"}
     )
-    ResponseEntity<Void> updatesPost(
+    Mono<ResponseEntity<Void>> updatesPost(
         @Parameter(name = "LinkUpdate", description = "", required = true) @Valid @RequestBody
-        Mono<LinkUpdate> linkUpdate);
-
+        Flux<LinkUpdate> linkUpdate
+    );
 }

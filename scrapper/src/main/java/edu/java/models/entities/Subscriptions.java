@@ -9,8 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
-public class Relation {
-    private final Long id;
+public class Subscriptions {
     private final Long chatId;
     private final Long linkId;
     private final OffsetDateTime createdAt;

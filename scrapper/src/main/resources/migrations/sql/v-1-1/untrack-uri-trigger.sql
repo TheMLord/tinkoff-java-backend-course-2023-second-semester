@@ -2,16 +2,15 @@ CREATE FUNCTION delete_links() RETURNS trigger AS
 '
     BEGIN
         DELETE
-        FROM link
-        WHERE id NOT IN (SELECT relation.link_id
-                         FROM relation);
+        FROM links
+        WHERE id NOT IN (SELECT link_id
+                         FROM subscriptions);
         RETURN NULL;
     END;
-'
-LANGUAGE plpgsql;
+'LANGUAGE plpgsql;
 
 CREATE TRIGGER delete_links
     AFTER DELETE
-    ON tgchat
+    ON tgchats
     FOR EACH ROW
 EXECUTE FUNCTION delete_links()

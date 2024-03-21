@@ -1,12 +1,12 @@
-package edu.java.bot.models.commands;
+package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
+import edu.java.bot.exceptions.ScrapperApiException;
 import edu.java.bot.proxy.ScrapperProxy;
-import edu.java.bot.repository.UserRepository;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -17,18 +17,14 @@ import reactor.core.publisher.Mono;
 
 @Component("/list")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public final class ListCommand implements Command {
-    public static final String EMPTY_LIST_SITES = "Вы не отслеживаете ни одну ссылку";
-    public static final String UNKNOWN_USER =
-        "Необходимо зарегистрироваться для просмотра списка отслеживаемых ссылок";
     private static final String USER_TRACK_SITES_MESSAGE = "Вы отслеживаете %d сайтов\n";
     private static final String LIST_TRACK_SEPARATOR = "\n";
     private static final String NAME_COMMAND = "/list";
     private static final String DESCRIPTION_COMMAND = "команда показать список отслеживаемых ссылок";
 
     private final ScrapperProxy scrapperProxy;
-    private final UserRepository userRepository;
 
     @Override
     public String nameCommand() {
@@ -44,15 +40,24 @@ public final class ListCommand implements Command {
     public Mono<String> execute(Update update) {
         var chatId = update.message().chat().id();
 
-        return userRepository.findUserById(chatId).map(
-                user -> scrapperProxy.getListLinks(chatId)
-                    .map(response -> {
-                        var userList = response.getLinks().stream()
-                            .flatMap(linkResponse -> Stream.of(linkResponse.getUrl())).toList();
-                        return prepareListSitesMessage(userList);
-                    })
-                    .onErrorReturn("Ошибка сервера"))
-            .orElse(Mono.just(UNKNOWN_USER));
+        return scrapperProxy.getListLinks(chatId)
+            .map(response -> {
+                var userList = response.getLinks().stream()
+                    .flatMap(linkResponse -> Stream.of(linkResponse.getUrl())).toList();
+                return prepareListSitesMessage(userList);
+            })
+            .onErrorResume(throwable -> {
+                if (throwable instanceof ScrapperApiException exception) {
+                    log.info(
+                        "запрос на регистрацию вернулся с кодом {} и ошибкой {}",
+                        exception.getApiErrorResponse().getCode(),
+                        exception.getApiErrorResponse().getExceptionName()
+                    );
+                    return Mono.just(exception.getApiErrorResponse().getDescription());
+                }
+                log.error("неизвестная ошибка - {}", throwable.getMessage());
+                return Mono.just("Неизвестная ошибка");
+            });
     }
 
     /**
