@@ -13,22 +13,20 @@ public class ChatController implements TgChatApi {
 
     @Override
     public Mono<ResponseEntity<Void>> tgChatIdDelete(Long id) {
-        chatService.unRegister(id);
-        return Mono.just(
-            ResponseEntity
-                .ok()
-                .build()
-        );
-
+        return chatService.unRegister(id)
+            .then(Mono.fromCallable(() ->
+                ResponseEntity
+                    .ok()
+                    .build()
+            ));
     }
 
     @Override
     public Mono<ResponseEntity<Void>> tgChatIdPost(Long id) {
-        chatService.register(id);
-        return Mono.just(
+        return chatService.register(id).then(Mono.fromCallable(() ->
             ResponseEntity
                 .ok()
                 .build()
-        );
+        ));
     }
 }

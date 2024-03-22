@@ -16,7 +16,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-public abstract class IntegrationTest {
+public abstract class IntegrationEnvironment {
     public static PostgreSQLContainer<?> POSTGRES;
 
     static {
@@ -46,25 +46,6 @@ public abstract class IntegrationTest {
 
         liquibase.update(new Contexts(), new LabelExpression());
     }
-
-    @SneakyThrows
-    public static void rollback(JdbcDatabaseContainer<?> c) {
-        var pathToMaster = new File(".").toPath().toAbsolutePath().getParent()
-            .resolve("src/main/resources/migrations");
-
-        var connection = DriverManager.getConnection(c.getJdbcUrl(), c.getUsername(), c.getPassword());
-        var db = DatabaseFactory.getInstance()
-            .findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-        var liquibase = new Liquibase(
-            "master.xml",
-            new DirectoryResourceAccessor(pathToMaster),
-            db
-        );
-
-        liquibase.rollback(1, "v1");
-    }
-
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);

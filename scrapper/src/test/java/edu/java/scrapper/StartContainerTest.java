@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class StartContainerTest extends IntegrationTest {
+public class StartContainerTest extends IntegrationEnvironment {
     @Autowired JdbcClient jdbcClient;
 
     @Test

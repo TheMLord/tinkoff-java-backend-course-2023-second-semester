@@ -39,6 +39,7 @@ import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.UNSUP
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-03-02T09:28:12.239297169Z[UTC]")
 @Validated
 @Tag(name = "links", description = "the links API")
+
 public interface LinksApi {
 
     /**

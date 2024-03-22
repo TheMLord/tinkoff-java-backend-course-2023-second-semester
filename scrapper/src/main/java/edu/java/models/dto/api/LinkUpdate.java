@@ -7,12 +7,14 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 /**
  * LinkUpdate
  */
 
 @RequiredArgsConstructor
+@ToString
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-27T07:34:30.177106031Z[UTC]")
 public class LinkUpdate {
 

@@ -1,5 +1,7 @@
 package edu.java.services;
 
+import reactor.core.publisher.Mono;
+
 /**
  * Interface of the chat service.
  * <p>
@@ -11,12 +13,12 @@ public interface ChatService {
      *
      * @param chatId id chat.
      */
-    void register(long chatId);
+    Mono<Void> register(long chatId);
 
     /**
      * Method that removes the chat from the application.
      *
      * @param chatId id chat.
      */
-    void unRegister(long chatId);
+    Mono<Void> unRegister(long chatId);
 }

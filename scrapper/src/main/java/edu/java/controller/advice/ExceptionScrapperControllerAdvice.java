@@ -32,6 +32,7 @@ public class ExceptionScrapperControllerAdvice {
 
     public static final String LINK_ALREADY_TRACKED_DESCRIPTION = "Ссылка уже отслеживается";
     public static final String LINK_IS_NOT_TRACK_DESCRIPTION = "Ссылка не отслеживается чатом";
+
     public static final String LINK_NOT_FOUND_DESCRIPTION = "Несуществующая ссылка";
 
     public static final String SERVER_ERROR_DESCRIPTION = "Ошибка на стороне сервера";
@@ -58,6 +59,7 @@ public class ExceptionScrapperControllerAdvice {
             .status(HttpStatus.UNAUTHORIZED)
             .body(ApiErrorResponse.builder()
                 .description(CHAT_NOT_REGISTER_DESCRIPTION)
+
                 .code(UNAUTHORIZED_HTTP_CODE)
                 .exceptionName(NotExistTgChatException.class.getName())
                 .exceptionMessage(CHAT_NOT_REGISTER_DESCRIPTION)
