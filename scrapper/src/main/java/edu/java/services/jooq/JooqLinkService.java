@@ -7,6 +7,7 @@ import edu.java.services.LinkService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 /**
  * Implementation of the jdbc link service.
@@ -18,26 +19,32 @@ public class JooqLinkService implements LinkService {
 
     @Override
     @Transactional
-    public LinkResponse addLink(long chatId, URI linkUri) {
-        var link = linkDao.add(chatId, linkUri);
-        return new LinkResponse(link.getId(), URI.create(link.getLinkName()));
+    public Mono<LinkResponse> addLink(long chatId, URI linkUri) {
+        return linkDao.add(chatId, linkUri)
+            .flatMap(link -> Mono.just(
+                    new LinkResponse(
+                        link.getId(),
+                        URI.create(link.getLinkUri())
+                    )
+                )
+            );
     }
 
     @Override
     @Transactional
-    public LinkResponse removeLink(long chatId, URI linkUri) {
-        var link = linkDao.remove(chatId, linkUri);
-        return new LinkResponse(link.getId(), URI.create(link.getLinkName()));
+    public Mono<LinkResponse> removeLink(long chatId, URI linkUri) {
+        return linkDao.remove(chatId, linkUri)
+            .flatMap(link -> Mono.just(new LinkResponse(link.getId(), URI.create(link.getLinkUri()))));
+
     }
 
     @Override
     @Transactional
-    public ListLinksResponse getListLinks(long chatId) {
-        var links = linkDao.getAllLinkInRelation(chatId);
-
-        return new ListLinksResponse(
-            links.stream().map(link -> new LinkResponse(link.getId(), URI.create(link.getLinkName()))).toList(),
-            links.size()
-        );
+    public Mono<ListLinksResponse> getListLinks(long chatId) {
+        return linkDao.getAllLinkInRelation(chatId)
+            .flatMap(links -> Mono.just(new ListLinksResponse(
+                links.stream().map(link -> new LinkResponse(link.getId(), URI.create(link.getLinkUri()))).toList(),
+                links.size()
+            )));
     }
 }

@@ -1,11 +1,11 @@
 package edu.java.repository;
 
-//import edu.java.models.entities.Link;
-import edu.java.domain.jooq.tables.pojos.Link;
+import edu.java.domain.pojos.Links;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 /**
  * contract link repository.
@@ -16,7 +16,7 @@ public interface LinkRepository {
      *
      * @return the list of link entities that are in the table.
      */
-    List<Link> findAll();
+    Mono<List<Links>> findAll();
 
     /**
      * Method of searching for a link from the links table with the specified identifier.
@@ -24,7 +24,7 @@ public interface LinkRepository {
      * @param id link id.
      * @return if there is a link in the table with the specified ID, returns this link otherwise empty Optional.
      */
-    Optional<Link> findById(Long id);
+    Mono<Optional<Links>> findById(Long id);
 
     /**
      * Method for searching for all link entities from the links table
@@ -33,7 +33,7 @@ public interface LinkRepository {
      * @param time time to filter the search.
      * @return the list of link entities that are in the table.
      */
-    List<Link> findAllByTime(OffsetDateTime time);
+    Mono<List<Links>> findAllByTime(OffsetDateTime time);
 
     /**
      * Method update method for the link is the value of the last modifying column.
@@ -42,7 +42,7 @@ public interface LinkRepository {
      * @param newLastModifyingTime new last modifying value.
      * @return updated link
      */
-    Link updateLastModifying(Long linkId, OffsetDateTime newLastModifyingTime);
+    Mono<Links> updateLastModifying(Long linkId, OffsetDateTime newLastModifyingTime);
 
     /**
      * Method update method for the link is the value of the content column.
@@ -51,7 +51,7 @@ public interface LinkRepository {
      * @param newContent new content value.
      * @return updated link
      */
-    Link updateContent(Long linkId, String newContent);
+    Mono<Links> updateContent(Long linkId, String newContent);
 
     /**
      * Method of searching for a link by name in the database from the links table
@@ -59,5 +59,5 @@ public interface LinkRepository {
      * @param linkName name link.
      * @return empty Optional if there is no link with the same name in the database, otherwise one Link object.
      */
-    Optional<Link> findLinkByName(URI linkName);
+    Mono<Optional<Links>> findLinkByName(URI linkName);
 }

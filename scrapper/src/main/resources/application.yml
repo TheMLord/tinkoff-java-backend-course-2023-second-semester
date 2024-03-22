@@ -4,7 +4,7 @@ app:
     interval: 5s
     force-check-delay: 10s
 
-  data-access-technology: JDBC # JDBC, JOOQ
+  database-access-type: JDBC # JPA, JOOQ
 
   client-base-url:
     github-uri: https://api.github.com

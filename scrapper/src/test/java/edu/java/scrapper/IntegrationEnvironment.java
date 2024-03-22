@@ -46,7 +46,6 @@ public abstract class IntegrationEnvironment {
 
         liquibase.update(new Contexts(), new LabelExpression());
     }
-
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);

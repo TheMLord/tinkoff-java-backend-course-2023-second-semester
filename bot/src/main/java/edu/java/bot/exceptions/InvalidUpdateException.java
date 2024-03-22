@@ -1,10 +1,13 @@
 package edu.java.bot.exceptions;
 
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@NoArgsConstructor
+/**
+ * Exception that is thrown when the delivery of the update to the chat fails.
+ */
+@RequiredArgsConstructor
+@Getter
 public class InvalidUpdateException extends RuntimeException {
-    public InvalidUpdateException(Exception e) {
-        super(e);
-    }
+    private final String failedUpdateInfo;
 }

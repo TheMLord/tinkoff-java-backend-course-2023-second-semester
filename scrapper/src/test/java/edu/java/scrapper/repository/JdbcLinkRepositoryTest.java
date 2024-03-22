@@ -1,6 +1,6 @@
 package edu.java.scrapper.repository;
 
-import edu.java.domain.jooq.tables.pojos.Link;
+import edu.java.domain.pojos.Links;
 import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
@@ -35,11 +35,11 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     void testThatTheMethodOfSearchingForAllLinksWorksCorrectlyReturnedTheCorrectNumberOfLinks() {
         var exceptedCountLinks = 3;
 
-        var actualAllLinks = jdbcLinkRepository.findAll();
+        var actualAllLinks = jdbcLinkRepository.findAll().block();
 
         assertThat(actualAllLinks.size()).isEqualTo(exceptedCountLinks);
 
-        var actualListLinkName = actualAllLinks.stream().map(Link::getLinkName).toList();
+        var actualListLinkName = actualAllLinks.stream().map(Links::getLinkUri).toList();
         assertThat(actualListLinkName).containsOnly(
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff1",
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff2",
@@ -59,10 +59,12 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         );
         var exceptedContLink = 2;
 
-        var actualLinks = jdbcLinkRepository.findAllByTime(timePredicate);
+        var actualLinks = jdbcLinkRepository.findAllByTime(timePredicate).block();
 
         assertThat(actualLinks.size()).isEqualTo(exceptedContLink);
-        var actualListLinkName = actualLinks.stream().map(Link::getLinkName).toList();
+
+        var actualListLinkName = actualLinks.stream().map(Links::getLinkUri).toList();
+
         assertThat(actualListLinkName).containsOnly(
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff2",
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff3"
@@ -80,11 +82,11 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         );
         var idLink = jdbcLinkRepository.findLinkByName(
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff1")
-        ).get().getId();
+        ).block().get().getId();
 
-        assertThat(jdbcLinkRepository.findById(idLink)).isPresent();
-        jdbcLinkRepository.updateLastModifying(idLink, exceptedLastModifyingTime);
-        var actualLinkLAtModifying = jdbcLinkRepository.findById(idLink).get().getLastModifying();
+        assertThat(jdbcLinkRepository.findById(idLink).block()).isPresent();
+        jdbcLinkRepository.updateLastModifying(idLink, exceptedLastModifyingTime).block();
+        var actualLinkLAtModifying = jdbcLinkRepository.findById(idLink).block().get().getLastModifying();
         assertThat(actualLinkLAtModifying).isEqualTo(exceptedLastModifyingTime);
     }
 
@@ -100,17 +102,17 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
             """;
         var idLink = jdbcLinkRepository.findLinkByName(
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff1")
-        ).get().getId();
+        ).block().get().getId();
 
-        assertThat(jdbcLinkRepository.findById(idLink)).isPresent();
-        jdbcLinkRepository.updateContent(idLink, exceptedContent);
-        var actualContent = jdbcLinkRepository.findById(idLink).get().getContent();
+        assertThat(jdbcLinkRepository.findById(idLink).block()).isPresent();
+        jdbcLinkRepository.updateContent(idLink, exceptedContent).block();
+        var actualContent = jdbcLinkRepository.findById(idLink).block().get().getContent();
 
         assertThat(exceptedContent).isEqualTo(actualContent);
     }
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.data-access-technology", () -> "JDBC");
+        registry.add("app.database-access-type", () -> "JDBC");
     }
 }

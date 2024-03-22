@@ -6,12 +6,14 @@ import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.Builder;
+import lombok.Getter;
 
 /**
  * ApiErrorResponse
  */
 
 @Builder
+@Getter
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-27T07:36:33.430797072Z[UTC]")
 public class ApiErrorResponse {
 

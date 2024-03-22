@@ -35,9 +35,9 @@ public class JdbcLinkServiceTest extends IntegrationEnvironment {
         var exceptedLinkResponseURI =
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff2");
         var exceptedLinkResponseId = jdbcLinkRepository
-            .findLinkByName(exceptedLinkResponseURI).get().getId();
+            .findLinkByName(exceptedLinkResponseURI).block().get().getId();
 
-        var actualLinkResponse = jdbcLinkService.addLink(2L, exceptedLinkResponseURI);
+        var actualLinkResponse = jdbcLinkService.addLink(2L, exceptedLinkResponseURI).block();
 
         assertThat(actualLinkResponse.getId()).isEqualTo(exceptedLinkResponseId);
         assertThat(actualLinkResponse.getUrl()).isEqualTo(exceptedLinkResponseURI);
@@ -52,9 +52,9 @@ public class JdbcLinkServiceTest extends IntegrationEnvironment {
         var exceptedLinkResponseURI =
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff2");
         var exceptedLinkResponseId = jdbcLinkRepository
-            .findLinkByName(exceptedLinkResponseURI).get().getId();
+            .findLinkByName(exceptedLinkResponseURI).block().get().getId();
 
-        var actualLinkResponse = jdbcLinkService.removeLink(1L, exceptedLinkResponseURI);
+        var actualLinkResponse = jdbcLinkService.removeLink(1L, exceptedLinkResponseURI).block();
 
         assertThat(actualLinkResponse.getId()).isEqualTo(exceptedLinkResponseId);
         assertThat(actualLinkResponse.getUrl()).isEqualTo(exceptedLinkResponseURI);
@@ -68,7 +68,7 @@ public class JdbcLinkServiceTest extends IntegrationEnvironment {
     void testThatTheMethodOfPreparingTheMessageAboutTheLinksMonitoredByTheChatIsBeingPerformedCorrectlyAndReturnedTheCorrectAnswer() {
         var exceptedSize = 3;
 
-        var actualListLinkResponse = jdbcLinkService.getListLinks(1L);
+        var actualListLinkResponse = jdbcLinkService.getListLinks(1L).block();
         var trackedLinks =
             actualListLinkResponse.getLinks().stream()
                 .map(linkResponse -> linkResponse.getUrl().toString())
@@ -84,6 +84,6 @@ public class JdbcLinkServiceTest extends IntegrationEnvironment {
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.data-access-technology", () -> "JDBC");
+        registry.add("app.database-access-type", () -> "JDBC");
     }
 }

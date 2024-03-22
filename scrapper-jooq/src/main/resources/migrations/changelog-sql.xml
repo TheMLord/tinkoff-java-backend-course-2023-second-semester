@@ -1,21 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
-    <changeSet id="init tables" author="themord">
+
+    <changeSet id="dropTables" author="themlord">
+        <tagDatabase tag="v1"/>
+    </changeSet>
+    <changeSet id="init tables" author="themlord">
         <sqlFile path="sql/v-1-0/table-chat.sql" relativeToChangelogFile="true"/>
         <sqlFile path="sql/v-1-0/table-link.sql" relativeToChangelogFile="true"/>
-        <sqlFile path="sql/v-1-0/relation.sql" relativeToChangelogFile="true"/>
+        <sqlFile path="sql/v-1-0/table-subscriptions.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <dropTable tableName="subscriptions"/>
+            <dropTable tableName="tgchats"/>
+            <dropTable tableName="links"/>
+        </rollback>
     </changeSet>
 
-    <changeSet id="link content attribute" author="themord">
+<!--    <changeSet id="drop trigger cleaner" author="themlord">-->
+<!--        <tagDatabase tag="v2"/>-->
+<!--    </changeSet>-->
+<!--    <changeSet id="add trigger-cleaner" author="themlord">-->
+<!--        <sqlFile path="sql/v-1-1/untrack-uri-trigger.sql" relativeToChangelogFile="true"/>-->
+<!--        <rollback>-->
+<!--            <sql>DROP TRIGGER IF EXITS delete_links</sql>-->
+<!--            <sql>DROP FUNCTION IF EXITS delete_links</sql>-->
+<!--        </rollback>-->
+<!--    </changeSet>-->
+
+    <changeSet id="delete attribute content" author="themlord">
+        <tagDatabase tag="v3"/>
+    </changeSet>
+    <changeSet id="link content attribute" author="themlord">
         <sqlFile path="sql/v-1-2/new-link-attribute.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <sql>ALTER TABLE links DROP COLUMN content</sql>
+        </rollback>
     </changeSet>
 
-    <changeSet id="link last modifying attribute" author="themord">
+    <changeSet id="delete attribute last_modifying" author="themlord">
+        <tagDatabase tag="v3"/>
+    </changeSet>
+    <changeSet id="link last modifying attribute" author="themlord">
         <sqlFile path="sql/v-1-3/last-modifying-attribute.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <sql>ALTER TABLE links DROP COLUMN last_modifying</sql>
+        </rollback>
     </changeSet>
 
 </databaseChangeLog>

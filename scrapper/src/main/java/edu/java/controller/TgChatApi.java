@@ -20,8 +20,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import reactor.core.publisher.Mono;
 import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.CHAT_ALREADY_REGISTER_DESCRIPTION;
 import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.CHAT_NOT_REGISTER_DESCRIPTION;
+import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.SERVER_ERROR_DESCRIPTION;
+import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.UNCORRECT_REQUEST_PARAM_DESCRIPTION;
+import static edu.java.controller.advice.ExceptionScrapperControllerAdvice.UNSUPPORTED_REQUEST_DESCRIPTION;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-03-02T09:28:12.239297169Z[UTC]")
 @Validated
@@ -41,10 +45,16 @@ public interface TgChatApi {
         summary = "Удалить чат",
         responses = {
             @ApiResponse(responseCode = "200", description = "Чат успешно удалён"),
-            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+            @ApiResponse(responseCode = "400", description = UNCORRECT_REQUEST_PARAM_DESCRIPTION, content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
             }),
-            @ApiResponse(responseCode = "404", description = CHAT_NOT_REGISTER_DESCRIPTION, content = {
+            @ApiResponse(responseCode = "401", description = CHAT_NOT_REGISTER_DESCRIPTION, content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "500", description = SERVER_ERROR_DESCRIPTION, content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "502", description = UNSUPPORTED_REQUEST_DESCRIPTION, content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
             })
         }
@@ -54,7 +64,7 @@ public interface TgChatApi {
         value = "/tg-chat/{id}",
         produces = {"application/json"}
     )
-    ResponseEntity<Void> tgChatIdDelete(
+    Mono<ResponseEntity<Void>> tgChatIdDelete(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id
     );
 
@@ -70,10 +80,16 @@ public interface TgChatApi {
         summary = "Зарегистрировать чат",
         responses = {
             @ApiResponse(responseCode = "200", description = "Чат зарегистрирован"),
-            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса", content = {
+            @ApiResponse(responseCode = "400", description = UNCORRECT_REQUEST_PARAM_DESCRIPTION, content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
             }),
-            @ApiResponse(responseCode = "404", description = CHAT_ALREADY_REGISTER_DESCRIPTION, content = {
+            @ApiResponse(responseCode = "406", description = CHAT_ALREADY_REGISTER_DESCRIPTION, content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "500", description = SERVER_ERROR_DESCRIPTION, content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "502", description = UNSUPPORTED_REQUEST_DESCRIPTION, content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))
             })
         }
@@ -83,8 +99,7 @@ public interface TgChatApi {
         value = "/tg-chat/{id}",
         produces = {"application/json"}
     )
-    ResponseEntity<Void> tgChatIdPost(
+    Mono<ResponseEntity<Void>> tgChatIdPost(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") Long id
     );
-
 }

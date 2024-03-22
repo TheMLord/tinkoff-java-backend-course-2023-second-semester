@@ -1,1 +1,1 @@
-ALTER TABLE link ADD COLUMN content TEXT;
+ALTER TABLE links ADD COLUMN content TEXT;

@@ -1,9 +1,10 @@
 package edu.java.services;
 
-import edu.java.domain.jooq.tables.pojos.Link;
+import edu.java.domain.pojos.Links;
 import edu.java.models.dto.api.LinkUpdate;
 import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 public interface LinkUpdateService {
-    Optional<LinkUpdate> prepareLinkUpdate(Link link);
+    Mono<Optional<LinkUpdate>> prepareLinkUpdate(Links link);
 }

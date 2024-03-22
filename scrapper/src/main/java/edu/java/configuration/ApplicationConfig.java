@@ -12,16 +12,14 @@ public record ApplicationConfig(
     @Bean
     @NotNull
     Scheduler scheduler,
+    ClientBaseUrl clientBaseUrl,
 
-    String dataAccessTechnology,
-
-    ClientBaseUrl clientBaseUrl
-
+    @NotNull
+    AccessType databaseAccessType
 ) {
 
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
-
 
     public record ClientBaseUrl(String githubUri, String stackoverflowUri, String botUrl) {
     }

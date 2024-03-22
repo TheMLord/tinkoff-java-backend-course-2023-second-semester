@@ -1,11 +1,12 @@
 package edu.java.scrapper.services.jdbc;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import edu.java.domain.jooq.tables.pojos.Link;
+import edu.java.domain.pojos.Links;
 import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.LinkUpdateService;
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,19 +43,19 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
                 "pushed_at": "2023-12-17T18:16:59Z"
             }""";
 
-    private static final Link Link1 = new Link(
+    private static final Links Link1 = new Links(
         1L,
         "https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester",
-        null,
+        OffsetDateTime.now(),
         null,
         GITHUB_ANSWER_BODY,
         null
     );
 
-    private static final Link Link2 = new Link(
+    private static final Links Link2 = new Links(
         2L,
         "https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester2",
-        null,
+        OffsetDateTime.now(),
         null,
         """
             {
@@ -82,7 +83,7 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
         var exceptedLinkUpdateDescription = "Есть изменения";
         var exceptedLinkUpdateChats = List.of(1L, 2L);
 
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2);
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2).block();
 
         assertThat(actualLinkUpdateOptional).isPresent();
         var linkUpdate = actualLinkUpdateOptional.get();
@@ -100,7 +101,7 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatReceivingUpdatesWorksCorrectlyAndReturnedAnEmptyLinkUpdateInTheAbsenceOfUpdates() {
         setUpServer();
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1);
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1).block();
 
         assertThat(actualLinkUpdateOptional).isEmpty();
     }
@@ -112,12 +113,12 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatTheServiceUpdateOfTheLastChangeTimeForTheEntityIsWorkingCorrectlyAndReturnedTheCorrectTimeForTheEntityWithoutChanges() {
         setUpServer();
-        var timeLastModifyingBefore = jdbcLinkRepository.findById(1L).get().getLastModifying();
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1);
+        var timeLastModifyingBefore = jdbcLinkRepository.findById(1L).block().get().getLastModifying();
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1).block();
 
         assertThat(actualLinkUpdateOptional).isEmpty();
 
-        var timeLastModifyingAfter = jdbcLinkRepository.findById(1L).get().getLastModifying();
+        var timeLastModifyingAfter = jdbcLinkRepository.findById(1L).block().get().getLastModifying();
         assertThat(timeLastModifyingAfter).isNotEqualTo(timeLastModifyingBefore);
     }
 
@@ -128,12 +129,12 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatTheServiceUpdateOfTheLastChangeTimeForTheEntityIsWorkingCorrectlyAndReturnedTheCorrectTimeForTheEntityWithChanges() {
         setUpServer();
-        var timeLastModifyingBefore = jdbcLinkRepository.findById(2L).get().getLastModifying();
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2);
+        var timeLastModifyingBefore = jdbcLinkRepository.findById(2L).block().get().getLastModifying();
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2).block();
 
         assertThat(actualLinkUpdateOptional).isPresent();
 
-        var timeLastModifyingAfter = jdbcLinkRepository.findById(2L).get().getLastModifying();
+        var timeLastModifyingAfter = jdbcLinkRepository.findById(2L).block().get().getLastModifying();
         assertThat(timeLastModifyingAfter).isNotEqualTo(timeLastModifyingBefore);
     }
 
@@ -144,12 +145,12 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatTheServiceUpdateOfTheContentForTheEntityIsWorkingCorrectlyAndReturnedTheCorrectContentForTheEntityWithoutChanges() {
         setUpServer();
-        var contentBefore = jdbcLinkRepository.findById(1L).get().getContent();
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1);
+        var contentBefore = jdbcLinkRepository.findById(1L).block().get().getContent();
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1).block();
 
         assertThat(actualLinkUpdateOptional).isEmpty();
 
-        var contentAfter = jdbcLinkRepository.findById(1L).get().getContent();
+        var contentAfter = jdbcLinkRepository.findById(1L).block().get().getContent();
         assertThat(contentAfter).isEqualTo(contentBefore);
     }
 
@@ -160,12 +161,12 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatTheServiceUpdateOfTheContentForTheEntityIsWorkingCorrectlyAndReturnedTheCorrectContentForTheEntityWithChanges() {
         setUpServer();
-        var contentBefore = jdbcLinkRepository.findById(2L).get().getContent();
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2);
+        var contentBefore = jdbcLinkRepository.findById(2L).block().get().getContent();
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2).block();
 
         assertThat(actualLinkUpdateOptional).isPresent();
 
-        var contentAfter = jdbcLinkRepository.findById(2L).get().getContent();
+        var contentAfter = jdbcLinkRepository.findById(2L).block().get().getContent();
         assertThat(contentAfter).isNotEqualTo(contentBefore);
 
     }
@@ -183,7 +184,7 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.data-access-technology", () -> "JDBC");
+        registry.add("app.database-access-type", () -> "JDBC");
     }
 
 }

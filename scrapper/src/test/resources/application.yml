@@ -7,7 +7,7 @@ app:
   client-base-url:
     github-uri: http://localhost:8080
     stackoverflow-uri: http://localhost:8080/2.3
-  data-access-technology: JDBC # JDBC, JOOQ
+  database-access-type: JDBC # JDBC, JOOQ
 
 spring:
   application:

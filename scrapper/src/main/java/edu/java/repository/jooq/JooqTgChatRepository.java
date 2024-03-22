@@ -1,46 +1,58 @@
 package edu.java.repository.jooq;
 
-import edu.java.domain.jooq.tables.pojos.Tgchat;
+import edu.java.domain.pojos.Tgchats;
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.repository.TgChatRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import static edu.java.domain.jooq.tables.Tgchat.TGCHAT;
+import reactor.core.publisher.Mono;
+import static edu.java.domain.jooq.tables.Tgchats.TGCHATS;
 
 @RequiredArgsConstructor
 public class JooqTgChatRepository implements TgChatRepository {
     private final DSLContext dslContext;
 
     @Override
-    public void add(Long chatId) {
-        try {
-            dslContext.insertInto(TGCHAT)
-                .columns(TGCHAT.CHAT_ID)
-                .values(chatId)
-                .execute();
-        } catch (Exception e) {
-            throw new DoubleRegistrationException();
-        }
+    public Mono<Void> add(Long chatId) {
+        return Mono.fromRunnable(() -> {
+            try {
+                dslContext.insertInto(TGCHATS)
+                    .columns(TGCHATS.ID)
+                    .values(chatId)
+                    .execute();
+            } catch (Exception e) {
+                throw new DoubleRegistrationException();
+            }
+        });
     }
 
     @Override
-    public Optional<Tgchat> findById(Long chatId) {
-        var chats = dslContext
-            .select(TGCHAT.fields())
-            .from(TGCHAT)
-            .where(TGCHAT.CHAT_ID.eq(chatId))
-            .fetch()
-            .into(Tgchat.class);
-        return chats.isEmpty() ? Optional.empty() : Optional.of(chats.getFirst());
+    public Mono<Optional<Tgchats>> findById(Long chatId) {
+        return Mono.defer(() -> {
+            var resultChats = dslContext
+                .select(TGCHATS.fields())
+                .from(TGCHATS)
+                .where(TGCHATS.ID.eq(chatId))
+                .fetchInto(Tgchats.class);
+            return resultChats.isEmpty()
+                ? Mono.just(Optional.empty())
+                : Mono.just(Optional.of(resultChats.getFirst()));
+        });
     }
 
     @Override
-    public void remove(Long chatId) {
-        if (this.findById(chatId).isEmpty()) {
-            throw new NotExistTgChatException();
-        }
-        dslContext.delete(TGCHAT).where(TGCHAT.CHAT_ID.eq(chatId)).execute();
+    public Mono<Void> remove(Long chatId) {
+        return findById(chatId)
+            .flatMap(chatOptional -> {
+                if (chatOptional.isEmpty()) {
+                    return Mono.error(new NotExistTgChatException());
+                } else {
+                    return Mono.fromRunnable(() -> {
+                        dslContext.delete(TGCHATS).where(TGCHATS.ID.eq(chatId)).execute();
+                    });
+                }
+            });
     }
 }

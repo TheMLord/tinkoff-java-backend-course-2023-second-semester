@@ -29,8 +29,8 @@ public final class LinkUpdaterScheduler {
     private void update() {
         log.info("executing the update method");
 
-//        linkRepository.findAllByTime(OffsetDateTime.now().minusHours(1))
-//            .forEach(link -> linkUpdateService.prepareLinkUpdate(link)
-//                .ifPresent(botProxy::pushLinkUpdate));
+        linkRepository.findAllByTime(OffsetDateTime.now().minusHours(1))
+            .subscribe(links -> links.forEach(link -> linkUpdateService.prepareLinkUpdate(link)
+                .subscribe(optionalUpdate -> optionalUpdate.map(botProxy::pushLinkUpdate))));
     }
 }
