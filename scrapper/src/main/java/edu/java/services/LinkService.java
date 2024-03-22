@@ -2,8 +2,8 @@ package edu.java.services;
 
 import edu.java.models.dto.api.response.LinkResponse;
 import edu.java.models.dto.api.response.ListLinksResponse;
-import reactor.core.publisher.Mono;
 import java.net.URI;
+import reactor.core.publisher.Mono;
 
 /**
  * Interface of the link service.

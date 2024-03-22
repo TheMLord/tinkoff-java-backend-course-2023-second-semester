@@ -5,9 +5,9 @@ import edu.java.exceptions.NotExistLinkException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.exceptions.NotTrackLinkException;
 import edu.java.models.entities.Link;
-import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.util.List;
+import reactor.core.publisher.Mono;
 
 /**
  * Interface describing the LinkDao contract.
@@ -36,7 +36,8 @@ public interface LinkDao {
      * @throws NotExistLinkException   if there is no such link in the database.
      * @throws NotTrackLinkException   if the chat does not track such a link
      */
-    Mono<Link> remove(Long chatId, URI uri) throws NotExistTgChatException, NotExistLinkException, NotTrackLinkException;
+    Mono<Link> remove(Long chatId, URI uri)
+        throws NotExistTgChatException, NotExistLinkException, NotTrackLinkException;
 
     /**
      * Method that collects all the links that the chat is tracking at the time of the request.
