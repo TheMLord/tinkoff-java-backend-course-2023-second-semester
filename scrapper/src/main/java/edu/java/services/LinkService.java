@@ -2,6 +2,7 @@ package edu.java.services;
 
 import edu.java.models.dto.api.response.LinkResponse;
 import edu.java.models.dto.api.response.ListLinksResponse;
+import reactor.core.publisher.Mono;
 import java.net.URI;
 
 /**
@@ -18,7 +19,7 @@ public interface LinkService {
      * @return If successful, it returns a LinkResponse with the
      *     id of the link that the database will assign and the name that was received when adding.
      */
-    LinkResponse addLink(long chatId, URI linkUri);
+    Mono<LinkResponse> addLink(long chatId, URI linkUri);
 
     /**
      * Method that removes a link from tracking for a specific user.
@@ -28,7 +29,7 @@ public interface LinkService {
      * @return If successful, it returns a response to the link with the
      *     link ID that the link had in the database and the name that was received when it was deleted.
      */
-    LinkResponse removeLink(long chatId, URI linkUri);
+    Mono<LinkResponse> removeLink(long chatId, URI linkUri);
 
     /**
      * Method that returns a prepared response with a list of all
@@ -39,5 +40,5 @@ public interface LinkService {
      *     list of LinkResponse, each of which contains the id and uri of the
      *     link that a particular chat is tracking
      */
-    ListLinksResponse getListLinks(long chatId);
+    Mono<ListLinksResponse> getListLinks(long chatId);
 }

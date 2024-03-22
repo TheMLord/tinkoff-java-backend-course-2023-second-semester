@@ -32,7 +32,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     void testThatTheMethodOfSearchingForAllLinksWorksCorrectlyReturnedTheCorrectNumberOfLinks() {
         var exceptedCountLinks = 3;
 
-        var actualAllLinks = jdbcLinkRepository.findAll();
+        var actualAllLinks = jdbcLinkRepository.findAll().block();
 
         assertThat(actualAllLinks.size()).isEqualTo(exceptedCountLinks);
 
@@ -56,7 +56,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         );
         var exceptedContLink = 2;
 
-        var actualLinks = jdbcLinkRepository.findAllByTime(timePredicate);
+        var actualLinks = jdbcLinkRepository.findAllByTime(timePredicate).block();
 
         assertThat(actualLinks.size()).isEqualTo(exceptedContLink);
         var actualListLinkName = actualLinks.stream().map(link -> link.getLinkUri().toString()).toList();
@@ -77,11 +77,11 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         );
         var idLink = jdbcLinkRepository.findLinkByName(
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff1")
-        ).get().getId();
+        ).block().get().getId();
 
-        assertThat(jdbcLinkRepository.findById(idLink)).isPresent();
-        jdbcLinkRepository.updateLastModifying(idLink, exceptedLastModifyingTime);
-        var actualLinkLAtModifying = jdbcLinkRepository.findById(idLink).get().getLastModifying();
+        assertThat(jdbcLinkRepository.findById(idLink).block()).isPresent();
+        jdbcLinkRepository.updateLastModifying(idLink, exceptedLastModifyingTime).block();
+        var actualLinkLAtModifying = jdbcLinkRepository.findById(idLink).block().get().getLastModifying();
         assertThat(actualLinkLAtModifying).isEqualTo(exceptedLastModifyingTime);
     }
 
@@ -97,11 +97,11 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
             """;
         var idLink = jdbcLinkRepository.findLinkByName(
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff1")
-        ).get().getId();
+        ).block().get().getId();
 
-        assertThat(jdbcLinkRepository.findById(idLink)).isPresent();
-        jdbcLinkRepository.updateContent(idLink, exceptedContent);
-        var actualContent = jdbcLinkRepository.findById(idLink).get().getContent();
+        assertThat(jdbcLinkRepository.findById(idLink).block()).isPresent();
+        jdbcLinkRepository.updateContent(idLink, exceptedContent).block();
+        var actualContent = jdbcLinkRepository.findById(idLink).block().get().getContent();
 
         assertThat(exceptedContent).isEqualTo(actualContent);
     }

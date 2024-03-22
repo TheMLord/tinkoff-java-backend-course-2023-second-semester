@@ -80,7 +80,7 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
         var exceptedLinkUpdateDescription = "Есть изменения";
         var exceptedLinkUpdateChats = List.of(1L, 2L);
 
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2);
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2).block();
 
         assertThat(actualLinkUpdateOptional).isPresent();
         var linkUpdate = actualLinkUpdateOptional.get();
@@ -98,7 +98,7 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatReceivingUpdatesWorksCorrectlyAndReturnedAnEmptyLinkUpdateInTheAbsenceOfUpdates() {
         setUpServer();
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1);
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1).block();
 
         assertThat(actualLinkUpdateOptional).isEmpty();
     }
@@ -110,12 +110,12 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatTheServiceUpdateOfTheLastChangeTimeForTheEntityIsWorkingCorrectlyAndReturnedTheCorrectTimeForTheEntityWithoutChanges() {
         setUpServer();
-        var timeLastModifyingBefore = jdbcLinkRepository.findById(1L).get().getLastModifying();
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1);
+        var timeLastModifyingBefore = jdbcLinkRepository.findById(1L).block().get().getLastModifying();
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1).block();
 
         assertThat(actualLinkUpdateOptional).isEmpty();
 
-        var timeLastModifyingAfter = jdbcLinkRepository.findById(1L).get().getLastModifying();
+        var timeLastModifyingAfter = jdbcLinkRepository.findById(1L).block().get().getLastModifying();
         assertThat(timeLastModifyingAfter).isNotEqualTo(timeLastModifyingBefore);
     }
 
@@ -126,12 +126,12 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatTheServiceUpdateOfTheLastChangeTimeForTheEntityIsWorkingCorrectlyAndReturnedTheCorrectTimeForTheEntityWithChanges() {
         setUpServer();
-        var timeLastModifyingBefore = jdbcLinkRepository.findById(2L).get().getLastModifying();
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2);
+        var timeLastModifyingBefore = jdbcLinkRepository.findById(2L).block().get().getLastModifying();
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2).block();
 
         assertThat(actualLinkUpdateOptional).isPresent();
 
-        var timeLastModifyingAfter = jdbcLinkRepository.findById(2L).get().getLastModifying();
+        var timeLastModifyingAfter = jdbcLinkRepository.findById(2L).block().get().getLastModifying();
         assertThat(timeLastModifyingAfter).isNotEqualTo(timeLastModifyingBefore);
     }
 
@@ -142,12 +142,12 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatTheServiceUpdateOfTheContentForTheEntityIsWorkingCorrectlyAndReturnedTheCorrectContentForTheEntityWithoutChanges() {
         setUpServer();
-        var contentBefore = jdbcLinkRepository.findById(1L).get().getContent();
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1);
+        var contentBefore = jdbcLinkRepository.findById(1L).block().get().getContent();
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link1).block();
 
         assertThat(actualLinkUpdateOptional).isEmpty();
 
-        var contentAfter = jdbcLinkRepository.findById(1L).get().getContent();
+        var contentAfter = jdbcLinkRepository.findById(1L).block().get().getContent();
         assertThat(contentAfter).isEqualTo(contentBefore);
     }
 
@@ -158,12 +158,12 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatTheServiceUpdateOfTheContentForTheEntityIsWorkingCorrectlyAndReturnedTheCorrectContentForTheEntityWithChanges() {
         setUpServer();
-        var contentBefore = jdbcLinkRepository.findById(2L).get().getContent();
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2);
+        var contentBefore = jdbcLinkRepository.findById(2L).block().get().getContent();
+        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2).block();
 
         assertThat(actualLinkUpdateOptional).isPresent();
 
-        var contentAfter = jdbcLinkRepository.findById(2L).get().getContent();
+        var contentAfter = jdbcLinkRepository.findById(2L).block().get().getContent();
         assertThat(contentAfter).isNotEqualTo(contentBefore);
 
     }

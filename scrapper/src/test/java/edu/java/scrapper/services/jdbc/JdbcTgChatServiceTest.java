@@ -30,9 +30,9 @@ public class JdbcTgChatServiceTest extends IntegrationEnvironment {
     void testThatTheServiceDoesNotReturnErrorsWhenAddingANewChatCorrectly() {
         var newChatId = 4L;
 
-        assertThat(jdbcTgChatRepository.findById(newChatId)).isEmpty();
-        jdbcChatService.register(newChatId);
-        assertThat(jdbcTgChatRepository.findById(newChatId)).isPresent();
+        assertThat(jdbcTgChatRepository.findById(newChatId).block()).isEmpty();
+        jdbcChatService.register(newChatId).block();
+        assertThat(jdbcTgChatRepository.findById(newChatId).block()).isPresent();
     }
 
     @Test
@@ -42,8 +42,8 @@ public class JdbcTgChatServiceTest extends IntegrationEnvironment {
     void testThatTheServiceDoesNotReturnErrorsIfTheChatIsDeletedCorrectly() {
         var existChat = 1L;
 
-        assertThat(jdbcTgChatRepository.findById(existChat)).isPresent();
-        jdbcChatService.unRegister(existChat);
-        assertThat(jdbcTgChatRepository.findById(existChat)).isEmpty();
+        assertThat(jdbcTgChatRepository.findById(existChat).block()).isPresent();
+        jdbcChatService.unRegister(existChat).block();
+        assertThat(jdbcTgChatRepository.findById(existChat).block()).isEmpty();
     }
 }

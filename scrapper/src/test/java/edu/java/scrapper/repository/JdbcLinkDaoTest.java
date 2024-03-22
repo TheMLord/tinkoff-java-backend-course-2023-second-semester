@@ -46,11 +46,11 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var exceptedLinkName =
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester11");
 
-        jdbcTgChatRepository.add(idChat);
-        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat)).isEmpty();
+        jdbcTgChatRepository.add(idChat).block();
+        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat).block()).isEmpty();
 
-        var actualLinkName = jdbcLinkDao.add(idChat, exceptedLinkName);
-        var actualLinkInDB = jdbcLinkRepository.findLinkByName(exceptedLinkName);
+        var actualLinkName = jdbcLinkDao.add(idChat, exceptedLinkName).block();
+        var actualLinkInDB = jdbcLinkRepository.findLinkByName(exceptedLinkName).block();
 
         assertThat(actualLinkName.getLinkUri()).isEqualTo(exceptedLinkName);
         assertThat(actualLinkInDB).isPresent();
@@ -70,7 +70,7 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         assertThatThrownBy(() -> jdbcLinkDao.add(
             idChat,
             exceptedLinkName
-        )).isInstanceOf(NotExistTgChatException.class);
+        ).block()).isInstanceOf(NotExistTgChatException.class);
     }
 
     @Test
@@ -83,15 +83,15 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var exceptedLinkName =
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester13");
 
-        jdbcTgChatRepository.add(idChat);
-        jdbcLinkDao.add(idChat, exceptedLinkName);
+        jdbcTgChatRepository.add(idChat).block();
+        jdbcLinkDao.add(idChat, exceptedLinkName).block();
 
-        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName)).isPresent();
+        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName).block()).isPresent();
 
         assertThatThrownBy(() -> jdbcLinkDao.add(
             idChat,
             exceptedLinkName
-        )).isInstanceOf(AlreadyTrackLinkException.class);
+        ).block()).isInstanceOf(AlreadyTrackLinkException.class);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         assertThatThrownBy(() -> jdbcLinkDao.remove(
             idChat,
             exceptedLinkName
-        )).isInstanceOf(NotExistTgChatException.class);
+        ).block()).isInstanceOf(NotExistTgChatException.class);
     }
 
     @Test
@@ -122,22 +122,22 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var exceptedLinkName =
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester15");
 
-        jdbcTgChatRepository.add(idChat);
-        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat)).isEmpty();
+        jdbcTgChatRepository.add(idChat).block();
+        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat).block()).isEmpty();
 
             /*
             Adding another user with a link so that the link entity appears in the database,
              otherwise there will be another error - NotExistLinkException
              */
-        jdbcTgChatRepository.add(16L);
-        jdbcLinkDao.add(16L, exceptedLinkName);
+        jdbcTgChatRepository.add(16L).block();
+        jdbcLinkDao.add(16L, exceptedLinkName).block();
 
-        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName)).isPresent();
+        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName).block()).isPresent();
 
         assertThatThrownBy(() -> jdbcLinkDao.remove(
             idChat,
             exceptedLinkName
-        )).isInstanceOf(NotTrackLinkException.class);
+        ).block()).isInstanceOf(NotTrackLinkException.class);
     }
 
     @Test
@@ -151,15 +151,15 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var exceptedLinkName =
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester17");
 
-        jdbcTgChatRepository.add(idChat);
-        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat)).isEmpty();
+        jdbcTgChatRepository.add(idChat).block();
+        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat).block()).isEmpty();
 
-        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName)).isEmpty();
+        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName).block()).isEmpty();
 
         assertThatThrownBy(() -> jdbcLinkDao.remove(
             idChat,
             exceptedLinkName
-        )).isInstanceOf(NotExistLinkException.class);
+        ).block()).isInstanceOf(NotExistLinkException.class);
     }
 
     @Test
@@ -176,23 +176,23 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var exceptedLinkName2 =
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff19");
 
-        jdbcTgChatRepository.add(idChat1);
-        jdbcTgChatRepository.add(idChat2);
-        jdbcLinkDao.add(idChat1, exceptedLinkName1);
-        jdbcLinkDao.add(idChat1, exceptedLinkName2);
-        jdbcLinkDao.add(idChat2, exceptedLinkName1);
+        jdbcTgChatRepository.add(idChat1).block();
+        jdbcTgChatRepository.add(idChat2).block();
+        jdbcLinkDao.add(idChat1, exceptedLinkName1).block();
+        jdbcLinkDao.add(idChat1, exceptedLinkName2).block();
+        jdbcLinkDao.add(idChat2, exceptedLinkName1).block();
 
-        var actualLink1 = jdbcLinkRepository.findLinkByName(exceptedLinkName1);
-        var actualLink2 = jdbcLinkRepository.findLinkByName(exceptedLinkName2);
+        var actualLink1 = jdbcLinkRepository.findLinkByName(exceptedLinkName1).block();
+        var actualLink2 = jdbcLinkRepository.findLinkByName(exceptedLinkName2).block();
 
         assertThat(actualLink1).isPresent();
         assertThat(actualLink2).isPresent();
 
-        assertThat(jdbcLinkDao.findAllIdTgChatWhoTrackLink(actualLink1.get().getId())).containsOnly(
+        assertThat(jdbcLinkDao.findAllIdTgChatWhoTrackLink(actualLink1.get().getId()).block()).containsOnly(
             idChat1,
             idChat2
         );
-        assertThat(jdbcLinkDao.findAllIdTgChatWhoTrackLink(actualLink2.get().getId())).containsOnly(idChat1);
+        assertThat(jdbcLinkDao.findAllIdTgChatWhoTrackLink(actualLink2.get().getId()).block()).containsOnly(idChat1);
     }
 
     private void setUpServer() {

@@ -11,6 +11,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -21,23 +22,22 @@ public class JdbcLinkUpdateService implements LinkUpdateService {
 
     @Override
     @Transactional
-    public Optional<LinkUpdate> prepareLinkUpdate(Link link) {
+    public Mono<Optional<LinkUpdate>> prepareLinkUpdate(Link link) {
         var linkId = link.getId();
 
-        var updateOptional = uriProcessor.compareContent(link.getLinkUri(), link.getContent());
-        linkRepository.updateLastModifying(linkId, OffsetDateTime.now());
-
-        return updateOptional
-            .map(linkChanges -> {
-                    linkRepository.updateContent(linkId, linkChanges.newContent());
-
-                    return new LinkUpdate(
-                        link.getId(),
-                        linkChanges.linkName(),
-                        linkChanges.descriptionChanges(),
-                        linkDao.findAllIdTgChatWhoTrackLink(link.getId())
-                    );
-                }
-            );
+        return Mono.defer(() -> {
+            var updates = uriProcessor.compareContent(link.getLinkUri(), link.getContent());
+            return updates.map(linkChanges -> linkRepository.updateLastModifying(linkId, OffsetDateTime.now())
+                .flatMap(linkWithUpdateModifying -> linkRepository.updateContent(linkId, linkChanges.newContent()))
+                .flatMap(linkWithUpdateContent ->
+                    linkDao.findAllIdTgChatWhoTrackLink(linkWithUpdateContent.getId()))
+                .flatMap(listSubscribers -> Mono.just(Optional.of(new LinkUpdate(
+                    linkId,
+                    updates.get().linkName(),
+                    updates.get().descriptionChanges(),
+                    listSubscribers
+                ))))).orElseGet(() -> linkRepository.updateLastModifying(linkId, OffsetDateTime.now())
+                .flatMap(linkWithUpdateModifying -> Mono.just(Optional.empty())));
+        });
     }
 }

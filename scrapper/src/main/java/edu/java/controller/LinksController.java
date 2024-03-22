@@ -20,19 +20,21 @@ public class LinksController implements LinksApi {
         Long tgChatId,
         RemoveLinkRequest removeLinkRequest
     ) {
-        return Mono.just(ResponseEntity.ok()
-            .body(linkService.removeLink(tgChatId, removeLinkRequest.getLink())));
+        return linkService.removeLink(tgChatId, removeLinkRequest.getLink())
+            .flatMap(linkResponse -> Mono.just(ResponseEntity
+                .ok()
+                .body(linkResponse))
+            );
+
     }
 
     @Override
     public Mono<ResponseEntity<ListLinksResponse>> linksGet(Long tgChatId) {
-        var linksResponse = linkService.getListLinks(tgChatId);
-
-        return Mono.just(
+        return linkService.getListLinks(tgChatId).flatMap(listLinksResponse -> Mono.just(
             ResponseEntity
                 .ok()
-                .body(linksResponse)
-        );
+                .body(listLinksResponse)
+        ));
     }
 
     @Override
@@ -40,14 +42,7 @@ public class LinksController implements LinksApi {
         Long tgChatId,
         AddLinkRequest addLinkRequest
     ) {
-        var linkResponse = linkService.addLink(
-            tgChatId,
-            addLinkRequest.getLink()
-        );
-
-        return Mono.just(
-            ResponseEntity.ok()
-                .body(linkResponse)
-        );
+        return linkService.addLink(tgChatId, addLinkRequest.getLink())
+            .flatMap(linkResponse -> Mono.just(ResponseEntity.ok().body(linkResponse)));
     }
 }

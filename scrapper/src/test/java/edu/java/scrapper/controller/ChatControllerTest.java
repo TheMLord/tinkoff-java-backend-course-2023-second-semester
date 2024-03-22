@@ -12,8 +12,8 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import reactor.core.publisher.Mono;
+import static org.mockito.Mockito.when;
 
 @WebFluxTest(ChatController.class)
 public class ChatControllerTest {
@@ -28,7 +28,7 @@ public class ChatControllerTest {
         var exceptedCode = 406;
         var exceptedExceptionName = DoubleRegistrationException.class.getName();
 
-        doThrow(new DoubleRegistrationException()).when(chatService).register(1L);
+        when(chatService.register(1L)).thenReturn(Mono.error(new DoubleRegistrationException()));
         webTestClient.post().uri("/tg-chat/1")
             .exchange()
             .expectStatus().isEqualTo(HttpStatus.NOT_ACCEPTABLE)
@@ -42,7 +42,7 @@ public class ChatControllerTest {
     @Test
     @DisplayName("Test that the ok status is returned upon a successful request to add a chat")
     void testThatTheOkStatusIsReturnedUponASuccessfulRequestToAddAChat() {
-        doNothing().when(chatService).register(1L);
+        when(chatService.register(1L)).thenReturn(Mono.empty());
 
         webTestClient.post().uri("/tg-chat/1")
             .exchange()
@@ -56,7 +56,7 @@ public class ChatControllerTest {
         var exceptedCode = 401;
         var exceptedExceptionName = NotExistTgChatException.class.getName();
 
-        doThrow(new NotExistTgChatException()).when(chatService).unRegister(1L);
+        when(chatService.unRegister(1L)).thenReturn(Mono.error(new NotExistTgChatException()));
 
         webTestClient.delete().uri("/tg-chat/1")
             .exchange()
@@ -71,8 +71,7 @@ public class ChatControllerTest {
     @Test
     @DisplayName("Test that the Ok status is returned when the chat is successfully deleted")
     void testThatTheOkStatusIsReturnedWhenTheChatIsSuccessfullyDeleted() {
-        doNothing().when(chatService).unRegister(1L);
-
+        when(chatService.unRegister(1L)).thenReturn(Mono.empty());
         webTestClient.delete().uri("/tg-chat/1")
             .exchange()
             .expectStatus().isEqualTo(HttpStatus.OK);

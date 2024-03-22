@@ -1,6 +1,7 @@
 package edu.java.repository;
 
 import edu.java.models.entities.TgChat;
+import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 /**
@@ -12,7 +13,7 @@ public interface TgChatRepository {
      *
      * @param chatId id chat to add.
      */
-    void add(Long chatId);
+    Mono<Void> add(Long chatId);
 
     /**
      * Method searching tg chat entity by id.
@@ -20,12 +21,12 @@ public interface TgChatRepository {
      * @param chatId id chat to search.
      * @return if the chat finds it, it returns the chat entity otherwise empty Optional.
      */
-    Optional<TgChat> findById(Long chatId);
+    Mono<Optional<TgChat>> findById(Long chatId);
 
     /**
      * Method for deleting a chat from the tgChat table.
      *
      * @param chatId id chat to removing.
      */
-    void remove(Long chatId);
+    Mono<Void> remove(Long chatId);
 }

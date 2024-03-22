@@ -1,5 +1,6 @@
 package edu.java.repository.jdbc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.java.exceptions.AlreadyTrackLinkException;
 import edu.java.exceptions.NotExistLinkException;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
 /**
  * jdbc implementation link dao.
@@ -36,77 +38,66 @@ public class JdbcLinkDao implements LinkDao {
 
     @SneakyThrows
     @Override
-    public Link add(Long chatId, URI uri) {
-        var tgChatId = getChatIfExist(chatId).getId();
-
-        Link link;
-        try {
-            link = getLinkIfExist(uri);
-        } catch (NotExistLinkException e) {
-            link = createLink(uri);
-        }
-        var linkId = link.getId();
-
-        try {
-            jdbcTemplate.update(
-                "INSERT INTO subscriptions (chat_id, link_id, created_at) VALUES (?, ?, ?)",
-                tgChatId,
-                linkId,
-                OffsetDateTime.now()
+    public Mono<Link> add(Long chatId, URI uri) {
+        return getChatIfExist(chatId).map(TgChat::getId)
+            .flatMap(id -> getLinkIfExist(uri).onErrorResume(throwable -> createLink(uri))
+            ).flatMap(link -> {
+                    var linkId = link.getId();
+                    try {
+                        jdbcTemplate.update(
+                            "INSERT INTO subscriptions (chat_id, link_id, created_at) VALUES (?, ?, ?)",
+                            chatId,
+                            linkId,
+                            OffsetDateTime.now()
+                        );
+                        return Mono.just(new Link(
+                            linkId,
+                            link.getLinkUri(),
+                            link.getCreatedAt(),
+                            link.getCreatedBy(),
+                            link.getContent(),
+                            link.getLastModifying()
+                        ));
+                    } catch (Exception e) {
+                        return Mono.error(new AlreadyTrackLinkException());
+                    }
+                }
             );
-            return new Link(
-                linkId,
-                link.getLinkUri(),
-                link.getCreatedAt(),
-                link.getCreatedBy(),
-                link.getContent(),
-                link.getLastModifying()
-            );
-        } catch (Exception e) {
-            throw new AlreadyTrackLinkException();
-        }
     }
 
     @Override
-    public Link remove(Long chatId, URI uri) {
-        var tgChatId = getChatIfExist(chatId).getId();
-        var link = getLinkIfExist(uri);
-
-        var linkId = link.getId();
-
-        jdbcTemplate.update(
-            "DELETE FROM subscriptions WHERE link_id = (?)",
-            getRelationIfExist(tgChatId, linkId).getLinkId()
-        );
-        deleteUntraceableLinks(linkId);
-
-        return new Link(
-            linkId,
-            link.getLinkUri(),
-            link.getCreatedAt(),
-            link.getCreatedBy(),
-            link.getContent(),
-            link.getLastModifying()
-        );
+    public Mono<Link> remove(Long chatId, URI uri) {
+        return getChatIfExist(chatId)
+            .flatMap(chat -> getLinkIfExist(uri))
+            .flatMap(link -> {
+                var linkId = link.getId();
+                jdbcTemplate.update(
+                    "DELETE FROM subscriptions WHERE link_id = (?)",
+                    getRelationIfExist(chatId, linkId).getLinkId()
+                );
+                return Mono.just(link);
+            }).map(link -> {
+                deleteUntraceableLinks(link.getId());
+                return link;
+            });
     }
 
     @Override
-    public List<Link> getAllLinkInRelation(Long chatId) {
-        var tgChat = getChatIfExist(chatId);
-        return jdbcTemplate.query(
+    public Mono<List<Link>> getAllLinkInRelation(Long chatId) {
+        return getChatIfExist(chatId).map(chat -> jdbcTemplate.query(
             "SELECT * FROM links WHERE id IN (SELECT link_id FROM subscriptions WHERE chat_id = (?))",
             JdbcRowMapperUtil::mapRowToLink,
-            tgChat.getId()
-        );
+            chat.getId()
+        ));
     }
 
     @Override
-    public List<Long> findAllIdTgChatWhoTrackLink(Long uriId) {
-        return jdbcTemplate.query(
+    public Mono<List<Long>> findAllIdTgChatWhoTrackLink(Long uriId) {
+        return Mono.just(jdbcTemplate.query(
             "SELECT id FROM tgchats WHERE id IN (SELECT chat_id FROM subscriptions WHERE link_id = (?))",
             JdbcRowMapperUtil::mapRowToChatId,
             uriId
-        );
+        ));
     }
 
     /*
@@ -119,8 +110,9 @@ public class JdbcLinkDao implements LinkDao {
      * @param id entity id.
      * @return TgChat by id if it exists, otherwise throws a NotExistTgChatException.
      */
-    private TgChat getChatIfExist(Long id) {
-        return chatRepository.findById(id).orElseThrow(NotExistTgChatException::new);
+    private Mono<TgChat> getChatIfExist(Long id) {
+        return chatRepository.findById(id).flatMap(tgChat ->
+            tgChat.map(Mono::just).orElse(Mono.error(new NotExistTgChatException())));
     }
 
     /**
@@ -129,8 +121,9 @@ public class JdbcLinkDao implements LinkDao {
      * @param uri link name.
      * @return Link by id if it exists, otherwise throws a NotExistLinkException.
      */
-    private Link getLinkIfExist(URI uri) {
-        return linkRepository.findLinkByName(uri).orElseThrow(NotExistLinkException::new);
+    private Mono<Link> getLinkIfExist(URI uri) {
+        return linkRepository.findLinkByName(uri).flatMap(link ->
+            link.map(Mono::just).orElse(Mono.error(new NotExistLinkException())));
     }
 
     /**
@@ -144,8 +137,8 @@ public class JdbcLinkDao implements LinkDao {
         return findRelationBetweenTgChatAndLink(chatId, uriId).orElseThrow(NotTrackLinkException::new);
     }
 
-    private boolean isLinkTrack(Long id) {
-        return findAllIdTgChatWhoTrackLink(id).isEmpty();
+    private Mono<Boolean> isLinkTrack(Long id) {
+        return findAllIdTgChatWhoTrackLink(id).map(List::isEmpty);
     }
 
     /*
@@ -175,9 +168,11 @@ public class JdbcLinkDao implements LinkDao {
      * @param linkId link ID.
      */
     private void deleteUntraceableLinks(Long linkId) {
-        if (isLinkTrack(linkId)) {
-            jdbcTemplate.update("DELETE FROM links WHERE id = (?)", linkId);
-        }
+        isLinkTrack(linkId).subscribe(logical -> {
+            if (logical) {
+                jdbcTemplate.update("DELETE FROM links WHERE id = (?)", linkId);
+            }
+        });
     }
 
     /**
@@ -188,14 +183,20 @@ public class JdbcLinkDao implements LinkDao {
      * @return the Link object, which contains the link name and the identifier assigned to it in the database.
      */
     @SneakyThrows
-    private Link createLink(URI linkUri) {
-        var linkContent = objectMapper.writeValueAsString(uriProcessor.processUri(linkUri));
-        jdbcTemplate.update(
-            "INSERT INTO links (link_uri, created_at, content) VALUES (?, ?, ?)",
-            linkUri.toString(),
-            OffsetDateTime.now(),
-            linkContent
-        );
-        return getLinkIfExist(linkUri);
+    private Mono<Link> createLink(URI linkUri) {
+        return Mono.defer(() -> {
+            try {
+                var content = objectMapper.writeValueAsString(uriProcessor.processUri(linkUri));
+                jdbcTemplate.update(
+                    "INSERT INTO links (link_uri, created_at, content) VALUES (?, ?, ?)",
+                    linkUri.toString(),
+                    OffsetDateTime.now(),
+                    content
+                );
+                return getLinkIfExist(linkUri);
+            } catch (JsonProcessingException e) {
+                return Mono.error(e);
+            }
+        });
     }
 }

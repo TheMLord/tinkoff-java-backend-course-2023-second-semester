@@ -10,6 +10,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
 /**
  * jdbc implementation chat repository.
@@ -20,33 +21,45 @@ public class JdbcTgChatRepository implements TgChatRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public void add(Long chatId) {
-        try {
-            jdbcTemplate.update(
-                "INSERT INTO tgchats (id, created_at) VALUES (?, ?)",
-                chatId,
-                OffsetDateTime.now()
+    public Mono<Void> add(Long chatId) {
+        return Mono.fromRunnable(() -> {
+            try {
+                jdbcTemplate.update(
+                    "INSERT INTO tgchats (id, created_at) VALUES (?, ?)",
+                    chatId,
+                    OffsetDateTime.now()
+                );
+            } catch (Exception e) {
+                throw new DoubleRegistrationException();
+            }
+        });
+    }
+
+    @Override
+    public Mono<Optional<TgChat>> findById(Long chatId) {
+        return Mono.defer(() -> {
+            var resultChats = jdbcTemplate.query(
+                "SELECT * FROM tgchats WHERE id = (?)",
+                JdbcRowMapperUtil::mapRowToTgChat,
+                chatId
             );
-        } catch (Exception e) {
-            throw new DoubleRegistrationException();
-        }
+            return resultChats.isEmpty()
+                ? Mono.just(Optional.empty())
+                : Mono.just(Optional.of(resultChats.getFirst()));
+        });
     }
 
     @Override
-    public Optional<TgChat> findById(Long chatId) {
-        var resultChats = jdbcTemplate.query(
-            "SELECT * FROM tgchats WHERE id = (?)",
-            JdbcRowMapperUtil::mapRowToTgChat,
-            chatId
-        );
-        return resultChats.isEmpty() ? Optional.empty() : Optional.of(resultChats.getFirst());
-    }
-
-    @Override
-    public void remove(Long chatId) {
-        if (this.findById(chatId).isEmpty()) {
-            throw new NotExistTgChatException();
-        }
-        jdbcTemplate.update("DELETE FROM tgchats WHERE id = (?)", chatId);
+    public Mono<Void> remove(Long chatId) {
+        return findById(chatId)
+            .flatMap(chatOptional -> {
+                if (chatOptional.isEmpty()) {
+                    return Mono.error(new NotExistTgChatException());
+                } else {
+                    return Mono.fromRunnable(() -> {
+                        jdbcTemplate.update("DELETE FROM tgchats WHERE id = (?)", chatId);
+                    });
+                }
+            });
     }
 }

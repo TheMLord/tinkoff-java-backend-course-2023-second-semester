@@ -5,6 +5,7 @@ import edu.java.exceptions.NotExistLinkException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.exceptions.NotTrackLinkException;
 import edu.java.models.entities.Link;
+import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface LinkDao {
      * @throws NotExistTgChatException   if the chat is not registered.
      * @throws AlreadyTrackLinkException if the chat is already tracking this link.
      */
-    Link add(Long chatId, URI uri) throws NotExistTgChatException, AlreadyTrackLinkException;
+    Mono<Link> add(Long chatId, URI uri) throws NotExistTgChatException, AlreadyTrackLinkException;
 
     /**
      * Method adds a link to the untrack chat.
@@ -35,7 +36,7 @@ public interface LinkDao {
      * @throws NotExistLinkException   if there is no such link in the database.
      * @throws NotTrackLinkException   if the chat does not track such a link
      */
-    Link remove(Long chatId, URI uri) throws NotExistTgChatException, NotExistLinkException, NotTrackLinkException;
+    Mono<Link> remove(Long chatId, URI uri) throws NotExistTgChatException, NotExistLinkException, NotTrackLinkException;
 
     /**
      * Method that collects all the links that the chat is tracking at the time of the request.
@@ -44,7 +45,7 @@ public interface LinkDao {
      * @return a list of Link objects ranging from 0 to n.
      * @throws NotExistTgChatException if the chat is not registered.
      */
-    List<Link> getAllLinkInRelation(Long chatId) throws NotExistTgChatException;
+    Mono<List<Link>> getAllLinkInRelation(Long chatId) throws NotExistTgChatException;
 
     /**
      * Method searches for all users who are tracking the link
@@ -52,5 +53,5 @@ public interface LinkDao {
      * @param uriId the ID of the link for which you need to find the chats tracking it.
      * @return list of chat IDs from the tgChat table that track this link.
      */
-    List<Long> findAllIdTgChatWhoTrackLink(Long uriId);
+    Mono<List<Long>> findAllIdTgChatWhoTrackLink(Long uriId);
 }

@@ -5,6 +5,7 @@ import edu.java.services.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 /**
  * Implementation of the jdbc chat service.
@@ -16,13 +17,13 @@ public class JdbcChatService implements ChatService {
 
     @Override
     @Transactional
-    public void register(long chatId) {
-        tgChatRepository.add(chatId);
+    public Mono<Void> register(long chatId) {
+        return tgChatRepository.add(chatId);
     }
 
     @Override
     @Transactional
-    public void unRegister(long chatId) {
-        tgChatRepository.remove(chatId);
+    public Mono<Void> unRegister(long chatId) {
+        return tgChatRepository.remove(chatId);
     }
 }
