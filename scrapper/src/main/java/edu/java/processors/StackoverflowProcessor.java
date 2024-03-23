@@ -15,6 +15,12 @@ public class StackoverflowProcessor extends UriProcessor {
     private final StackoverflowProxy stackoverflowProxy;
     private final ObjectMapper objectMapper;
 
+    private static final String REMOVE_PHRASE = "Deleted ";
+    private static final String ADDED_PHRASE = "Added ";
+    private static final String ANSWERS_PHRASE = " answer(s):\n";
+    private static final String LINE_SEPARATOR = "\n";
+    private static final String AUTHOR_INFO_PHRASE = "Author: %s (reputations: %d)\n%s";
+
     public StackoverflowProcessor(
         UriProcessor nextProcessor,
         StackoverflowProxy stackoverflowProxy,
@@ -37,9 +43,6 @@ public class StackoverflowProcessor extends UriProcessor {
             .getQuestionRequest(stackoverflowApiArgs.questionId()).block();
         var answersInfo = stackoverflowProxy
             .getAnswersForQuestion(stackoverflowApiArgs.questionId()).block();
-
-        var s = stackoverflowProxy.getAnswersForQuestion(stackoverflowApiArgs.questionId()).block();
-        System.out.println(s);
 
         return StackoverflowContent
             .builder()
@@ -109,20 +112,20 @@ public class StackoverflowProcessor extends UriProcessor {
         var changesDescription = new StringBuilder();
 
         if (!deletedAnswers.isEmpty()) {
-            changesDescription.append("Удалено ").append(deletedAnswers.size()).append(" ответов:\n");
-            changesDescription.append(String.join("\n", deletedAnswers));
-            changesDescription.append("\n");
+            changesDescription.append(REMOVE_PHRASE).append(deletedAnswers.size()).append(ANSWERS_PHRASE);
+            changesDescription.append(String.join(LINE_SEPARATOR, deletedAnswers));
+            changesDescription.append(LINE_SEPARATOR);
         }
 
         if (!addedAnswers.isEmpty()) {
-            changesDescription.append("Добавлено ").append(addedAnswers.size()).append(" ответов:\n");
-            changesDescription.append(String.join("\n", addedAnswers));
+            changesDescription.append(ADDED_PHRASE).append(addedAnswers.size()).append(ANSWERS_PHRASE);
+            changesDescription.append(String.join(LINE_SEPARATOR, addedAnswers));
         }
 
         return changesDescription.toString();
     }
 
     private String formatAnswer(String name, Long reputation, String body) {
-        return String.format("Автор: %s (репутация: %d)\n%s", name, reputation, body);
+        return String.format(AUTHOR_INFO_PHRASE, name, reputation, body);
     }
 }

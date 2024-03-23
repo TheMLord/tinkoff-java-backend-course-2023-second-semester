@@ -1,4 +1,4 @@
-package edu.java.scrapper.services.jdbc;
+package edu.java.scrapper.services;
 
 import edu.java.repository.TgChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
-public class JdbcTgChatServiceTest extends IntegrationEnvironment {
+public class TgChatServiceTest extends IntegrationEnvironment {
     @Autowired ChatService jdbcChatService;
     @Autowired TgChatRepository jdbcTgChatRepository;
 
@@ -51,6 +51,6 @@ public class JdbcTgChatServiceTest extends IntegrationEnvironment {
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "JDBC");
+        registry.add("app.database-access-type", () -> "jooq");
     }
 }

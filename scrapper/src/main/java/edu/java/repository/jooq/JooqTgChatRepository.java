@@ -4,6 +4,7 @@ import edu.java.domain.pojos.Tgchats;
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.repository.TgChatRepository;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -19,8 +20,8 @@ public class JooqTgChatRepository implements TgChatRepository {
         return Mono.fromRunnable(() -> {
             try {
                 dslContext.insertInto(TGCHATS)
-                    .columns(TGCHATS.ID)
-                    .values(chatId)
+                    .columns(TGCHATS.ID, TGCHATS.CREATED_AT)
+                    .values(chatId, OffsetDateTime.now())
                     .execute();
             } catch (Exception e) {
                 throw new DoubleRegistrationException();

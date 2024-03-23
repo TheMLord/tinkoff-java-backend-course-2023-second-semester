@@ -9,7 +9,6 @@ import edu.java.exceptions.AlreadyTrackLinkException;
 import edu.java.exceptions.NotExistLinkException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.exceptions.NotTrackLinkException;
-
 import edu.java.processors.UriProcessor;
 import edu.java.repository.LinkDao;
 import edu.java.repository.LinkRepository;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.jdbc.core.JdbcTemplate;
-
 import reactor.core.publisher.Mono;
 
 /**

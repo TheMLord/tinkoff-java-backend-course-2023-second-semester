@@ -15,6 +15,11 @@ public class GithubProcessor extends UriProcessor {
     private final GithubProxy githubProxy;
     private final ObjectMapper objectMapper;
 
+    private static final String REMOVE_PHRASE = "Deleted ";
+    private static final String ADDED_PHRASE = "Added ";
+    private static final String BRANCHES_PHRASE = " branch(es):\n";
+    private static final String LINE_SEPARATOR = "\n";
+
     public GithubProcessor(UriProcessor nextProcessor, GithubProxy githubProxy, ObjectMapper objectMapper) {
         super(nextProcessor);
         this.githubProxy = githubProxy;
@@ -68,9 +73,11 @@ public class GithubProcessor extends UriProcessor {
     }
 
     private boolean isChangedBranches(GithubBranchesDTO[] prevBranches, GithubBranchesDTO[] newBranches) {
-        Arrays.sort(prevBranches);
-        Arrays.sort(newBranches);
-        return Arrays.equals(prevBranches, newBranches);
+        var listPrevBranches =
+            Arrays.stream(prevBranches).map(GithubBranchesDTO::name).sorted().toList();
+        var listNewBranches = Arrays.stream(newBranches).map(GithubBranchesDTO::name).sorted().toList();
+
+        return listPrevBranches.equals(listNewBranches);
     }
 
     private String prepareChangesDescription(GithubContent prevContent, GithubContent newContent) {
@@ -87,14 +94,14 @@ public class GithubProcessor extends UriProcessor {
         var changesDescription = new StringBuilder();
 
         if (!deletedBranches.isEmpty()) {
-            changesDescription.append("Удалено ").append(deletedBranches.size()).append(" веток:\n");
-            changesDescription.append(String.join("\n", deletedBranches));
-            changesDescription.append("\n");
+            changesDescription.append(REMOVE_PHRASE).append(deletedBranches.size()).append(BRANCHES_PHRASE);
+            changesDescription.append(String.join(LINE_SEPARATOR, deletedBranches));
+            changesDescription.append(LINE_SEPARATOR);
         }
 
         if (!newBranches.isEmpty()) {
-            changesDescription.append("Добавлено ").append(newBranches.size()).append(" веток:\n");
-            changesDescription.append(String.join("\n", newBranches));
+            changesDescription.append(ADDED_PHRASE).append(newBranches.size()).append(BRANCHES_PHRASE);
+            changesDescription.append(String.join(LINE_SEPARATOR, newBranches));
         }
 
         return changesDescription.toString();

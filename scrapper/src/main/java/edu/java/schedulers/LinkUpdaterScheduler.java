@@ -3,7 +3,6 @@ package edu.java.schedulers;
 import edu.java.proxies.BotProxy;
 import edu.java.repository.LinkRepository;
 import edu.java.services.LinkUpdateService;
-import java.time.OffsetDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,8 +28,8 @@ public final class LinkUpdaterScheduler {
     private void update() {
         log.info("executing the update method");
 
-        linkRepository.findAllByTime(OffsetDateTime.now().minusHours(1))
-            .subscribe(links -> links.forEach(link -> linkUpdateService.prepareLinkUpdate(link)
-                .subscribe(optionalUpdate -> optionalUpdate.map(botProxy::pushLinkUpdate))));
+//        linkRepository.findAllByTime(OffsetDateTime.now().minusHours(1))
+//            .subscribe(links -> links.forEach(link -> linkUpdateService.prepareLinkUpdate(link)
+//                .subscribe(optionalUpdate -> optionalUpdate.map(botProxy::pushLinkUpdate))));
     }
 }

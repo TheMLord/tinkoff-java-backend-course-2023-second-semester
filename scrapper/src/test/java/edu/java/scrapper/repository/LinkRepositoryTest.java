@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
-public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
+public class LinkRepositoryTest extends IntegrationEnvironment {
     @Autowired LinkRepository jdbcLinkRepository;
 
     @Test
@@ -113,6 +113,6 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "JDBC");
+        registry.add("app.database-access-type", () -> "jooq");
     }
 }

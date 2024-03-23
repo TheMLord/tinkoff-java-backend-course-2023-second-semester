@@ -1,9 +1,11 @@
 package edu.java;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import edu.java.models.dto.GithubBranchesDTO;
 import edu.java.proxies.GithubProxy;
 import edu.java.proxies.StackoverflowProxy;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +31,7 @@ class WebClientTest {
     @Autowired
     StackoverflowProxy stackoverflowProxy;
 
-    private static final String GITHUB_ANSWER_BODY =
+    private static final String GITHUB_REPOSITORY_BODY =
         """
             {
                 "owner": {
@@ -40,8 +42,35 @@ class WebClientTest {
                 "updated_at": "2024-02-05T09:25:22Z",
                 "pushed_at": "2024-02-13T13:34:39Z"
             }""";
-
-    private static final String STACKOVERFLOW_ANSWER_BODY =
+    private static final String GITHUB_BRANCHES_BODY =
+        """
+            [
+                {
+                    "name": "develop",
+                    "commit": {
+                        "sha": "4dbe31d95af7ba0d17fba874826d11ff4694ae0d",
+                        "url": "https://api.github.com/repos/TheMLord/tinkoff-java-backend-course-2023-second-semester/commits/4dbe31d95af7ba0d17fba874826d11ff4694ae0d"
+                    },
+                    "protected": false
+                },
+                {
+                    "name": "main",
+                    "commit": {
+                        "sha": "d65e347a7168e1d9241c33b1f29b89d132c8cd29",
+                        "url": "https://api.github.com/repos/TheMLord/tinkoff-java-backend-course-2023-second-semester/commits/d65e347a7168e1d9241c33b1f29b89d132c8cd29"
+                    },
+                    "protected": false
+                },
+                {
+                    "name": "master",
+                    "commit": {
+                        "sha": "a4c23bae185c2a3459af5c3b68fdf7eb785fc6d9",
+                        "url": "https://api.github.com/repos/TheMLord/tinkoff-java-backend-course-2023-second-semester/commits/a4c23bae185c2a3459af5c3b68fdf7eb785fc6d9"
+                    },
+                    "protected": false
+                }
+            ]""";
+    private static final String STACKOVERFLOW_QUESTION_BODY =
         """
             {
                 "items": [
@@ -61,6 +90,34 @@ class WebClientTest {
                 ],
                 "quota_remaining": 285
             }""";
+    private static final String STACKOVERFLOW_ANSWERS_BODY = """
+        {
+            "items": [
+                {
+                    "owner": {
+                        "account_id": 5339,
+                        "reputation": 15809,
+                        "user_id": 8542,
+                        "user_type": "registered",
+                        "profile_image": "https://i.stack.imgur.com/g3kyp.jpg?s=256&g=1",
+                        "display_name": "BigJump",
+                        "link": "https://stackoverflow.com/users/8542/bigjump"
+                    },
+                    "is_accepted": true,
+                    "score": 7,
+                    "last_activity_date": 1221652071,
+                    "creation_date": 1221652071,
+                    "answer_id": 82270,
+                    "question_id": 82223,
+                    "content_license": "CC BY-SA 2.5",
+                    "body": "If it ain't broken"
+                }
+            ],
+            "has_more": false,
+            "quota_max": 300,
+            "quota_remaining": 283
+        }
+        """;
 
     @Test
     @DisplayName("Test that github client parses the request correctly returned the correct data to the dto")
@@ -71,7 +128,7 @@ class WebClientTest {
         var exceptedTimeUpdatedAt = OffsetDateTime.parse("2024-02-05T09:25:22Z");
         var exceptedTimePushedAt = OffsetDateTime.parse("2024-02-13T13:34:39Z");
 
-        setUpServer("/repos/.*", GITHUB_ANSWER_BODY);
+        setUpServer("/repos/.*", GITHUB_REPOSITORY_BODY);
 
         var response =
             githubProxy.getRepositoryRequest("TheMLord", "tinkoff-java-backend-course-2023-second-semester").block();
@@ -85,13 +142,34 @@ class WebClientTest {
     }
 
     @Test
+    @DisplayName(
+        "Test that the github client correctly parses the information from the request to receive repository branches and returned the expected values")
+    void testThatTheGithubClientCorrectlyParsesTheInformationFromTheRequestToReceiveRepositoryBranchesAndReturnedTheExpectedValues() {
+        var exceptedBranch1 = "main";
+        var exceptedBranch2 = "master";
+        var exceptedBranch3 = "develop";
+
+        setUpServer("/repos/.*", GITHUB_BRANCHES_BODY);
+
+        var response =
+            githubProxy.getBranchesRequest("TheMLord", "tinkoff-java-backend-course-2023-second-semester").block();
+
+        assertThat(response).isNotNull();
+        assertThat(Arrays.stream(response).map(GithubBranchesDTO::name).toList()).containsOnly(
+            exceptedBranch1,
+            exceptedBranch2,
+            exceptedBranch3
+        );
+    }
+
+    @Test
     @DisplayName("Test that stackoverflow client parses the request correctly returned the correct data to the dto")
     void testThatStackoverflowClientParsesTheRequestCorrectlyReturnedTheCorrectDataToTheDto() {
         long exceptedOwnerId = 2147L;
         var exceptedOwnerName = "Stu Thompson";
         int exceptedCountAnswer = 8;
 
-        setUpServer("/2\\.3/questions/.*", STACKOVERFLOW_ANSWER_BODY);
+        setUpServer("/2\\.3/questions/.*", STACKOVERFLOW_QUESTION_BODY);
 
         var response = stackoverflowProxy.getQuestionRequest("82223")
             .block();
@@ -100,6 +178,27 @@ class WebClientTest {
         assertThat(dto.owner().accountId()).isEqualTo(exceptedOwnerId);
         assertThat(dto.owner().displayName()).isEqualTo(exceptedOwnerName);
         assertThat(dto.answerCount()).isEqualTo(exceptedCountAnswer);
+    }
+
+    @Test
+    @DisplayName(
+        "Test that the stackoverflow client correctly parses the information from the request for answers to the question and returned the expected values")
+    void testThatTheStackoverflowClientCorrectlyParsesTheInformationFromTheRequestForAnswersToTheQuestionAndReturnedTheExpectedValues() {
+        var exceptedAnswerCount = 1;
+        var exceptedOwnerAnswerName = "BigJump";
+        var exceptedOwnerAnswerReputation = 15809;
+        var exceptedOwnerAnswerBody = "If it ain't broken";
+
+        setUpServer("/2\\.3/questions/.*", STACKOVERFLOW_ANSWERS_BODY);
+        var response = stackoverflowProxy.getAnswersForQuestion("82223").block();
+
+        assertThat(response).isNotNull();
+        var dto = response.items();
+        assertThat(dto.size()).isEqualTo(exceptedAnswerCount);
+        assertThat(dto.getFirst().body()).isEqualTo(exceptedOwnerAnswerBody);
+        assertThat(dto.getFirst().owner().name()).isEqualTo(exceptedOwnerAnswerName);
+        assertThat(dto.getFirst().owner().reputation()).isEqualTo(exceptedOwnerAnswerReputation);
+
     }
 
     private void setUpServer(String url, String body) {

@@ -1,4 +1,4 @@
-package edu.java.scrapper.services.jdbc;
+package edu.java.scrapper.services;
 
 import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
-public class JdbcLinkServiceTest extends IntegrationEnvironment {
+public class LinkServiceTest extends IntegrationEnvironment {
     @Autowired LinkService jdbcLinkService;
     @Autowired LinkRepository jdbcLinkRepository;
 
@@ -84,6 +84,6 @@ public class JdbcLinkServiceTest extends IntegrationEnvironment {
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "JDBC");
+        registry.add("app.database-access-type", () -> "jooq");
     }
 }

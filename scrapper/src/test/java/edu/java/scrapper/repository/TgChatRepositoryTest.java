@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @TestPropertySource(locations = "classpath:test")
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
-public class JdbcTgChatRepositoryTest extends IntegrationEnvironment {
+public class TgChatRepositoryTest extends IntegrationEnvironment {
     @Autowired TgChatRepository jdbcTgChatRepository;
 
     @Test
@@ -80,6 +80,6 @@ public class JdbcTgChatRepositoryTest extends IntegrationEnvironment {
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "JDBC");
+        registry.add("app.database-access-type", () -> "jooq");
     }
 }

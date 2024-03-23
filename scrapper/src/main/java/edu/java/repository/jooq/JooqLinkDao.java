@@ -2,8 +2,8 @@ package edu.java.repository.jooq;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.java.domain.jooq.tables.Subscriptions;
 import edu.java.domain.pojos.Links;
+import edu.java.domain.pojos.Subscriptions;
 import edu.java.domain.pojos.Tgchats;
 import edu.java.exceptions.AlreadyTrackLinkException;
 import edu.java.exceptions.NotExistLinkException;
@@ -70,7 +70,7 @@ public class JooqLinkDao implements LinkDao {
                 var linkId = link.getId();
                 dslContext
                     .delete(SUBSCRIPTIONS)
-                    .where(SUBSCRIPTIONS.LINK_ID.eq(linkId))
+                    .where(SUBSCRIPTIONS.LINK_ID.eq(getRelationIfExist(chatId, linkId).getLinkId()))
                     .execute();
                 return Mono.just(link);
             }).map(link -> {
@@ -105,7 +105,7 @@ public class JooqLinkDao implements LinkDao {
                         .from(SUBSCRIPTIONS)
                         .where(SUBSCRIPTIONS.LINK_ID.eq(uriId))
                 )
-            ).fetchInto(Long.class));
+            ).fetchInto(Tgchats.class).stream().map(Tgchats::getId).toList());
     }
 
 
@@ -164,7 +164,7 @@ public class JooqLinkDao implements LinkDao {
     private Optional<Subscriptions> findRelationBetweenTgChatAndLink(Long chatId, Long uriId) {
         var resultRelations = dslContext
             .selectFrom(SUBSCRIPTIONS)
-            .where(SUBSCRIPTIONS.CHAT_ID.eq(chatId)).and(SUBSCRIPTIONS.LINK_ID.eq(uriId))
+            .where(SUBSCRIPTIONS.CHAT_ID.eq(chatId).and(SUBSCRIPTIONS.LINK_ID.eq(uriId)))
             .fetchInto(Subscriptions.class);
 
         return resultRelations.isEmpty() ? Optional.empty() : Optional.of(resultRelations.getFirst());
@@ -200,8 +200,8 @@ public class JooqLinkDao implements LinkDao {
                 var content = objectMapper.writeValueAsString(uriProcessor.processUri(linkUri));
                 dslContext
                     .insertInto(LINKS)
-                    .columns(LINKS.LINK_URI, LINKS.CONTENT)
-                    .values(linkUri.toString(), content)
+                    .columns(LINKS.LINK_URI, LINKS.CONTENT, LINKS.CREATED_AT)
+                    .values(linkUri.toString(), content, OffsetDateTime.now())
                     .execute();
                 return getLinkIfExist(linkUri);
             } catch (JsonProcessingException e) {

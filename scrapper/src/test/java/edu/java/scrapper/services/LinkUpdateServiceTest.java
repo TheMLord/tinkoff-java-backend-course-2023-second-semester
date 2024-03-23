@@ -1,4 +1,4 @@
-package edu.java.scrapper.services.jdbc;
+package edu.java.scrapper.services;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.domain.pojos.Links;
@@ -27,20 +27,34 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = "classpath:sql/insert-link-linkupdateservice.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(value = "classpath:sql/clearDB.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @WireMockTest(httpPort = 8080)
-public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
+public class LinkUpdateServiceTest extends IntegrationEnvironment {
     @Autowired LinkUpdateService jdbcLinkUpdateService;
     @Autowired LinkRepository jdbcLinkRepository;
 
-    private static final String GITHUB_ANSWER_BODY =
+    private static final String GITHUB_CONTENT =
         """
             {
-                "owner": {
-                    "login": "TheMLord",
-                    "id": 113773994
+            "githubRepositoryDTO":
+            {
+                "created_at":"2024-02-05T09:23:06Z",
+                "updated_at":"2024-02-05T09:25:22Z",
+                "pushed_at":"2024-02-22T10:12:19Z",
+                "owner":{
+                    "login":"TheMLord",
+                    "id":113773994
+                    }
                 },
-                "created_at": "2023-10-02T21:35:03Z",
-                "updated_at": "2023-10-18T13:48:21Z",
-                "pushed_at": "2023-12-17T18:16:59Z"
+                "githubBranchesDTO":
+                [
+                    {"name":"develop"},
+                    {"name":"hw2"},
+                    {"name":"hw3"},
+                    {"name":"hw4"},
+                    {"name":"hw5_bonus"},
+                    {"name":"hw5"},
+                    {"name":"main"},
+                    {"name":"master"}
+                ]
             }""";
 
     private static final Links Link1 = new Links(
@@ -48,7 +62,25 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
         "https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester",
         OffsetDateTime.now(),
         null,
-        GITHUB_ANSWER_BODY,
+        """
+            {
+            "githubRepositoryDTO":
+            {
+                "created_at":"2024-02-05T09:23:06Z",
+                "updated_at":"2024-02-05T09:25:22Z",
+                "pushed_at":"2024-02-22T10:12:19Z",
+                "owner":{
+                    "login":"TheMLord",
+                    "id":113773994
+                    }
+                },
+                "githubBranchesDTO":
+                [
+                    {"name":"createdAccount"},
+                    {"name":"main"},
+                    {"name":"master"}
+                ]
+            }""",
         null
     );
 
@@ -57,16 +89,7 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
         "https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester2",
         OffsetDateTime.now(),
         null,
-        """
-            {
-                "owner": {
-                    "login": "TheMLord",
-                    "id": 113773994
-                },
-                "created_at": "2023-10-02T21:35:03Z",
-                "updated_at": "2023-10-18T13:48:21Z",
-                "pushed_at": "2023-10-17T18:16:59Z"
-            }""",
+        GITHUB_CONTENT,
         null
     );
 
@@ -80,7 +103,16 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
         var exceptedLinkUpdateId = 2L;
         var exceptedLinkUpdateURI =
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester2");
-        var exceptedLinkUpdateDescription = "Есть изменения";
+        var exceptedLinkUpdateDescription = """
+            Deleted 6 branch(es):
+            develop
+            hw2
+            hw3
+            hw4
+            hw5_bonus
+            hw5
+            Added 1 branch(es):
+            createdAccount""";
         var exceptedLinkUpdateChats = List.of(1L, 2L);
 
         var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate(Link2).block();
@@ -173,18 +205,63 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
 
     private void setUpServer() {
         stubFor(
-            get(urlPathMatching("/repos/.*"))
+            get(urlPathMatching("/repos/TheMLord/tinkoff-java-backend-course-2023-second-semester([1-9][1-9]|[1-9]*)"))
                 .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody(
-                        GITHUB_ANSWER_BODY
+                        """
+                            {
+                                "owner": {
+                                    "login": "TheMLord",
+                                    "id": 113773994
+                                },
+                                "created_at": "2024-02-05T09:23:06Z",
+                                "updated_at": "2024-02-05T09:25:22Z",
+                                "pushed_at": "2024-02-13T13:34:39Z"
+                            }"""
+                    )));
+
+        stubFor(
+            get(urlPathMatching(
+                "/repos/TheMLord/tinkoff-java-backend-course-2023-second-semester([1-9][1-9]|[1-9]*)/branches"))
+                .willReturn(aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
+                            [
+                                 {
+                                     "name": "createdAccount",
+                                     "commit": {
+                                         "sha": "91c6ce32c18cd16baae811a6348ea37ca75a4cdb",
+                                         "url": "https://api.github.com/repos/TheMLord/Interface_for_an_ATM_with_a_banking_system/commits/91c6ce32c18cd16baae811a6348ea37ca75a4cdb"
+                                     },
+                                     "protected": false
+                                 },
+                                 {
+                                     "name": "main",
+                                     "commit": {
+                                         "sha": "0f9906316ed03aeae035ae851b9742a630b5b070",
+                                         "url": "https://api.github.com/repos/TheMLord/Interface_for_an_ATM_with_a_banking_system/commits/0f9906316ed03aeae035ae851b9742a630b5b070"
+                                     },
+                                     "protected": false
+                                 },
+                                 {
+                                     "name": "master",
+                                     "commit": {
+                                         "sha": "af16415266c8482501b840c46411cce4a9e1f775",
+                                         "url": "https://api.github.com/repos/TheMLord/Interface_for_an_ATM_with_a_banking_system/commits/af16415266c8482501b840c46411cce4a9e1f775"
+                                     },
+                                     "protected": false
+                                 }
+                             ]"""
                     )));
     }
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "JDBC");
+        registry.add("app.database-access-type", () -> "jooq");
     }
 
 }
