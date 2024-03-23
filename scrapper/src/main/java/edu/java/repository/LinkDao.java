@@ -1,6 +1,6 @@
 package edu.java.repository;
 
-import edu.java.domain.pojos.Links;
+import edu.java.domain.jooq.pojos.Links;
 import edu.java.exceptions.AlreadyTrackLinkException;
 import edu.java.exceptions.NotExistLinkException;
 import edu.java.exceptions.NotExistTgChatException;

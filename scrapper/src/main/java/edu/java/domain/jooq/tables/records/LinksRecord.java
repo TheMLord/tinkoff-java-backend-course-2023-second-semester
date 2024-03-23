@@ -356,7 +356,7 @@ public class LinksRecord extends UpdatableRecordImpl<LinksRecord>
     /**
      * Create a detached, initialised LinksRecord
      */
-    public LinksRecord(edu.java.domain.pojos.Links value) {
+    public LinksRecord(edu.java.domain.jooq.pojos.Links value) {
         super(Links.LINKS);
 
         if (value != null) {

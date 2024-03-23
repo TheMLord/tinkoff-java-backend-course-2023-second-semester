@@ -1,7 +1,7 @@
 package edu.java.scrapper.services;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import edu.java.domain.pojos.Links;
+import edu.java.domain.jooq.pojos.Links;
 import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.LinkUpdateService;

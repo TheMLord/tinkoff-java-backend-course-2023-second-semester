@@ -1,6 +1,6 @@
 package edu.java.services;
 
-import edu.java.domain.pojos.Links;
+import edu.java.domain.jooq.pojos.Links;
 import edu.java.models.dto.api.LinkUpdate;
 import java.util.Optional;
 import reactor.core.publisher.Mono;

@@ -19,6 +19,11 @@ spring:
     url: ${db_url}
     username: ${db_username}
     password: ${db_password}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
 
 server:
   port: 8080

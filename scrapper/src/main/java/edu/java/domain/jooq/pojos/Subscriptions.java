@@ -1,4 +1,4 @@
-package edu.java.domain.pojos;
+package edu.java.domain.jooq.pojos;
 
 import java.beans.ConstructorProperties;
 import java.io.Serializable;
@@ -22,27 +22,31 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings({"all", "unchecked", "rawtypes", "this-escape"})
 @NoArgsConstructor
 @Data
-public class Tgchats implements Serializable {
+public class Subscriptions implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    private Long chatId;
+    private Long linkId;
     private OffsetDateTime createdAt;
     private String createdBy;
 
-    public Tgchats(Tgchats value) {
-        this.id = value.id;
+    public Subscriptions(Subscriptions value) {
+        this.chatId = value.chatId;
+        this.linkId = value.linkId;
         this.createdAt = value.createdAt;
         this.createdBy = value.createdBy;
     }
 
-    @ConstructorProperties({"id", "createdAt", "createdBy"})
-    public Tgchats(
-        @NotNull Long id,
+    @ConstructorProperties({"chatId", "linkId", "createdAt", "createdBy"})
+    public Subscriptions(
+        @NotNull Long chatId,
+        @NotNull Long linkId,
         @NotNull OffsetDateTime createdAt,
         @Nullable String createdBy
     ) {
-        this.id = id;
+        this.chatId = chatId;
+        this.linkId = linkId;
         this.createdAt = createdAt;
         this.createdBy = createdBy;
     }

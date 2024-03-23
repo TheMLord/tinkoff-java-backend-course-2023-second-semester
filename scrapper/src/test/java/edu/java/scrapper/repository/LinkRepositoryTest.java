@@ -1,6 +1,6 @@
 package edu.java.scrapper.repository;
 
-import edu.java.domain.pojos.Links;
+import edu.java.domain.jooq.pojos.Links;
 import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;

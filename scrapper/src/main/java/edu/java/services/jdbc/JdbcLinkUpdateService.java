@@ -1,6 +1,6 @@
 package edu.java.services.jdbc;
 
-import edu.java.domain.pojos.Links;
+import edu.java.domain.jooq.pojos.Links;
 import edu.java.models.dto.api.LinkUpdate;
 import edu.java.processors.UriProcessor;
 import edu.java.repository.LinkDao;

@@ -267,7 +267,7 @@ public class SubscriptionsRecord extends UpdatableRecordImpl<SubscriptionsRecord
     /**
      * Create a detached, initialised SubscriptionsRecord
      */
-    public SubscriptionsRecord(edu.java.domain.pojos.Subscriptions value) {
+    public SubscriptionsRecord(edu.java.domain.jooq.pojos.Subscriptions value) {
         super(Subscriptions.SUBSCRIPTIONS);
 
         if (value != null) {

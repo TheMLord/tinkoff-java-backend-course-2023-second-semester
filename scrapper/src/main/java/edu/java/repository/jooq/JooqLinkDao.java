@@ -2,9 +2,9 @@ package edu.java.repository.jooq;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.java.domain.pojos.Links;
-import edu.java.domain.pojos.Subscriptions;
-import edu.java.domain.pojos.Tgchats;
+import edu.java.domain.jooq.pojos.Links;
+import edu.java.domain.jooq.pojos.Subscriptions;
+import edu.java.domain.jooq.pojos.Tgchats;
 import edu.java.exceptions.AlreadyTrackLinkException;
 import edu.java.exceptions.NotExistLinkException;
 import edu.java.exceptions.NotExistTgChatException;

@@ -1,6 +1,6 @@
 package edu.java.repository.jdbc;
 
-import edu.java.domain.pojos.Tgchats;
+import edu.java.domain.jooq.pojos.Tgchats;
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.repository.TgChatRepository;
