@@ -1,9 +1,11 @@
 package edu.java.repository.jdbc.utilities;
 
-import edu.java.models.entities.Link;
-import edu.java.models.entities.Subscriptions;
-import edu.java.models.entities.TgChat;
-import java.net.URI;
+//import edu.java.models.entities.Link;
+//import edu.java.models.entities.TgChat;
+
+import edu.java.domain.pojos.Links;
+import edu.java.domain.pojos.Subscriptions;
+import edu.java.domain.pojos.Tgchats;
 import java.sql.ResultSet;
 import java.time.OffsetDateTime;
 import lombok.NoArgsConstructor;
@@ -39,10 +41,10 @@ public final class JdbcRowMapperUtil {
      * @return Link entity.
      */
     @SneakyThrows
-    public static Link mapRowToLink(ResultSet row, int rowNum) {
-        return new Link(
+    public static Links mapRowToLink(ResultSet row, int rowNum) {
+        return new Links(
             row.getLong(LINK_TABLE_COLUMN_ID),
-            URI.create(row.getString(LINK_TABLE_COLUMN_LINK_NAME)),
+            row.getString(LINK_TABLE_COLUMN_LINK_NAME),
             row.getObject(LINK_TABLE_COLUMN_CREATE_AT, OffsetDateTime.class),
             row.getString(LINK_TABLE_COLUMN_CREATE_BY),
             row.getString(LINK_TABLE_COLUMN_CONTENT),
@@ -87,8 +89,8 @@ public final class JdbcRowMapperUtil {
      * @return TgChat entity from table tgchat.
      */
     @SneakyThrows
-    public static TgChat mapRowToTgChat(ResultSet row, int rowNum) {
-        return new TgChat(
+    public static Tgchats mapRowToTgChat(ResultSet row, int rowNum) {
+        return new Tgchats(
             row.getLong(TG_CHAT_TABLE_COLUMN_ID),
             row.getObject(TG_CHAT_TABLE_COLUMN_CREATED_AT, OffsetDateTime.class),
             row.getString(TG_CHAT_TABLE_COLUMN_CREATED_BY)

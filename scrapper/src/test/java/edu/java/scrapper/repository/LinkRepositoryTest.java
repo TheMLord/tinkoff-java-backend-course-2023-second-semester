@@ -1,5 +1,6 @@
 package edu.java.scrapper.repository;
 
+import edu.java.domain.pojos.Links;
 import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
-public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
+public class LinkRepositoryTest extends IntegrationEnvironment {
     @Autowired LinkRepository jdbcLinkRepository;
 
     @Test
@@ -36,7 +39,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
         assertThat(actualAllLinks.size()).isEqualTo(exceptedCountLinks);
 
-        var actualListLinkName = actualAllLinks.stream().map(link -> link.getLinkUri().toString()).toList();
+        var actualListLinkName = actualAllLinks.stream().map(Links::getLinkUri).toList();
         assertThat(actualListLinkName).containsOnly(
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff1",
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff2",
@@ -59,7 +62,9 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         var actualLinks = jdbcLinkRepository.findAllByTime(timePredicate).block();
 
         assertThat(actualLinks.size()).isEqualTo(exceptedContLink);
-        var actualListLinkName = actualLinks.stream().map(link -> link.getLinkUri().toString()).toList();
+
+        var actualListLinkName = actualLinks.stream().map(Links::getLinkUri).toList();
+
         assertThat(actualListLinkName).containsOnly(
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff2",
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff3"
@@ -104,5 +109,10 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         var actualContent = jdbcLinkRepository.findById(idLink).block().get().getContent();
 
         assertThat(exceptedContent).isEqualTo(actualContent);
+    }
+
+    @DynamicPropertySource
+    static void jdbcProperties(DynamicPropertyRegistry registry) {
+        registry.add("app.database-access-type", () -> "jooq");
     }
 }

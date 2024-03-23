@@ -2,13 +2,13 @@ package edu.java.repository.jdbc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.java.domain.pojos.Links;
+import edu.java.domain.pojos.Subscriptions;
+import edu.java.domain.pojos.Tgchats;
 import edu.java.exceptions.AlreadyTrackLinkException;
 import edu.java.exceptions.NotExistLinkException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.exceptions.NotTrackLinkException;
-import edu.java.models.entities.Link;
-import edu.java.models.entities.Subscriptions;
-import edu.java.models.entities.TgChat;
 import edu.java.processors.UriProcessor;
 import edu.java.repository.LinkDao;
 import edu.java.repository.LinkRepository;
@@ -21,13 +21,11 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 /**
  * jdbc implementation link dao.
  */
-@Repository
 @RequiredArgsConstructor
 public class JdbcLinkDao implements LinkDao {
     private final JdbcTemplate jdbcTemplate;
@@ -38,8 +36,8 @@ public class JdbcLinkDao implements LinkDao {
 
     @SneakyThrows
     @Override
-    public Mono<Link> add(Long chatId, URI uri) {
-        return getChatIfExist(chatId).map(TgChat::getId)
+    public Mono<Links> add(Long chatId, URI uri) {
+        return getChatIfExist(chatId).map(Tgchats::getId)
             .flatMap(id -> getLinkIfExist(uri).onErrorResume(throwable -> createLink(uri))
             ).flatMap(link -> {
                     var linkId = link.getId();
@@ -50,7 +48,7 @@ public class JdbcLinkDao implements LinkDao {
                             linkId,
                             OffsetDateTime.now()
                         );
-                        return Mono.just(new Link(
+                        return Mono.just(new Links(
                             linkId,
                             link.getLinkUri(),
                             link.getCreatedAt(),
@@ -66,7 +64,7 @@ public class JdbcLinkDao implements LinkDao {
     }
 
     @Override
-    public Mono<Link> remove(Long chatId, URI uri) {
+    public Mono<Links> remove(Long chatId, URI uri) {
         return getChatIfExist(chatId)
             .flatMap(chat -> getLinkIfExist(uri))
             .flatMap(link -> {
@@ -83,7 +81,7 @@ public class JdbcLinkDao implements LinkDao {
     }
 
     @Override
-    public Mono<List<Link>> getAllLinkInRelation(Long chatId) {
+    public Mono<List<Links>> getAllLinkInRelation(Long chatId) {
         return getChatIfExist(chatId).map(chat -> jdbcTemplate.query(
             "SELECT * FROM links WHERE id IN (SELECT link_id FROM subscriptions WHERE chat_id = (?))",
             JdbcRowMapperUtil::mapRowToLink,
@@ -110,7 +108,8 @@ public class JdbcLinkDao implements LinkDao {
      * @param id entity id.
      * @return TgChat by id if it exists, otherwise throws a NotExistTgChatException.
      */
-    private Mono<TgChat> getChatIfExist(Long id) {
+
+    private Mono<Tgchats> getChatIfExist(Long id) {
         return chatRepository.findById(id).flatMap(tgChat ->
             tgChat.map(Mono::just).orElse(Mono.error(new NotExistTgChatException())));
     }
@@ -121,7 +120,7 @@ public class JdbcLinkDao implements LinkDao {
      * @param uri link name.
      * @return Link by id if it exists, otherwise throws a NotExistLinkException.
      */
-    private Mono<Link> getLinkIfExist(URI uri) {
+    private Mono<Links> getLinkIfExist(URI uri) {
         return linkRepository.findLinkByName(uri).flatMap(link ->
             link.map(Mono::just).orElse(Mono.error(new NotExistLinkException())));
     }
@@ -183,7 +182,7 @@ public class JdbcLinkDao implements LinkDao {
      * @return the Link object, which contains the link name and the identifier assigned to it in the database.
      */
     @SneakyThrows
-    private Mono<Link> createLink(URI linkUri) {
+    private Mono<Links> createLink(URI linkUri) {
         return Mono.defer(() -> {
             try {
                 var content = objectMapper.writeValueAsString(uriProcessor.processUri(linkUri));

@@ -10,11 +10,14 @@ import edu.java.repository.LinkRepository;
 import edu.java.repository.TgChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
+import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,10 +33,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @TestPropertySource(locations = "classpath:test")
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
-public class JdbcLinkDaoTest extends IntegrationEnvironment {
-    @Autowired TgChatRepository jdbcTgChatRepository;
-    @Autowired LinkDao jdbcLinkDao;
-    @Autowired LinkRepository jdbcLinkRepository;
+public class LinkDaoTest extends IntegrationEnvironment {
+    @Autowired TgChatRepository tgChatRepository;
+    @Autowired LinkDao linkDao;
+    @Autowired LinkRepository linkRepository;
 
     @Test
     @DisplayName(
@@ -46,15 +49,15 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var exceptedLinkName =
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester11");
 
-        jdbcTgChatRepository.add(idChat).block();
-        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat).block()).isEmpty();
+        tgChatRepository.add(idChat).block();
+        assertThat(linkDao.getAllLinkInRelation(idChat).block()).isEmpty();
 
-        var actualLinkName = jdbcLinkDao.add(idChat, exceptedLinkName).block();
-        var actualLinkInDB = jdbcLinkRepository.findLinkByName(exceptedLinkName).block();
+        var actualLinkName = linkDao.add(idChat, exceptedLinkName).block();
+        var actualLinkInDB = linkRepository.findLinkByName(exceptedLinkName).block();
 
-        assertThat(actualLinkName.getLinkUri()).isEqualTo(exceptedLinkName);
+        assertThat(actualLinkName.getLinkUri()).isEqualTo(exceptedLinkName.toString());
         assertThat(actualLinkInDB).isPresent();
-        assertThat(actualLinkInDB.get().getLinkUri()).isEqualTo(exceptedLinkName);
+        assertThat(actualLinkInDB.get().getLinkUri()).isEqualTo(exceptedLinkName.toString());
     }
 
     @Test
@@ -67,7 +70,7 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var exceptedLinkName =
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester12");
 
-        assertThatThrownBy(() -> jdbcLinkDao.add(
+        assertThatThrownBy(() -> linkDao.add(
             idChat,
             exceptedLinkName
         ).block()).isInstanceOf(NotExistTgChatException.class);
@@ -83,12 +86,12 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var exceptedLinkName =
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester13");
 
-        jdbcTgChatRepository.add(idChat).block();
-        jdbcLinkDao.add(idChat, exceptedLinkName).block();
+        tgChatRepository.add(idChat).block();
+        linkDao.add(idChat, exceptedLinkName).block();
 
-        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName).block()).isPresent();
+        assertThat(linkRepository.findLinkByName(exceptedLinkName).block()).isPresent();
 
-        assertThatThrownBy(() -> jdbcLinkDao.add(
+        assertThatThrownBy(() -> linkDao.add(
             idChat,
             exceptedLinkName
         ).block()).isInstanceOf(AlreadyTrackLinkException.class);
@@ -105,7 +108,7 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var exceptedLinkName =
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester14");
 
-        assertThatThrownBy(() -> jdbcLinkDao.remove(
+        assertThatThrownBy(() -> linkDao.remove(
             idChat,
             exceptedLinkName
         ).block()).isInstanceOf(NotExistTgChatException.class);
@@ -118,24 +121,17 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
     @Rollback
     void testThatItIsImpossibleToRemoveFromTrackingALinkThatTheChatDoesNotTrackAndReturnedTheCorrectError() {
         setUpServer();
-        var idChat = 15L;
+        var idChat1 = 13L;
+        var idChat2 = 14L;
         var exceptedLinkName =
-            URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester15");
+            URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester13");
 
-        jdbcTgChatRepository.add(idChat).block();
-        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat).block()).isEmpty();
+        tgChatRepository.add(idChat1).block();
+        tgChatRepository.add(idChat2).block();
+        linkDao.add(idChat2, exceptedLinkName).block();
 
-            /*
-            Adding another user with a link so that the link entity appears in the database,
-             otherwise there will be another error - NotExistLinkException
-             */
-        jdbcTgChatRepository.add(16L).block();
-        jdbcLinkDao.add(16L, exceptedLinkName).block();
-
-        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName).block()).isPresent();
-
-        assertThatThrownBy(() -> jdbcLinkDao.remove(
-            idChat,
+        assertThatThrownBy(() -> linkDao.remove(
+            idChat1,
             exceptedLinkName
         ).block()).isInstanceOf(NotTrackLinkException.class);
     }
@@ -151,12 +147,12 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var exceptedLinkName =
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester17");
 
-        jdbcTgChatRepository.add(idChat).block();
-        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat).block()).isEmpty();
+        tgChatRepository.add(idChat).block();
+        assertThat(linkDao.getAllLinkInRelation(idChat).block()).isEmpty();
 
-        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName).block()).isEmpty();
+        assertThat(linkRepository.findLinkByName(exceptedLinkName).block()).isEmpty();
 
-        assertThatThrownBy(() -> jdbcLinkDao.remove(
+        assertThatThrownBy(() -> linkDao.remove(
             idChat,
             exceptedLinkName
         ).block()).isInstanceOf(NotExistLinkException.class);
@@ -174,30 +170,30 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var exceptedLinkName1 =
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester18");
         var exceptedLinkName2 =
-            URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff19");
+            URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester19");
 
-        jdbcTgChatRepository.add(idChat1).block();
-        jdbcTgChatRepository.add(idChat2).block();
-        jdbcLinkDao.add(idChat1, exceptedLinkName1).block();
-        jdbcLinkDao.add(idChat1, exceptedLinkName2).block();
-        jdbcLinkDao.add(idChat2, exceptedLinkName1).block();
+        tgChatRepository.add(idChat1).block();
+        tgChatRepository.add(idChat2).block();
+        linkDao.add(idChat1, exceptedLinkName1).block();
+        linkDao.add(idChat1, exceptedLinkName2).block();
+        linkDao.add(idChat2, exceptedLinkName1).block();
 
-        var actualLink1 = jdbcLinkRepository.findLinkByName(exceptedLinkName1).block();
-        var actualLink2 = jdbcLinkRepository.findLinkByName(exceptedLinkName2).block();
+        var actualLink1 = linkRepository.findLinkByName(exceptedLinkName1).block();
+        var actualLink2 = linkRepository.findLinkByName(exceptedLinkName2).block();
 
         assertThat(actualLink1).isPresent();
         assertThat(actualLink2).isPresent();
 
-        assertThat(jdbcLinkDao.findAllIdTgChatWhoTrackLink(actualLink1.get().getId()).block()).containsOnly(
+        assertThat(linkDao.findAllIdTgChatWhoTrackLink(actualLink1.get().getId()).block()).containsOnly(
             idChat1,
             idChat2
         );
-        assertThat(jdbcLinkDao.findAllIdTgChatWhoTrackLink(actualLink2.get().getId()).block()).containsOnly(idChat1);
+        assertThat(linkDao.findAllIdTgChatWhoTrackLink(actualLink2.get().getId()).block()).containsOnly(idChat1);
     }
 
     private void setUpServer() {
         stubFor(
-            get(urlPathMatching("/repos/.*"))
+            get(urlPathMatching("/repos/TheMLord/tinkoff-java-backend-course-2023-second-semester([1-9][1-9]|[1-9])"))
                 .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/json")
@@ -213,5 +209,46 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
                                 "pushed_at": "2024-02-13T13:34:39Z"
                             }"""
                     )));
+
+        stubFor(
+            get(urlPathMatching(
+                "/repos/TheMLord/tinkoff-java-backend-course-2023-second-semester([1-9][1-9]|[1-9])/branches"))
+                .willReturn(aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(
+                        """
+                            [
+                                 {
+                                     "name": "createdAccount",
+                                     "commit": {
+                                         "sha": "91c6ce32c18cd16baae811a6348ea37ca75a4cdb",
+                                         "url": "https://api.github.com/repos/TheMLord/Interface_for_an_ATM_with_a_banking_system/commits/91c6ce32c18cd16baae811a6348ea37ca75a4cdb"
+                                     },
+                                     "protected": false
+                                 },
+                                 {
+                                     "name": "main",
+                                     "commit": {
+                                         "sha": "0f9906316ed03aeae035ae851b9742a630b5b070",
+                                         "url": "https://api.github.com/repos/TheMLord/Interface_for_an_ATM_with_a_banking_system/commits/0f9906316ed03aeae035ae851b9742a630b5b070"
+                                     },
+                                     "protected": false
+                                 },
+                                 {
+                                     "name": "master",
+                                     "commit": {
+                                         "sha": "af16415266c8482501b840c46411cce4a9e1f775",
+                                         "url": "https://api.github.com/repos/TheMLord/Interface_for_an_ATM_with_a_banking_system/commits/af16415266c8482501b840c46411cce4a9e1f775"
+                                     },
+                                     "protected": false
+                                 }
+                             ]"""
+                    )));
+    }
+
+    @DynamicPropertySource
+    static void jdbcProperties(DynamicPropertyRegistry registry) {
+        registry.add("app.database-access-type", () -> "jooq");
     }
 }

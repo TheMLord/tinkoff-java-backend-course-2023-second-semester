@@ -1,21 +1,19 @@
 package edu.java.repository.jdbc;
 
+import edu.java.domain.pojos.Tgchats;
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
-import edu.java.models.entities.TgChat;
 import edu.java.repository.TgChatRepository;
 import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 /**
  * jdbc implementation chat repository.
  */
-@Repository
 @RequiredArgsConstructor
 public class JdbcTgChatRepository implements TgChatRepository {
     private final JdbcTemplate jdbcTemplate;
@@ -36,7 +34,7 @@ public class JdbcTgChatRepository implements TgChatRepository {
     }
 
     @Override
-    public Mono<Optional<TgChat>> findById(Long chatId) {
+    public Mono<Optional<Tgchats>> findById(Long chatId) {
         return Mono.defer(() -> {
             var resultChats = jdbcTemplate.query(
                 "SELECT * FROM tgchats WHERE id = (?)",

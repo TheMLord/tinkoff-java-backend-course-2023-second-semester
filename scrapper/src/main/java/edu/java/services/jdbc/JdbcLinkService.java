@@ -6,14 +6,13 @@ import edu.java.repository.LinkDao;
 import edu.java.services.LinkService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 /**
  * Implementation of the jdbc link service.
  */
-@Service
+
 @RequiredArgsConstructor
 public class JdbcLinkService implements LinkService {
     private final LinkDao linkDao;
@@ -25,7 +24,7 @@ public class JdbcLinkService implements LinkService {
             .flatMap(link -> Mono.just(
                     new LinkResponse(
                         link.getId(),
-                        link.getLinkUri()
+                        URI.create(link.getLinkUri())
                     )
                 )
             );
@@ -35,7 +34,7 @@ public class JdbcLinkService implements LinkService {
     @Transactional
     public Mono<LinkResponse> removeLink(long chatId, URI linkUri) {
         return linkDao.remove(chatId, linkUri)
-            .flatMap(link -> Mono.just(new LinkResponse(link.getId(), link.getLinkUri())));
+            .flatMap(link -> Mono.just(new LinkResponse(link.getId(), URI.create(link.getLinkUri()))));
 
     }
 
@@ -44,7 +43,7 @@ public class JdbcLinkService implements LinkService {
     public Mono<ListLinksResponse> getListLinks(long chatId) {
         return linkDao.getAllLinkInRelation(chatId)
             .flatMap(links -> Mono.just(new ListLinksResponse(
-                links.stream().map(link -> new LinkResponse(link.getId(), link.getLinkUri())).toList(),
+                links.stream().map(link -> new LinkResponse(link.getId(), URI.create(link.getLinkUri()))).toList(),
                 links.size()
             )));
     }
