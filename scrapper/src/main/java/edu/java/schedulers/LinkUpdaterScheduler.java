@@ -3,11 +3,11 @@ package edu.java.schedulers;
 import edu.java.proxies.BotProxy;
 import edu.java.repository.LinkRepository;
 import edu.java.services.LinkUpdateService;
+import java.time.OffsetDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import java.time.OffsetDateTime;
 
 /**
  * Scheduler class for periodically checking for updates to the content of links stored
