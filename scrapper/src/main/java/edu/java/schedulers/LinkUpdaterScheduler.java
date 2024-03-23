@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import java.time.OffsetDateTime;
 
 /**
  * Scheduler class for periodically checking for updates to the content of links stored
@@ -28,8 +29,8 @@ public final class LinkUpdaterScheduler {
     private void update() {
         log.info("executing the update method");
 
-//        linkRepository.findAllByTime(OffsetDateTime.now().minusHours(1))
-//            .subscribe(links -> links.forEach(link -> linkUpdateService.prepareLinkUpdate(link)
-//                .subscribe(optionalUpdate -> optionalUpdate.map(botProxy::pushLinkUpdate))));
+        linkRepository.findAllByTime(OffsetDateTime.now().minusHours(1))
+            .subscribe(links -> links.forEach(link -> linkUpdateService.prepareLinkUpdate(link)
+                .subscribe(optionalUpdate -> optionalUpdate.map(botProxy::pushLinkUpdate))));
     }
 }
