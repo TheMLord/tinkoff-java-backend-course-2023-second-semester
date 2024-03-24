@@ -1,6 +1,6 @@
 package edu.java.repository;
 
-import edu.java.domain.pojos.Tgchats;
+import edu.java.domain.jooq.pojos.Tgchats;
 import java.util.Optional;
 import reactor.core.publisher.Mono;
 

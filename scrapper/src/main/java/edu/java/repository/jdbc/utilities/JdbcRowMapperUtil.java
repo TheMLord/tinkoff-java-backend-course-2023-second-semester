@@ -3,9 +3,9 @@ package edu.java.repository.jdbc.utilities;
 //import edu.java.models.entities.Link;
 //import edu.java.models.entities.TgChat;
 
-import edu.java.domain.pojos.Links;
-import edu.java.domain.pojos.Subscriptions;
-import edu.java.domain.pojos.Tgchats;
+import edu.java.domain.jooq.pojos.Links;
+import edu.java.domain.jooq.pojos.Subscriptions;
+import edu.java.domain.jooq.pojos.Tgchats;
 import java.sql.ResultSet;
 import java.time.OffsetDateTime;
 import lombok.NoArgsConstructor;

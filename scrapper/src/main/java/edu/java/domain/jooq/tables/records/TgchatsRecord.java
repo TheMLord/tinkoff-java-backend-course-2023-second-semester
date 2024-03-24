@@ -213,7 +213,7 @@ public class TgchatsRecord extends UpdatableRecordImpl<TgchatsRecord> implements
     /**
      * Create a detached, initialised TgchatsRecord
      */
-    public TgchatsRecord(edu.java.domain.pojos.Tgchats value) {
+    public TgchatsRecord(edu.java.domain.jooq.pojos.Tgchats value) {
         super(Tgchats.TGCHATS);
 
         if (value != null) {

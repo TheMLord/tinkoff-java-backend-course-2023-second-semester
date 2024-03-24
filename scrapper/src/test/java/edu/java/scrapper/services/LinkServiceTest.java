@@ -1,9 +1,7 @@
 package edu.java.scrapper.services;
 
-import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.LinkService;
-import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +12,19 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.net.URI;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@Sql(value = "classpath:sql/jdbcservice-insert-test.sql",
+@Sql(value = "classpath:sql/service-insert-test.sql",
      executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
 public class LinkServiceTest extends IntegrationEnvironment {
-    @Autowired LinkService jdbcLinkService;
-    @Autowired LinkRepository jdbcLinkRepository;
+    @Autowired LinkService linkService;
 
     @Test
     @DisplayName(
@@ -34,10 +34,9 @@ public class LinkServiceTest extends IntegrationEnvironment {
     void testThatTheAddLinkBetweenChatAndLinkMethodWorksCorrectlyAndReturnsTheCorrectLinkResponse() {
         var exceptedLinkResponseURI =
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff2");
-        var exceptedLinkResponseId = jdbcLinkRepository
-            .findLinkByName(exceptedLinkResponseURI).block().get().getId();
+        var exceptedLinkResponseId = 2L;
 
-        var actualLinkResponse = jdbcLinkService.addLink(2L, exceptedLinkResponseURI).block();
+        var actualLinkResponse = linkService.addLink(2L, exceptedLinkResponseURI).block();
 
         assertThat(actualLinkResponse.getId()).isEqualTo(exceptedLinkResponseId);
         assertThat(actualLinkResponse.getUrl()).isEqualTo(exceptedLinkResponseURI);
@@ -51,10 +50,9 @@ public class LinkServiceTest extends IntegrationEnvironment {
     void testThatTheMethodOfRemovingTheLinkBetweenTheChatAndTheLinkWorksCorrectlyAndReturnsTheCorrectLinkResponse() {
         var exceptedLinkResponseURI =
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff2");
-        var exceptedLinkResponseId = jdbcLinkRepository
-            .findLinkByName(exceptedLinkResponseURI).block().get().getId();
+        var exceptedLinkResponseId = 2L;
 
-        var actualLinkResponse = jdbcLinkService.removeLink(1L, exceptedLinkResponseURI).block();
+        var actualLinkResponse = linkService.removeLink(1L, exceptedLinkResponseURI).block();
 
         assertThat(actualLinkResponse.getId()).isEqualTo(exceptedLinkResponseId);
         assertThat(actualLinkResponse.getUrl()).isEqualTo(exceptedLinkResponseURI);
@@ -68,7 +66,7 @@ public class LinkServiceTest extends IntegrationEnvironment {
     void testThatTheMethodOfPreparingTheMessageAboutTheLinksMonitoredByTheChatIsBeingPerformedCorrectlyAndReturnedTheCorrectAnswer() {
         var exceptedSize = 3;
 
-        var actualListLinkResponse = jdbcLinkService.getListLinks(1L).block();
+        var actualListLinkResponse = linkService.getListLinks(1L).block();
         var trackedLinks =
             actualListLinkResponse.getLinks().stream()
                 .map(linkResponse -> linkResponse.getUrl().toString())
@@ -82,8 +80,10 @@ public class LinkServiceTest extends IntegrationEnvironment {
         );
     }
 
+
+
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
+        registry.add("app.database-access-type", () -> "jpa");
     }
 }

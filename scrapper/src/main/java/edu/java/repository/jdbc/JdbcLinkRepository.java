@@ -1,6 +1,6 @@
 package edu.java.repository.jdbc;
 
-import edu.java.domain.pojos.Links;
+import edu.java.domain.jooq.pojos.Links;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
 import java.net.URI;

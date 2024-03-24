@@ -1,6 +1,6 @@
 package edu.java.repository.jooq;
 
-import edu.java.domain.pojos.Links;
+import edu.java.domain.jooq.pojos.Links;
 import edu.java.repository.LinkRepository;
 import java.net.URI;
 import java.time.OffsetDateTime;
