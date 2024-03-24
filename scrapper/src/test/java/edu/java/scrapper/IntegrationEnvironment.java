@@ -34,18 +34,19 @@ public abstract class IntegrationEnvironment {
         var pathToMaster = new File(".").toPath().toAbsolutePath().getParent()
             .resolve("src/main/resources/migrations");
 
-        var connection = DriverManager.getConnection(c.getJdbcUrl(), c.getUsername(), c.getPassword());
-        var db = DatabaseFactory.getInstance()
-            .findCorrectDatabaseImplementation(new JdbcConnection(connection));
-
-        var liquibase = new Liquibase(
-            "master.xml",
-            new DirectoryResourceAccessor(pathToMaster),
-            db
-        );
-
-        liquibase.update(new Contexts(), new LabelExpression());
+        try (var connection = DriverManager.getConnection(c.getJdbcUrl(), c.getUsername(), c.getPassword())) {
+            try (var db = DatabaseFactory.getInstance()
+                .findCorrectDatabaseImplementation(new JdbcConnection(connection))) {
+                var liquibase = new Liquibase(
+                    "master.xml",
+                    new DirectoryResourceAccessor(pathToMaster),
+                    db
+                );
+                liquibase.update(new Contexts(), new LabelExpression());
+            }
+        }
     }
+
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);

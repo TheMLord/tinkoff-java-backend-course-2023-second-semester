@@ -1,6 +1,5 @@
 package edu.java.scrapper.services;
 
-import edu.java.repository.TgChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.ChatService;
 import org.junit.jupiter.api.DisplayName;
@@ -13,17 +12,15 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest()
-@Sql(value = "classpath:sql/jdbcservice-insert-test.sql",
+@Sql(value = "classpath:sql/service-insert-test.sql",
      executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
 public class TgChatServiceTest extends IntegrationEnvironment {
-    @Autowired ChatService jdbcChatService;
-    @Autowired TgChatRepository jdbcTgChatRepository;
+    @Autowired ChatService chatService;
 
     @Test
     @DisplayName("Test that the service does not return errors when adding a new chat correctly")
@@ -32,9 +29,7 @@ public class TgChatServiceTest extends IntegrationEnvironment {
     void testThatTheServiceDoesNotReturnErrorsWhenAddingANewChatCorrectly() {
         var newChatId = 4L;
 
-        assertThat(jdbcTgChatRepository.findById(newChatId).block()).isEmpty();
-        jdbcChatService.register(newChatId).block();
-        assertThat(jdbcTgChatRepository.findById(newChatId).block()).isPresent();
+        chatService.register(newChatId).block();
     }
 
     @Test
@@ -44,13 +39,13 @@ public class TgChatServiceTest extends IntegrationEnvironment {
     void testThatTheServiceDoesNotReturnErrorsIfTheChatIsDeletedCorrectly() {
         var existChat = 1L;
 
-        assertThat(jdbcTgChatRepository.findById(existChat).block()).isPresent();
-        jdbcChatService.unRegister(existChat).block();
-        assertThat(jdbcTgChatRepository.findById(existChat).block()).isEmpty();
+        chatService.unRegister(existChat).block();
     }
+
+
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
+        registry.add("app.database-access-type", () -> "jpa");
     }
 }

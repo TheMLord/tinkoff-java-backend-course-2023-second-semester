@@ -1,4 +1,4 @@
-package edu.java.scrapper.repository;
+package edu.java.scrapper.repository.jdbcJooq;
 
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
@@ -78,8 +78,9 @@ public class TgChatRepositoryTest extends IntegrationEnvironment {
             .isInstanceOf(NotExistTgChatException.class);
     }
 
+
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
 }

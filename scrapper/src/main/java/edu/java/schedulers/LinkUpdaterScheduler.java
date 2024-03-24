@@ -1,13 +1,10 @@
 package edu.java.schedulers;
 
 import edu.java.proxies.BotProxy;
-import edu.java.repository.LinkRepository;
-import edu.java.services.LinkUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import java.time.OffsetDateTime;
 
 /**
  * Scheduler class for periodically checking for updates to the content of links stored
@@ -17,8 +14,7 @@ import java.time.OffsetDateTime;
 @RequiredArgsConstructor
 @Slf4j
 public final class LinkUpdaterScheduler {
-    private final LinkUpdateService linkUpdateService;
-    private final LinkRepository linkRepository;
+    //    private final LinkUpdateService linkUpdateService;
     private final BotProxy botProxy;
 
     /**
@@ -29,8 +25,7 @@ public final class LinkUpdaterScheduler {
     private void update() {
         log.info("executing the update method");
 
-        linkRepository.findAllByTime(OffsetDateTime.now().minusHours(1))
-            .subscribe(links -> links.forEach(link -> linkUpdateService.prepareLinkUpdate(link)
-                .subscribe(optionalUpdate -> optionalUpdate.map(botProxy::pushLinkUpdate))));
+//        linkUpdateService.prepareLinkUpdate()
+//            .subscribe(optionalUpdate -> optionalUpdate.map(botProxy::pushLinkUpdate));
     }
 }

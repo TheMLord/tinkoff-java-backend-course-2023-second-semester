@@ -1,4 +1,4 @@
-package edu.java.scrapper.repository;
+package edu.java.scrapper.repository.jdbcJooq;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.exceptions.AlreadyTrackLinkException;
@@ -10,7 +10,6 @@ import edu.java.repository.LinkRepository;
 import edu.java.repository.TgChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
-import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -249,6 +248,6 @@ public class LinkDaoTest extends IntegrationEnvironment {
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
 }

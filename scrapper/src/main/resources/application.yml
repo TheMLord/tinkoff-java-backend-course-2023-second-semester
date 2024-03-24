@@ -4,7 +4,7 @@ app:
     interval: 5s
     force-check-delay: 10s
 
-  database-access-type: jooq # JPA, JOOQ
+  database-access-type: jpa # JPA, JOOQ
 
   client-base-url:
     github-uri: https://api.github.com
