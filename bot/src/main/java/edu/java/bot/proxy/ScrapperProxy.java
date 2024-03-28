@@ -11,19 +11,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 @RequiredArgsConstructor
 @Slf4j
 public class ScrapperProxy {
     private final WebClient scrapperClient;
+    private final Retry retryPolicy;
     private static final String TG_HEADER = "Tg-Chat-Id";
     private static final String TG_REQUEST_PATH = "/tg-chat/{id}";
     private static final String LINK_REQUEST_PATH = "/links";
 
-    public ScrapperProxy(WebClient.Builder webClientBuilder, String baseUri) {
+    public ScrapperProxy(WebClient.Builder webClientBuilder, String baseUri, Retry retryPolicy) {
         this.scrapperClient = webClientBuilder
             .baseUrl(baseUri)
             .build();
+        this.retryPolicy = retryPolicy;
     }
 
     public Mono<Void> registerChat(long chatId) {
@@ -37,7 +40,8 @@ public class ScrapperProxy {
                     .map(ScrapperApiException::new)
                     .flatMap(Mono::error)
             )
-            .bodyToMono(Void.class);
+            .bodyToMono(Void.class)
+            .retryWhen(retryPolicy);
     }
 
     public Mono<Void> deleteChat(long chatId) {
@@ -51,7 +55,8 @@ public class ScrapperProxy {
                     .map(ScrapperApiException::new)
                     .flatMap(Mono::error)
             )
-            .bodyToMono(Void.class);
+            .bodyToMono(Void.class)
+            .retryWhen(retryPolicy);
     }
 
     public Mono<ListLinksResponse> getListLinks(long tgChatId) {
@@ -66,7 +71,8 @@ public class ScrapperProxy {
                     .map(ScrapperApiException::new)
                     .flatMap(Mono::error)
             )
-            .bodyToMono(ListLinksResponse.class);
+            .bodyToMono(ListLinksResponse.class)
+            .retryWhen(retryPolicy);
     }
 
     public Mono<LinkResponse> addLink(AddLinkRequest addLinkRequest, long tgChatId) {
@@ -82,7 +88,8 @@ public class ScrapperProxy {
                     .map(ScrapperApiException::new)
                     .flatMap(Mono::error)
             )
-            .bodyToMono(LinkResponse.class);
+            .bodyToMono(LinkResponse.class)
+            .retryWhen(retryPolicy);
     }
 
     public Mono<LinkResponse> deleteLink(RemoveLinkRequest removeLinkRequest, long tgChatId) {
@@ -98,6 +105,7 @@ public class ScrapperProxy {
                     .map(ScrapperApiException::new)
                     .flatMap(Mono::error)
             )
-            .bodyToMono(LinkResponse.class);
+            .bodyToMono(LinkResponse.class)
+            .retryWhen(retryPolicy);
     }
 }
