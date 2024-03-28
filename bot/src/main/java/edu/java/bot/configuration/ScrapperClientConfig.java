@@ -4,6 +4,7 @@ import edu.java.bot.proxy.ScrapperProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.util.retry.Retry;
 
 /**
  * Configuration of the client that makes requests to the Scrapper application.
@@ -17,10 +18,15 @@ public class ScrapperClientConfig {
      * @param appConfig        application configuration properties by app prefix/
      */
     @Bean
-    public ScrapperProxy scrapperProxy(WebClient.Builder webClientBuilder, ApplicationConfig appConfig) {
+    public ScrapperProxy scrapperProxy(
+        WebClient.Builder webClientBuilder,
+        ApplicationConfig appConfig,
+        Retry retryPolicy
+    ) {
         return new ScrapperProxy(
             webClientBuilder,
-            appConfig.scrapperBaseUri()
+            appConfig.scrapperBaseUri(),
+            retryPolicy
         );
     }
 }

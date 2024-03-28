@@ -2,6 +2,7 @@ package edu.java.controller;
 
 import edu.java.services.ChatService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
@@ -21,7 +22,7 @@ public class ChatController implements TgChatApi {
             ));
     }
 
-    @Override
+    @SneakyThrows @Override
     public Mono<ResponseEntity<Void>> tgChatIdPost(Long id) {
         return chatService.register(id).then(Mono.fromCallable(() ->
             ResponseEntity
