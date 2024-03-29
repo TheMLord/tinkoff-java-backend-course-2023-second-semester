@@ -12,7 +12,49 @@ spring:
     name: bot
   jackson:
     time-zone: UTC
+  cache:
+    cache-names:
+      - rate-limit-buckets-bot
+    caffeine:
+      spec: maximumSize=100000,expireAfterAccess=3600s
 
+bucket4j:
+  enabled: true
+
+  default-metric-tags:
+    - key: IP
+      expression: getRemoteAddr()
+      types: REJECTED_COUNTER
+
+  filter-config-caching-enabled: true
+  filter-config-cache-name: rate-limit-buckets-bot
+  filters:
+    - id: filterUpdate
+      cache-name: rate-limit-buckets-bot
+      http-content-type: application/json
+      http-status-code: TOO_MANY_REQUESTS
+      http-response-body: '{
+        "description": "Too many requests",
+        "code": "429",
+        "exceptionName": "string",
+        "exceptionMessage": "Too many requests",
+        "stacktrace": [
+          "string"
+        ]
+      }'
+
+      url: /updates
+      strategy: first
+      rate-limits:
+        - cache-key: getRemoteAddr()
+          num-tokens: 1
+          bandwidths:
+            - id: bandwidthsChat
+              capacity: 100
+              time: 1
+              unit: minutes
+      metrics:
+        enabled: true
 server:
   port: 8090
 

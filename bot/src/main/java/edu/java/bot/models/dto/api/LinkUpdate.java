@@ -6,6 +6,7 @@ import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -13,6 +14,7 @@ import lombok.Setter;
  */
 
 @Setter
+@AllArgsConstructor
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2024-02-27T07:34:30.177106031Z[UTC]")
 public class LinkUpdate {
 

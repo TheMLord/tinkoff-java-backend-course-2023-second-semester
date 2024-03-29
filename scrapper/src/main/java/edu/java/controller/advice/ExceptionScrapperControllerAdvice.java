@@ -29,12 +29,9 @@ public class ExceptionScrapperControllerAdvice {
 
     public static final String CHAT_ALREADY_REGISTER_DESCRIPTION = "Чат уже зарегистрирован";
     public static final String CHAT_NOT_REGISTER_DESCRIPTION = "Чат не зарегистрирован";
-
     public static final String LINK_ALREADY_TRACKED_DESCRIPTION = "Ссылка уже отслеживается";
     public static final String LINK_IS_NOT_TRACK_DESCRIPTION = "Ссылка не отслеживается чатом";
-
     public static final String LINK_NOT_FOUND_DESCRIPTION = "Несуществующая ссылка";
-
     public static final String SERVER_ERROR_DESCRIPTION = "Ошибка на стороне сервера";
     public static final String UNCORRECT_REQUEST_PARAM_DESCRIPTION = "Некорректные параметры запроса";
     public static final String UNSUPPORTED_REQUEST_DESCRIPTION = "Неподдерживаемый запрос";

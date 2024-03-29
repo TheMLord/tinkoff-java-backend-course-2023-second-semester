@@ -12,6 +12,74 @@ app:
 spring:
   application:
     name: scrapper
+  cache:
+    cache-names:
+      - rate-limit-buckets-scrapper
+    caffeine:
+      spec: maximumSize=100000,expireAfterAccess=3600s
+
+bucket4j:
+  enabled: true
+
+  default-metric-tags:
+    - key: IP
+      expression: getRemoteAddr()
+      types: REJECTED_COUNTER
+
+  filter-config-caching-enabled: true
+  filter-config-cache-name: rate-limit-buckets-scrapper
+  filters:
+    - id: filterChat
+      cache-name: rate-limit-buckets-scrapper
+      http-content-type: application/json
+      http-status-code: TOO_MANY_REQUESTS
+      http-response-body: '{
+        "description": "Too many requests",
+        "code": "429",
+        "exceptionName": "string",
+        "exceptionMessage": "Too many requests",
+        "stacktrace": [
+          "string"
+        ]
+      }'
+      url: /tg-chat/.*
+      strategy: first
+      rate-limits:
+        - cache-key: getRemoteAddr()
+          num-tokens: 1
+          bandwidths:
+            - id: bandwidthsChat
+              capacity: 1
+              time: 1
+              unit: minutes
+      metrics:
+        enabled: true
+
+    - id: filterLink
+      cache-name: rate-limit-buckets-scrapper
+      http-content-type: application/json
+      http-status-code: TOO_MANY_REQUESTS
+      http-response-body: '{
+        "description": "Too many requests",
+        "code": "429",
+        "exceptionName": "string",
+        "exceptionMessage": "Too many requests",
+        "stacktrace": [
+          "string"
+        ]
+      }'
+      url: /links
+      strategy: first
+      rate-limits:
+        - cache-key: getRemoteAddr()
+          num-tokens: 1
+          bandwidths:
+            - id: bandwidthsChat
+              capacity: 1
+              time: 1
+              unit: minutes
+      metrics:
+        enabled: true
 
 server:
   port: 8080
