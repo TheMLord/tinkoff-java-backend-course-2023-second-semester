@@ -1,4 +1,4 @@
-package edu.java.scrapper.repository;
+package edu.java.scrapper.repository.jooq;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.exceptions.AlreadyTrackLinkException;
@@ -10,11 +10,11 @@ import edu.java.repository.LinkRepository;
 import edu.java.repository.TgChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
-import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -29,11 +29,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
+@DirtiesContext
 @WireMockTest(httpPort = 8080)
 @TestPropertySource(locations = "classpath:test")
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
-public class LinkDaoTest extends IntegrationEnvironment {
+public class JooqLinkDaoTest extends IntegrationEnvironment {
     @Autowired TgChatRepository tgChatRepository;
     @Autowired LinkDao linkDao;
     @Autowired LinkRepository linkRepository;

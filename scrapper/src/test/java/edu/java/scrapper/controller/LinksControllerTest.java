@@ -7,9 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @WebFluxTest(LinksController.class)
+@DirtiesContext
 public class LinksControllerTest {
     @MockBean LinkService linkService;
     @Autowired WebTestClient webTestClient;
