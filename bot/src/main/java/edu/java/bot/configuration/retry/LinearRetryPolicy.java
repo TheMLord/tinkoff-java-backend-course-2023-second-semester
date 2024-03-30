@@ -72,7 +72,7 @@ public final class LinearRetryPolicy extends Retry {
                 } else if (iteration >= this.maxAttempts) {
                     return Mono.error((Throwable) this.retryExhaustedGenerator.apply(this, copy));
                 } else {
-                    return Mono.delay(Duration.ofSeconds(backOff.getSeconds() * copy.totalRetries()))
+                    return Mono.delay(Duration.ofSeconds(backOff.getSeconds() * (copy.totalRetries() + 1)))
                         .thenReturn(copy.totalRetries());
                 }
             }).onErrorStop();
