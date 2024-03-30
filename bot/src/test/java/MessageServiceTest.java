@@ -1,3 +1,4 @@
+import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.when;
 @DirtiesContext
 class MessageServiceTest {
     @MockBean Update update;
+    @MockBean TelegramBot telegramBot;
 
     @Autowired MessageService messageService;
 

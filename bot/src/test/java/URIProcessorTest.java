@@ -1,3 +1,4 @@
+import com.pengrad.telegrambot.TelegramBot;
 import edu.java.bot.BotApplication;
 import edu.java.bot.processor.UrlProcessor;
 import java.net.URI;
@@ -8,12 +9,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {BotApplication.class})
 @DirtiesContext
 public class URIProcessorTest {
+    @MockBean TelegramBot telegramBot;
     @Autowired
     private UrlProcessor urlProcessor;
 

@@ -1,3 +1,4 @@
+import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {BotApplication.class})
 @DirtiesContext
 public class CommandsTest {
+    @MockBean TelegramBot telegramBot;
     @MockBean Update update;
 
     @MockBean ScrapperProxy scrapperProxy;
