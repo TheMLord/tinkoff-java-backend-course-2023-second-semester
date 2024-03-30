@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @DirtiesContext
 @TestPropertySource(locations = "classpath:test")
+@DirtiesContext
 public class UriProcessorsTest {
     @Autowired UriProcessor uriProcessor;
 

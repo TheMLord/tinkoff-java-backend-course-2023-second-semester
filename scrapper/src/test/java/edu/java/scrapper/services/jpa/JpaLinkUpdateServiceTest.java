@@ -1,4 +1,4 @@
-package edu.java.scrapper.services;
+package edu.java.scrapper.services.jpa;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.scrapper.IntegrationEnvironment;
@@ -25,9 +25,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 @Sql(value = "classpath:sql/insert-for-link-update-service.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(value = "classpath:sql/clearDB.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
+@DirtiesContext
 @WireMockTest(httpPort = 8080)
-public class LinkUpdateServiceTest extends IntegrationEnvironment {
-    @Autowired LinkUpdateService jdbcLinkUpdateService;
+public class JpaLinkUpdateServiceTest extends IntegrationEnvironment {
+    @Autowired LinkUpdateService linkUpdateService;
 
     private static final String GITHUB_BRANCHES =
         """
@@ -97,7 +98,7 @@ public class LinkUpdateServiceTest extends IntegrationEnvironment {
             """;
         var exceptedLinkUpdateChats = List.of(1L, 3L);
 
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate().blockFirst();
+        var actualLinkUpdateOptional = linkUpdateService.prepareLinkUpdate().blockFirst();
 
         assertThat(actualLinkUpdateOptional).isPresent();
         var linkUpdate = actualLinkUpdateOptional.get();
@@ -115,7 +116,7 @@ public class LinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatReceivingUpdatesWorksCorrectlyAndReturnedAnEmptyLinkUpdateInTheAbsenceOfUpdates() {
         setUpServer(GITHUB_BRANCHES);
-        var actualLinkUpdateOptional = jdbcLinkUpdateService.prepareLinkUpdate().blockFirst();
+        var actualLinkUpdateOptional = linkUpdateService.prepareLinkUpdate().blockFirst();
 
         assertThat(actualLinkUpdateOptional).isEmpty();
     }

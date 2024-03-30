@@ -1,4 +1,4 @@
-package edu.java.scrapper.repository.jdbcJooq;
+package edu.java.scrapper.repository.jdbc;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.exceptions.AlreadyTrackLinkException;
@@ -31,10 +31,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @DirtiesContext
 @WireMockTest(httpPort = 8080)
+@DirtiesContext
 @TestPropertySource(locations = "classpath:test")
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
-public class LinkDaoTest extends IntegrationEnvironment {
+public class JdbcLinkDaoTest extends IntegrationEnvironment {
     @Autowired TgChatRepository tgChatRepository;
     @Autowired LinkDao linkDao;
     @Autowired LinkRepository linkRepository;

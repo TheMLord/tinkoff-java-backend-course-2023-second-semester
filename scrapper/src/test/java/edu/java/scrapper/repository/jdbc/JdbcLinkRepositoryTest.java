@@ -1,8 +1,12 @@
-package edu.java.scrapper.repository.jdbcJooq;
+package edu.java.scrapper.repository.jdbc;
+
 
 import edu.java.domain.jooq.pojos.Links;
 import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +18,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -28,8 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
-public class LinkRepositoryTest extends IntegrationEnvironment {
-    @Autowired LinkRepository jdbcLinkRepository;
+public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
+    @Autowired LinkRepository linkRepository;
 
     @Test
     @DisplayName(
@@ -39,7 +38,7 @@ public class LinkRepositoryTest extends IntegrationEnvironment {
     void testThatTheMethodOfSearchingForAllLinksWorksCorrectlyReturnedTheCorrectNumberOfLinks() {
         var exceptedCountLinks = 3;
 
-        var actualAllLinks = jdbcLinkRepository.findAll().block();
+        var actualAllLinks = linkRepository.findAll().block();
 
         assertThat(actualAllLinks.size()).isEqualTo(exceptedCountLinks);
 
@@ -63,7 +62,7 @@ public class LinkRepositoryTest extends IntegrationEnvironment {
         );
         var exceptedContLink = 2;
 
-        var actualLinks = jdbcLinkRepository.findAllByTime(timePredicate).block();
+        var actualLinks = linkRepository.findAllByTime(timePredicate).block();
 
         assertThat(actualLinks.size()).isEqualTo(exceptedContLink);
 
@@ -84,13 +83,13 @@ public class LinkRepositoryTest extends IntegrationEnvironment {
             "2024-03-15 17:49:14 +00:00",
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss XXX")
         );
-        var idLink = jdbcLinkRepository.findLinkByName(
+        var idLink = linkRepository.findLinkByName(
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff1")
         ).block().get().getId();
 
-        assertThat(jdbcLinkRepository.findById(idLink).block()).isPresent();
-        jdbcLinkRepository.updateLastModifying(idLink, exceptedLastModifyingTime).block();
-        var actualLinkLAtModifying = jdbcLinkRepository.findById(idLink).block().get().getLastModifying();
+        assertThat(linkRepository.findById(idLink).block()).isPresent();
+        linkRepository.updateLastModifying(idLink, exceptedLastModifyingTime).block();
+        var actualLinkLAtModifying = linkRepository.findById(idLink).block().get().getLastModifying();
         assertThat(actualLinkLAtModifying).isEqualTo(exceptedLastModifyingTime);
     }
 
@@ -104,18 +103,16 @@ public class LinkRepositoryTest extends IntegrationEnvironment {
                 "example": "json"
             }
             """;
-        var idLink = jdbcLinkRepository.findLinkByName(
+        var idLink = linkRepository.findLinkByName(
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff1")
         ).block().get().getId();
 
-        assertThat(jdbcLinkRepository.findById(idLink).block()).isPresent();
-        jdbcLinkRepository.updateContent(idLink, exceptedContent).block();
-        var actualContent = jdbcLinkRepository.findById(idLink).block().get().getContent();
+        assertThat(linkRepository.findById(idLink).block()).isPresent();
+        linkRepository.updateContent(idLink, exceptedContent).block();
+        var actualContent = linkRepository.findById(idLink).block().get().getContent();
 
         assertThat(exceptedContent).isEqualTo(actualContent);
     }
-
-
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {

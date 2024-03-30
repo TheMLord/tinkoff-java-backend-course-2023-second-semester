@@ -1,4 +1,4 @@
-package edu.java.scrapper.repository.jdbcJooq;
+package edu.java.scrapper.repository.jdbc;
 
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
@@ -23,8 +23,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @TestPropertySource(locations = "classpath:test")
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
-public class TgChatRepositoryTest extends IntegrationEnvironment {
-    @Autowired TgChatRepository jdbcTgChatRepository;
+public class JdbcTgChatRepositoryTest extends IntegrationEnvironment {
+    @Autowired TgChatRepository tgChatRepository;
 
     @Test
     @DisplayName("Test that the chat is being added successfully returned the chat with the correct id")
@@ -33,8 +33,8 @@ public class TgChatRepositoryTest extends IntegrationEnvironment {
     void testThatTheChatIsBeingAddedSuccessfullyReturnedTheChatWithTheCorrectId() {
         var exceptedId = 30L;
 
-        jdbcTgChatRepository.add(exceptedId).block();
-        var actualChatEntity = jdbcTgChatRepository.findById(exceptedId).block();
+        tgChatRepository.add(exceptedId).block();
+        var actualChatEntity = tgChatRepository.findById(exceptedId).block();
 
         assertThat(actualChatEntity).isPresent();
         assertThat(actualChatEntity.get().getId()).isEqualTo(exceptedId);
@@ -47,9 +47,9 @@ public class TgChatRepositoryTest extends IntegrationEnvironment {
     void testThatTheChatCannotBeRegisteredTwiceAndReturnedACorrectError() {
         var existChat1 = 31L;
 
-        jdbcTgChatRepository.add(existChat1).block();
+        tgChatRepository.add(existChat1).block();
 
-        assertThatThrownBy(() -> jdbcTgChatRepository.add(existChat1).block())
+        assertThatThrownBy(() -> tgChatRepository.add(existChat1).block())
             .isInstanceOf(DoubleRegistrationException.class);
     }
 
@@ -60,11 +60,11 @@ public class TgChatRepositoryTest extends IntegrationEnvironment {
     void testThatTheChatIsBeingDeletedSuccessfully() {
         var idChatToDelete = 32L;
 
-        jdbcTgChatRepository.add(idChatToDelete).block();
-        assertThat(jdbcTgChatRepository.findById(idChatToDelete).block()).isPresent();
+        tgChatRepository.add(idChatToDelete).block();
+        assertThat(tgChatRepository.findById(idChatToDelete).block()).isPresent();
 
-        jdbcTgChatRepository.remove(idChatToDelete).block();
-        assertThat(jdbcTgChatRepository.findById(idChatToDelete).block()).isEmpty();
+        tgChatRepository.remove(idChatToDelete).block();
+        assertThat(tgChatRepository.findById(idChatToDelete).block()).isEmpty();
     }
 
     @Test
@@ -74,12 +74,11 @@ public class TgChatRepositoryTest extends IntegrationEnvironment {
     void testThatItIsImpossibleToDeleteANonExistentChatAndReturnedTheCorrectError() {
         var idChatToDelete = 33L;
 
-        assertThat(jdbcTgChatRepository.findById(idChatToDelete).block()).isEmpty();
+        assertThat(tgChatRepository.findById(idChatToDelete).block()).isEmpty();
 
-        assertThatThrownBy(() -> jdbcTgChatRepository.remove(idChatToDelete).block())
+        assertThatThrownBy(() -> tgChatRepository.remove(idChatToDelete).block())
             .isInstanceOf(NotExistTgChatException.class);
     }
-
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {

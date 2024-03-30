@@ -1,4 +1,4 @@
-package edu.java.scrapper.services;
+package edu.java.scrapper.services.jdbc;
 
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.ChatService;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
-public class TgChatServiceTest extends IntegrationEnvironment {
+public class JdbcTgChatServiceTest extends IntegrationEnvironment {
     @Autowired ChatService chatService;
 
     @Test
@@ -44,10 +44,8 @@ public class TgChatServiceTest extends IntegrationEnvironment {
         chatService.unRegister(existChat).block();
     }
 
-
-
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jpa");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
 }
