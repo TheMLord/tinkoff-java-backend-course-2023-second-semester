@@ -24,10 +24,11 @@ public class ChatController implements TgChatApi {
 
     @SneakyThrows @Override
     public Mono<ResponseEntity<Void>> tgChatIdPost(Long id) {
-        return chatService.register(id).then(Mono.fromCallable(() ->
-            ResponseEntity
-                .ok()
-                .build()
-        ));
+        throw new Exception();
+//        return chatService.register(id).then(Mono.fromCallable(() ->
+//            ResponseEntity
+//                .ok()
+//                .build()
+//        ));
     }
 }

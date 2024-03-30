@@ -2,7 +2,7 @@ app:
   telegram-token: ${bot_token}
   scrapper-base-uri: http://localhost:8080
   retry:
-    back-off-policy: exponential
+    back-off-policy: linear
     httpStatuses: INTERNAL_SERVER_ERROR, UNAUTHORIZED
     max-attempts: 3
     delay: 1s
