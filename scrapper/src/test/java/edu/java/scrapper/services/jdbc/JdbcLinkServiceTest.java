@@ -1,4 +1,4 @@
-package edu.java.scrapper.services;
+package edu.java.scrapper.services.jdbc;
 
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.LinkService;
@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -22,8 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
      executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
+@DirtiesContext
 @TestPropertySource(locations = "classpath:test")
-public class LinkServiceTest extends IntegrationEnvironment {
+public class JdbcLinkServiceTest extends IntegrationEnvironment {
     @Autowired LinkService linkService;
 
     @Test
@@ -84,6 +86,6 @@ public class LinkServiceTest extends IntegrationEnvironment {
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jpa");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
 }

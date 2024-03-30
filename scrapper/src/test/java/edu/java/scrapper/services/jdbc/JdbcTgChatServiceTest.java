@@ -1,4 +1,4 @@
-package edu.java.scrapper.services;
+package edu.java.scrapper.services.jdbc;
 
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.ChatService;
@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -13,13 +14,14 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest()
+@SpringBootTest
+@DirtiesContext
 @Sql(value = "classpath:sql/service-insert-test.sql",
      executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
-public class TgChatServiceTest extends IntegrationEnvironment {
+public class JdbcTgChatServiceTest extends IntegrationEnvironment {
     @Autowired ChatService chatService;
 
     @Test
@@ -42,10 +44,8 @@ public class TgChatServiceTest extends IntegrationEnvironment {
         chatService.unRegister(existChat).block();
     }
 
-
-
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jpa");
+        registry.add("app.database-access-type", () -> "jdbc");
     }
 }

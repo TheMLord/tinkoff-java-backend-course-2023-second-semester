@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest(ChatController.class)
+@DirtiesContext
 public class ChatControllerTest {
     @MockBean ChatService chatService;
     @Autowired WebTestClient webTestClient;
