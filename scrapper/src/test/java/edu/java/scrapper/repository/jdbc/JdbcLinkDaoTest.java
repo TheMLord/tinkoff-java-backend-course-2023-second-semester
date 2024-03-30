@@ -31,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @DirtiesContext
 @WireMockTest(httpPort = 8080)
-@DirtiesContext
 @TestPropertySource(locations = "classpath:test")
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)

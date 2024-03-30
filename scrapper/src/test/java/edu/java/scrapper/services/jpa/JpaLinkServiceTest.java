@@ -24,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
      executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
-@DirtiesContext
 @TestPropertySource(locations = "classpath:test")
 public class JpaLinkServiceTest extends IntegrationEnvironment {
     @Autowired LinkService linkService;
