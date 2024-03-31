@@ -34,7 +34,7 @@ bucket4j:
 
   default-metric-tags:
     - key: IP
-      expression: getRemoteAddr()
+      expression: getHeader("X-Forwarded-For")
       types: REJECTED_COUNTER
 
   filter-config-caching-enabled: true
@@ -56,7 +56,7 @@ bucket4j:
       url: /tg-chat/.*
       strategy: first
       rate-limits:
-        - cache-key: getRemoteAddr()
+        - cache-key: getHeader("X-Forwarded-For")
           num-tokens: 1
           bandwidths:
             - id: bandwidthsChat
@@ -82,7 +82,7 @@ bucket4j:
       url: /links
       strategy: first
       rate-limits:
-        - cache-key: getRemoteAddr()
+        - cache-key: getHeader("X-Forwarded-For")
           num-tokens: 1
           bandwidths:
             - id: bandwidthsChat
