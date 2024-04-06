@@ -14,7 +14,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 public class KafkaProducerConfig {
 
     @Bean
-    public KafkaTemplate<String, LinkUpdate.linkUpdateProtoMessage> protobufKafkaTemplate(ApplicationConfig applicationConfig) {
+    public KafkaTemplate<String, LinkUpdate.linkUpdateProtoMessage> protobufKafkaTemplate(
+        ApplicationConfig applicationConfig
+    ) {
         var config = applicationConfig.kafka();
         return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(Map.of(
             ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, prepareServersConfig(config.bootstrapServers()),

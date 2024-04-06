@@ -1,7 +1,6 @@
 package edu.java.schedulers;
 
 import edu.java.services.LinkUpdateCheckService;
-import edu.java.services.LinkUpdateSendService;
 import edu.java.services.SendUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,5 @@
 package edu.java.configuration;
 
-import edu.java.senders.BotHttpSender;
 import edu.java.proxies.GithubProxy;
 import edu.java.proxies.StackoverflowProxy;
 import org.springframework.context.annotation.Bean;
