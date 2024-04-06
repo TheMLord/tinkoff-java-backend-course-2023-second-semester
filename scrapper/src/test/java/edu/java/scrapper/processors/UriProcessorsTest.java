@@ -8,11 +8,13 @@ import edu.java.processors.UriProcessor;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import edu.java.schedulers.LinkUpdaterScheduler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -29,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestPropertySource(locations = "classpath:test")
 public class UriProcessorsTest {
     @Autowired UriProcessor uriProcessor;
-
+    @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
     private static final String GITHUB_CONTENT_PREV =
         """
             {

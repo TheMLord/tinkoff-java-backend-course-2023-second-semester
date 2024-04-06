@@ -1,6 +1,7 @@
 package edu.java;
 
 import edu.java.controller.LinksController;
+import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.services.LinkService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.when;
 @DirtiesContext
 @TestPropertySource(locations = "classpath:test")
 public class RateLimitLinksControllerTest {
+    @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
     @MockBean LinkService linkService;
     @Autowired LinksController linksController;
 

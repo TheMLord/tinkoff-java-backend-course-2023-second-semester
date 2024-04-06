@@ -10,7 +10,7 @@ import edu.java.repository.jdbc.JdbcLinkRepository;
 import edu.java.repository.jdbc.JdbcTgChatRepository;
 import edu.java.services.ChatService;
 import edu.java.services.LinkService;
-import edu.java.services.LinkUpdateService;
+import edu.java.services.LinkUpdateCheckService;
 import edu.java.services.jdbc.JdbcChatService;
 import edu.java.services.jdbc.JdbcLinkService;
 import edu.java.services.jdbc.JdbcLinkUpdateService;
@@ -49,7 +49,7 @@ public class JdbcDataAccessConfig {
         return new JdbcChatService(tgChatRepository);
     }
 
-    @Bean LinkUpdateService linkUpdateService(
+    @Bean LinkUpdateCheckService linkUpdateService(
         UriProcessor uriProcessor,
         LinkDao linkDao,
         LinkRepository linkRepository

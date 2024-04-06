@@ -1,7 +1,8 @@
 package edu.java.schedulers;
 
-import edu.java.proxies.BotProxy;
-import edu.java.services.LinkUpdateService;
+import edu.java.services.LinkUpdateCheckService;
+import edu.java.services.LinkUpdateSendService;
+import edu.java.services.SendUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,8 +16,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public final class LinkUpdaterScheduler {
-    private final LinkUpdateService linkUpdateService;
-    private final BotProxy botProxy;
+    private final LinkUpdateCheckService linkUpdateService;
+    private final SendUpdateService linkUpdateSendService;
 
     /**
      * Scheduled method that starts a periodic search for updates
@@ -27,6 +28,7 @@ public final class LinkUpdaterScheduler {
         log.info("executing the update method");
 
         linkUpdateService.prepareLinkUpdate()
-            .subscribe(optionalUpdate -> optionalUpdate.map(botProxy::pushLinkUpdate));
+            .subscribe(
+                optionalUpdate -> optionalUpdate.ifPresent(linkUpdateSendService::sendUpdate));
     }
 }

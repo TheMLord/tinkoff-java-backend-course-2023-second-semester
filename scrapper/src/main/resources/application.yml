@@ -11,6 +11,10 @@ app:
     stackoverflow-uri: https://api.stackexchange.com/2.3
     bot-url: http://localhost:8090
 
+  useQueue: true
+
+  kafka:
+    bootstrapServers: localhost:29091, localhost:29092, localhost:29093
 
 spring:
   application:

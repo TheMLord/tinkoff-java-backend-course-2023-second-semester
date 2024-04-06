@@ -6,7 +6,7 @@ import edu.java.models.dto.api.LinkUpdate;
 import edu.java.processors.UriProcessor;
 import edu.java.repository.jpa.JpaLinkRepository;
 import edu.java.repository.jpa.JpaSubscriptionRepository;
-import edu.java.services.LinkUpdateService;
+import edu.java.services.LinkUpdateCheckService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -15,7 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
-public class JpaLinkUpdateService implements LinkUpdateService {
+public class JpaLinkUpdateService implements LinkUpdateCheckService {
     private final JpaLinkRepository jpaLinkRepository;
     private final UriProcessor uriProcessor;
     private final JpaSubscriptionRepository jpaSubscriptionRepository;

@@ -3,11 +3,13 @@ package edu.java.scrapper.repository.jooq;
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.repository.TgChatRepository;
+import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -26,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 public class JooqTgChatRepositoryTest extends IntegrationEnvironment {
     @Autowired TgChatRepository tgChatRepository;
+    @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
 
     @Test
     @DisplayName("Test that the chat is being added successfully returned the chat with the correct id")

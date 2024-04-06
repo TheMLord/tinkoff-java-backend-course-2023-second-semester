@@ -1,6 +1,6 @@
 package edu.java.configuration;
 
-import edu.java.proxies.BotProxy;
+import edu.java.senders.BotHttpSender;
 import edu.java.proxies.GithubProxy;
 import edu.java.proxies.StackoverflowProxy;
 import org.springframework.context.annotation.Bean;
@@ -24,13 +24,5 @@ public class WebClientConfig {
         ApplicationConfig applicationConfig
     ) {
         return new StackoverflowProxy(webClientBuilder, applicationConfig.clientBaseUrl().stackoverflowUri());
-    }
-
-    @Bean
-    public BotProxy botClient(
-        WebClient.Builder webClientBuilder,
-        ApplicationConfig applicationConfig
-    ) {
-        return new BotProxy(webClientBuilder, applicationConfig.clientBaseUrl().botUrl());
     }
 }

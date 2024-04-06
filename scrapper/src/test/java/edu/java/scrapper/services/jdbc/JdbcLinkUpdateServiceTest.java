@@ -1,14 +1,16 @@
 package edu.java.scrapper.services.jdbc;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
-import edu.java.services.LinkUpdateService;
+import edu.java.services.LinkUpdateCheckService;
 import java.net.URI;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -27,7 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 @WireMockTest(httpPort = 8080)
 public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
-    @Autowired LinkUpdateService linkUpdateService;
+    @Autowired LinkUpdateCheckService linkUpdateService;
+    @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
 
     private static final String GITHUB_BRANCHES =
         """

@@ -8,12 +8,14 @@ import edu.java.exceptions.NotTrackLinkException;
 import edu.java.repository.LinkDao;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.TgChatRepository;
+import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -38,6 +40,7 @@ public class JooqLinkDaoTest extends IntegrationEnvironment {
     @Autowired TgChatRepository tgChatRepository;
     @Autowired LinkDao linkDao;
     @Autowired LinkRepository linkRepository;
+    @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
 
     @Test
     @DisplayName(

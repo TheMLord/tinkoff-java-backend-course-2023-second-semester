@@ -1,11 +1,13 @@
 package edu.java.scrapper.services.jpa;
 
+import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.ChatService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
 public class JpaTgChatServiceTest extends IntegrationEnvironment {
+    @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
     @Autowired ChatService chatService;
 
     @Test

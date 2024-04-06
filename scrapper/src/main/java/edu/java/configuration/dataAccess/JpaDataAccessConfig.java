@@ -7,7 +7,7 @@ import edu.java.repository.jpa.JpaSubscriptionRepository;
 import edu.java.repository.jpa.JpaTgChatRepository;
 import edu.java.services.ChatService;
 import edu.java.services.LinkService;
-import edu.java.services.LinkUpdateService;
+import edu.java.services.LinkUpdateCheckService;
 import edu.java.services.jpa.JpaLinkService;
 import edu.java.services.jpa.JpaLinkUpdateService;
 import edu.java.services.jpa.JpaTgChatService;
@@ -38,7 +38,8 @@ public class JpaDataAccessConfig {
         return new JpaTgChatService(jpaTgChatRepository);
     }
 
-    @Bean LinkUpdateService linkUpdateService(
+    @Bean
+    LinkUpdateCheckService linkUpdateService(
         JpaLinkRepository jpaLinkRepository,
         UriProcessor uriProcessor,
         JpaSubscriptionRepository jpaSubscriptionRepository

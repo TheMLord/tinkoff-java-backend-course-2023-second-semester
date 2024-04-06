@@ -4,7 +4,7 @@ import edu.java.models.dto.api.LinkUpdate;
 import edu.java.processors.UriProcessor;
 import edu.java.repository.LinkDao;
 import edu.java.repository.LinkRepository;
-import edu.java.services.LinkUpdateService;
+import edu.java.services.LinkUpdateCheckService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Optional;
@@ -14,7 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
-public class JooqLinkUpdateService implements LinkUpdateService {
+public class JooqLinkUpdateService implements LinkUpdateCheckService {
     private final UriProcessor uriProcessor;
     private final LinkDao linkDao;
     private final LinkRepository linkRepository;

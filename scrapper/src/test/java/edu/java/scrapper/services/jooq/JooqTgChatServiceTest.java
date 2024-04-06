@@ -1,11 +1,13 @@
 package edu.java.scrapper.services.jooq;
 
+import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.ChatService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TestPropertySource(locations = "classpath:test")
 public class JooqTgChatServiceTest extends IntegrationEnvironment {
     @Autowired ChatService chatService;
+    @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
 
     @Test
     @DisplayName("Test that the service does not return errors when adding a new chat correctly")

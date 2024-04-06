@@ -1,5 +1,7 @@
 package edu.java.configuration;
 
+import edu.java.configuration.dataAccess.AccessType;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,15 +14,22 @@ public record ApplicationConfig(
     @Bean
     @NotNull
     Scheduler scheduler,
-    ClientBaseUrl clientBaseUrl,
+    @NotNull ClientBaseUrl clientBaseUrl,
 
     @NotNull
-    AccessType databaseAccessType
+    AccessType databaseAccessType,
+    @NotNull Boolean useQueue,
+    @NotNull
+    Kafka kafka
 ) {
 
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
 
-    public record ClientBaseUrl(String githubUri, String stackoverflowUri, String botUrl) {
+    public record ClientBaseUrl(@NotNull @NotEmpty String githubUri, @NotNull @NotEmpty String stackoverflowUri,
+                                @NotNull @NotEmpty String botUrl) {
+    }
+
+    public record Kafka(@NotEmpty String[] bootstrapServers) {
     }
 }

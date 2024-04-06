@@ -10,18 +10,39 @@ import edu.java.repository.jooq.JooqLinkRepository;
 import edu.java.repository.jooq.JooqTgChatRepository;
 import edu.java.services.ChatService;
 import edu.java.services.LinkService;
-import edu.java.services.LinkUpdateService;
+import edu.java.services.LinkUpdateCheckService;
 import edu.java.services.jooq.JooqChatService;
 import edu.java.services.jooq.JooqLinkService;
 import edu.java.services.jooq.JooqLinkUpdateService;
 import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.conf.RenderQuotedNames;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DataSourceConnectionProvider;
+import org.jooq.impl.DefaultConfiguration;
+import org.jooq.impl.DefaultDSLContext;
+import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.jooq.JooqExceptionTranslator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jooq")
 public class JooqDataAccessConfig {
+
+    @Bean
+    public DSLContext dslContext(DataSourceConnectionProvider dataSourceConnectionProvider) {
+        return new DefaultDSLContext(new DefaultConfiguration()
+            .set(dataSourceConnectionProvider)
+            .set(SQLDialect.POSTGRES)
+            .set(new Settings()
+                .withRenderSchema(false)
+                .withRenderFormatted(true)
+                .withRenderQuotedNames(RenderQuotedNames.NEVER))
+            .set(new DefaultExecuteListenerProvider(new JooqExceptionTranslator())));
+    }
+
     @Bean LinkRepository joocLinkRepository(DSLContext dslContext) {
         return new JooqLinkRepository(dslContext);
     }
@@ -48,7 +69,7 @@ public class JooqDataAccessConfig {
         return new JooqChatService(tgChatRepository);
     }
 
-    @Bean LinkUpdateService linkUpdateService(
+    @Bean LinkUpdateCheckService linkUpdateService(
         UriProcessor uriProcessor,
         LinkDao linkDao,
         LinkRepository linkRepository

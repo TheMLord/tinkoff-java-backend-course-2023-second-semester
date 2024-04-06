@@ -2,11 +2,13 @@ package edu.java.scrapper.repository.jooq;
 
 import edu.java.domain.jooq.pojos.Links;
 import edu.java.repository.LinkRepository;
+import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -29,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestPropertySource(locations = "classpath:test")
 public class JooqLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired LinkRepository linkRepository;
+    @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
 
     @Test
     @DisplayName(

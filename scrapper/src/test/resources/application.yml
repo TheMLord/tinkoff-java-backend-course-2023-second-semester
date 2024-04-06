@@ -7,7 +7,14 @@ app:
   client-base-url:
     github-uri: http://localhost:8080
     stackoverflow-uri: http://localhost:8080/2.3
+    bot-url: http://localhost:8090
+
   database-access-type: JDBC # JDBC, JOOQ
+
+  useQueue: true
+
+  kafka:
+    bootstrapServers: localhost:29091, localhost:29092, localhost:29093
 
 spring:
   application:

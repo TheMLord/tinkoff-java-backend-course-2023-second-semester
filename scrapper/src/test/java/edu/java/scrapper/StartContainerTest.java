@@ -1,10 +1,12 @@
 package edu.java.scrapper;
 
 import java.util.List;
+import edu.java.schedulers.LinkUpdaterScheduler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.annotation.DirtiesContext;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 public class StartContainerTest extends IntegrationEnvironment {
     @Autowired JdbcClient jdbcClient;
+    @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
 
     @Test
     @DisplayName("test that the container is running successfully")
