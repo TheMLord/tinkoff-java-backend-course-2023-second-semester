@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package edu.java.models.proto;
+
+message linkUpdateProtoMessage {
+    int64 id = 1;
+    string url = 2;
+    string description = 3;
+    repeated int64 tgChatIds = 4;
+}

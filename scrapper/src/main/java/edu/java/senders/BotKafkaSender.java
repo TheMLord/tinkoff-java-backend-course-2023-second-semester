@@ -8,10 +8,11 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class BotKafkaSender implements LinkUpdateSender {
     private final KafkaTemplate<String, edu.java.models.proto.LinkUpdate.linkUpdateProtoMessage> kafkaTemplate;
+    private final String topicName;
 
     @Override
     public Mono<Void> pushLinkUpdate(LinkUpdate linkUpdate) {
-        return Mono.fromFuture(kafkaTemplate.send("scrapper.link_update", buildMessage(linkUpdate))).then()
+        return Mono.fromFuture(kafkaTemplate.send(topicName, buildMessage(linkUpdate))).then()
             .onErrorMap(throwable -> throwable);
     }
 

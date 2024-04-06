@@ -1,24 +1,36 @@
 app:
   scheduler:
     enable: true
-    interval: 10s
+    interval: 5s
     force-check-delay: 10s
 
-  client-base-url:
-    github-uri: http://localhost:8080
-    stackoverflow-uri: http://localhost:8080/2.3
-    bot-url: http://localhost:8090
+  database-access-type: jpa # JPA, JOOQ
 
-  database-access-type: JDBC # JDBC, JOOQ
+  client-base-url:
+    github-uri: https://api.github.com
+    stackoverflow-uri: https://api.stackexchange.com/2.3
+    bot-url: http://localhost:8090
 
   useQueue: true
 
   kafka:
     bootstrapServers: localhost:29091, localhost:29092, localhost:29093
+    topics-property:
+      - topicName: scrapper.link_update
+        number-partitions: 3
+        replication-factor: 3
 
 spring:
   application:
     name: scrapper
+  datasource:
+    url: ${db_url}
+    username: ${db_username}
+    password: ${db_password}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
   cache:
     cache-names:
       - rate-limit-buckets-scrapper
@@ -30,7 +42,7 @@ bucket4j:
 
   default-metric-tags:
     - key: IP
-      expression: getRemoteAddr()
+      expression: getHeader("X-Forwarded-For")
       types: REJECTED_COUNTER
 
   filter-config-caching-enabled: true
@@ -52,11 +64,11 @@ bucket4j:
       url: /tg-chat/.*
       strategy: first
       rate-limits:
-        - cache-key: getRemoteAddr()
+        - cache-key: getHeader("X-Forwarded-For")
           num-tokens: 1
           bandwidths:
             - id: bandwidthsChat
-              capacity: 1
+              capacity: 100
               time: 1
               unit: minutes
       metrics:
@@ -78,15 +90,16 @@ bucket4j:
       url: /links
       strategy: first
       rate-limits:
-        - cache-key: getRemoteAddr()
+        - cache-key: getHeader("X-Forwarded-For")
           num-tokens: 1
           bandwidths:
             - id: bandwidthsChat
-              capacity: 1
+              capacity: 100
               time: 1
               unit: minutes
       metrics:
         enabled: true
+
 
 server:
   port: 8080
