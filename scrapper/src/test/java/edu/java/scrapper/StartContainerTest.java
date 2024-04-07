@@ -2,6 +2,7 @@ package edu.java.scrapper;
 
 import java.util.List;
 import edu.java.schedulers.LinkUpdaterScheduler;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @DirtiesContext
 public class StartContainerTest extends IntegrationEnvironment {
+    @MockBean AdminClient adminClient;
+
     @Autowired JdbcClient jdbcClient;
     @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
 

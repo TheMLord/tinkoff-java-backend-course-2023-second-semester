@@ -3,6 +3,7 @@ package edu.java.bot.proxy;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.pengrad.telegrambot.TelegramBot;
 import java.time.Duration;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import static edu.java.bot.configuration.retry.BackOffPolicy.CONSTANT;
 @DirtiesContext
 @WireMockTest(httpPort = 8090)
 public class ConstantRetryTest {
+    @MockBean AdminClient adminClient;
     @Autowired ScrapperProxy scrapperProxy;
     @MockBean TelegramBot telegramBot;
 

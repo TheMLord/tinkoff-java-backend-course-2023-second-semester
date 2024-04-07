@@ -8,6 +8,7 @@ import edu.java.bot.models.dto.api.request.RemoveLinkRequest;
 import edu.java.bot.models.dto.api.response.LinkResponse;
 import java.net.URI;
 import lombok.SneakyThrows;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @WireMockTest(httpPort = 8090)
 @DirtiesContext
 class ScrapperProxyTest {
+    @MockBean AdminClient adminClient;
+
     @Autowired ScrapperProxy scrapperProxy;
     @MockBean TelegramBot telegramBot;
     private static final String getAllLinksAnswer = """

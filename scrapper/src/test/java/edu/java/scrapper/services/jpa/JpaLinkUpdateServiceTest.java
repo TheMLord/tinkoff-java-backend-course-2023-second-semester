@@ -6,6 +6,7 @@ import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.LinkUpdateCheckService;
 import java.net.URI;
 import java.util.List;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(value = "classpath:sql/clearDB.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @WireMockTest(httpPort = 8080)
 public class JpaLinkUpdateServiceTest extends IntegrationEnvironment {
+    @MockBean AdminClient adminClient;
+
     @Autowired LinkUpdateCheckService linkUpdateService;
     @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
 

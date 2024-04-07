@@ -4,6 +4,7 @@ import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.LinkService;
 import java.net.URI;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 @TestPropertySource(locations = "classpath:test")
 public class JooqLinkServiceTest extends IntegrationEnvironment {
+    @MockBean AdminClient adminClient;
+
     @Autowired LinkService linkService;
     @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
 

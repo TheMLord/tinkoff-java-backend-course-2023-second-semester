@@ -19,6 +19,7 @@ import edu.java.bot.service.MessageService;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,6 +37,8 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {BotApplication.class})
 @DirtiesContext
 class MessageServiceTest {
+    @MockBean AdminClient adminClient;
+
     @MockBean Update update;
     @MockBean TelegramBot telegramBot;
 

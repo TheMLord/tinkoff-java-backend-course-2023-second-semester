@@ -4,6 +4,7 @@ import edu.java.domain.jooq.pojos.Links;
 import edu.java.repository.LinkRepository;
 import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
 public class JooqLinkRepositoryTest extends IntegrationEnvironment {
+    @MockBean AdminClient adminClient;
+
     @Autowired LinkRepository linkRepository;
     @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
 

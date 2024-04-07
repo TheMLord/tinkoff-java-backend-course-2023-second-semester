@@ -9,6 +9,7 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import edu.java.schedulers.LinkUpdaterScheduler;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 @TestPropertySource(locations = "classpath:test")
 public class UriProcessorsTest {
+    @MockBean AdminClient adminClient;
+
     @Autowired UriProcessor uriProcessor;
     @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
     private static final String GITHUB_CONTENT_PREV =

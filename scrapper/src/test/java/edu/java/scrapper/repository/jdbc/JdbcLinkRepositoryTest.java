@@ -8,6 +8,7 @@ import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ import static org.assertj.core.api.Assertions.assertThat;
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
 public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
+    @MockBean AdminClient adminClient;
+
     @Autowired LinkRepository linkRepository;
     @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
 

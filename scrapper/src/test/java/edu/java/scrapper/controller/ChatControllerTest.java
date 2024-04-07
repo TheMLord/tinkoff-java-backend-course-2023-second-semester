@@ -5,6 +5,7 @@ import edu.java.controller.advice.ExceptionScrapperControllerAdvice;
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.services.ChatService;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import static org.mockito.Mockito.when;
 @WebFluxTest(ChatController.class)
 @DirtiesContext
 public class ChatControllerTest {
+    @MockBean AdminClient adminClient;
+
     @MockBean ChatService chatService;
     @Autowired WebTestClient webTestClient;
 

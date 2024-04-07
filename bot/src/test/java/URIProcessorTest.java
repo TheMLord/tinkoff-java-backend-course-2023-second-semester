@@ -3,6 +3,7 @@ import edu.java.bot.BotApplication;
 import edu.java.bot.processor.UrlProcessor;
 import java.net.URI;
 import java.util.stream.Stream;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = {BotApplication.class})
 @DirtiesContext
 public class URIProcessorTest {
+    @MockBean AdminClient adminClient;
     @MockBean TelegramBot telegramBot;
     @Autowired
     private UrlProcessor urlProcessor;

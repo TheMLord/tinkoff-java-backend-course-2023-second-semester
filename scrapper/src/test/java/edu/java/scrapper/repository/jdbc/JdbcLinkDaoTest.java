@@ -11,6 +11,7 @@ import edu.java.repository.TgChatRepository;
 import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 public class JdbcLinkDaoTest extends IntegrationEnvironment {
+    @MockBean AdminClient adminClient;
+
     @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
     @Autowired TgChatRepository tgChatRepository;
     @Autowired LinkDao linkDao;

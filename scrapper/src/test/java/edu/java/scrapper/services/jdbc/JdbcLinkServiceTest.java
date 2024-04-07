@@ -3,6 +3,7 @@ package edu.java.scrapper.services.jdbc;
 import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.LinkService;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 @TestPropertySource(locations = "classpath:test")
 public class JdbcLinkServiceTest extends IntegrationEnvironment {
+    @MockBean AdminClient adminClient;
+
     @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
     @Autowired LinkService linkService;
 

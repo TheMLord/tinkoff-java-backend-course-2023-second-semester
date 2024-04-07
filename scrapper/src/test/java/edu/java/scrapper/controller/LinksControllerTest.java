@@ -2,6 +2,7 @@ package edu.java.scrapper.controller;
 
 import edu.java.controller.LinksController;
 import edu.java.services.LinkService;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @WebFluxTest(LinksController.class)
 @DirtiesContext
 public class LinksControllerTest {
+    @MockBean AdminClient adminClient;
+
     @MockBean LinkService linkService;
     @Autowired WebTestClient webTestClient;
 
