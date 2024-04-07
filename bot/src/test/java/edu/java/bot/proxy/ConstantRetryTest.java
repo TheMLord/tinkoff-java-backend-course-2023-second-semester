@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -25,6 +26,7 @@ import static edu.java.bot.configuration.retry.BackOffPolicy.CONSTANT;
 @WireMockTest(httpPort = 8090)
 public class ConstantRetryTest {
     @MockBean AdminClient adminClient;
+    @MockBean KafkaAdmin kafkaAdmin;
     @Autowired ScrapperProxy scrapperProxy;
     @MockBean TelegramBot telegramBot;
 

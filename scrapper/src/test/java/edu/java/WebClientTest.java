@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -31,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @WireMockTest(httpPort = 8080)
 class WebClientTest {
     @MockBean AdminClient adminClient;
+    @MockBean KafkaAdmin kafkaAdmin;
 
     @Autowired
     GithubProxy githubProxy;

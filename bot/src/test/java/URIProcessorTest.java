@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.test.annotation.DirtiesContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,6 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 public class URIProcessorTest {
     @MockBean AdminClient adminClient;
+    @MockBean KafkaAdmin kafkaAdmin;
+
     @MockBean TelegramBot telegramBot;
     @Autowired
     private UrlProcessor urlProcessor;
