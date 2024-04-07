@@ -17,11 +17,11 @@ import reactor.core.publisher.Mono;
  */
 @Component
 @Slf4j
-public class MessageListener implements UpdatesListener {
+public class TelegramMessageListener implements UpdatesListener {
     private final MessageService messageService;
     private final BotMessageSender botMessageSender;
 
-    public MessageListener(
+    public TelegramMessageListener(
         TelegramBot telegramBot,
         MessageService messageService,
         BotMessageSender botMessageSender

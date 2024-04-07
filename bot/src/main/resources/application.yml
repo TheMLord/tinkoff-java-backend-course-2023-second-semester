@@ -7,6 +7,15 @@ app:
     max-attempts: 3
     delay: 1s
 
+  kafka:
+    bootstrapServers: localhost:29091, localhost:29092, localhost:29093
+    update-topic-name: scrapper.link_update
+    dlq-topic-name: link_update_dlq
+    topics-property:
+      - topicName: link_update_dlq
+        number-partitions: 3
+        replication-factor: 3
+
 spring:
   application:
     name: bot

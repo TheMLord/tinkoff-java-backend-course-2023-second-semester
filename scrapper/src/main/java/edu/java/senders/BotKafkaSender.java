@@ -20,11 +20,9 @@ public class BotKafkaSender implements LinkUpdateSender {
         var builder = edu.java.models.proto.LinkUpdate.linkUpdateProtoMessage.newBuilder()
             .setId(linkUpdate.getId())
             .setDescription(linkUpdate.getDescription())
-            .setUrl(linkUpdate.getUrl().toString());
+            .setUrl(linkUpdate.getUrl().toString())
+            .addAllTgChatIds(linkUpdate.getTgChatIds());
 
-        for (int i = 0; i < linkUpdate.getTgChatIds().size(); i++) {
-            builder.setTgChatIds(i, linkUpdate.getTgChatIds().get(i));
-        }
         return builder.build();
     }
 }

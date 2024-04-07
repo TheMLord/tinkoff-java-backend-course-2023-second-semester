@@ -7,14 +7,15 @@ app:
   database-access-type: jpa # JPA, JOOQ
 
   client-base-url:
-    github-uri: https://api.github.com
-    stackoverflow-uri: https://api.stackexchange.com/2.3
+    github-uri: http://localhost:8080
+    stackoverflow-uri: http://localhost:8080/2.3
     bot-url: http://localhost:8090
 
   useQueue: true
 
   kafka:
     bootstrapServers: localhost:29091, localhost:29092, localhost:29093
+    update-topic-name: scrapper.link_update
     topics-property:
       - topicName: scrapper.link_update
         number-partitions: 3
