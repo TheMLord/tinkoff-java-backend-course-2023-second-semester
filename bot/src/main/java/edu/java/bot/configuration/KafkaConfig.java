@@ -1,7 +1,6 @@
 package edu.java.bot.configuration;
 
 import edu.java.bot.serdes.LinkUpdateDeserializer;
-import edu.java.bot.serdes.LinkUpdateSerializer;
 import edu.java.models.proto.LinkUpdate;
 import java.util.Map;
 import org.apache.kafka.clients.admin.AdminClientConfig;
