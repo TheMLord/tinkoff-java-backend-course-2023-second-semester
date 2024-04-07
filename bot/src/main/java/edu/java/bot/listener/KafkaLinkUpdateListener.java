@@ -4,6 +4,7 @@ import edu.java.bot.models.dto.TelegramMessage;
 import edu.java.bot.sender.BotMessageSender;
 import edu.java.models.proto.LinkUpdate;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -14,8 +15,9 @@ import org.springframework.stereotype.Component;
 public class KafkaLinkUpdateListener {
     private final BotMessageSender botMessageSender;
 
-    @KafkaListener(topics = "${app.kafka.update-topic-name}", groupId = "linkUpdateProtoMessage-group",
-                   containerFactory = "concurrentKafkaListenerContainerFactory")
+    @SneakyThrows @KafkaListener(topics = "${app.kafka.update-topic-name}", groupId = "linkUpdateProtoMessage-group",
+                                 containerFactory = "concurrentKafkaListenerContainerFactory",
+                                 errorHandler = "protobufLinkUpdateProcessErrorHandler")
     public void listen(LinkUpdate.linkUpdateProtoMessage update) {
         log.info("received a message from kafka {}", update);
         update.getTgChatIdsList()
@@ -24,5 +26,5 @@ public class KafkaLinkUpdateListener {
                 update.getUrl()
             ), id)).block());
     }
-
 }
+

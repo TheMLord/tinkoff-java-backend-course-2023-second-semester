@@ -33,7 +33,8 @@ public record ApplicationConfig(
 
     public record Kafka(@NotBlank String bootstrapServers,
                         @NotNull @NotBlank String updateTopicName,
-                        @NotNull @NotBlank String dlqTopicName,
+                        @NotNull @NotBlank String dlqProcessingTopicName,
+                        @NotNull @NotBlank String  dlqDeserializerTopicName,
                         @NotNull @NotEmpty TopicsProperty[] topicsProperty) {
     }
 

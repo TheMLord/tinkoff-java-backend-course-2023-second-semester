@@ -10,9 +10,13 @@ app:
   kafka:
     bootstrapServers: localhost:29091, localhost:29092, localhost:29093
     update-topic-name: scrapper.link_update
-    dlq-topic-name: link_update_dlq
+    dlq-processing-topic-name: link_update_processing_dlq
+    dlq-deserializer-topic-name: link_update_deserializer_dlq
     topics-property:
-      - topicName: link_update_dlq
+      - topicName: link_update_processing_dlq
+        number-partitions: 3
+        replication-factor: 3
+      - topicName: link_update_deserializer_dlq
         number-partitions: 3
         replication-factor: 3
 
