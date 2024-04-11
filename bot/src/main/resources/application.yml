@@ -31,6 +31,29 @@ spring:
     caffeine:
       spec: maximumSize=100000,expireAfterAccess=3600s
 
+management:
+  server:
+    port: 8091
+
+  endpoints:
+    web:
+      base-path: /
+      path-mapping:
+        prometheus: /metrics
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    info:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 bucket4j:
   enabled: true
 

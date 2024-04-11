@@ -112,6 +112,31 @@ services:
       kafka-topics --bootstrap-server kafka1:9091,kafka2:9092,kafka3:9093 --list
       "
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      monitoring:
+        aliases:
+          - prometheus
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    networks:
+      monitoring:
+        aliases:
+          - grafana
+
 volumes:
   psql: { }
   kafka1: { }
@@ -120,3 +145,4 @@ volumes:
 
 networks:
   backend: { }
+  monitoring: { }
