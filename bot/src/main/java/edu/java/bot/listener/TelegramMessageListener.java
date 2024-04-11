@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.models.dto.TelegramMessage;
 import edu.java.bot.sender.BotMessageSender;
 import edu.java.bot.service.MessageService;
+import io.micrometer.core.instrument.Counter;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,15 +19,17 @@ import reactor.core.publisher.Mono;
 @Component
 @Slf4j
 public class TelegramMessageListener implements UpdatesListener {
+    private final Counter processMessageMetric;
     private final MessageService messageService;
     private final BotMessageSender botMessageSender;
 
     public TelegramMessageListener(
         TelegramBot telegramBot,
         MessageService messageService,
-        BotMessageSender botMessageSender
+        BotMessageSender botMessageSender, Counter processMessageMetric
     ) {
         telegramBot.setUpdatesListener(this);
+        this.processMessageMetric = processMessageMetric;
         this.messageService = messageService;
         this.botMessageSender = botMessageSender;
     }
@@ -38,6 +41,7 @@ public class TelegramMessageListener implements UpdatesListener {
     public int process(List<Update> list) {
         Flux<TelegramMessage> messages = Flux.fromIterable(list)
             .flatMap(update -> {
+                processMessageMetric.increment();
                 try {
                     long chatId = update.message().chat().id();
                     var response = messageService.prepareResponseMessage(update);
