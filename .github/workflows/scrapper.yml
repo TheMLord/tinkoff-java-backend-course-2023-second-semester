@@ -10,7 +10,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: themlord/scrapper-image
+  IMAGE_NAME: themlord/tinkoff-java-backend-course-2023-second-semester/scrapper-image
 
 jobs:
   build:

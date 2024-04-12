@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: themlord/bot-image
+  IMAGE_NAME: themlord/tinkoff-java-backend-course-2023-second-semester/bot-image
 
 jobs:
   build:
