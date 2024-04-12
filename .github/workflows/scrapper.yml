@@ -32,7 +32,7 @@ jobs:
         run: mvn -pl scrapper -am package
 
       - name: build scrapper image
-        run: docker build -t scrapper-image -f scrapper.Dockerfile .
+        run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -f scrapper.Dockerfile .
         working-directory: ${{ github.workspace }}/scrapper
 
       - name: Log in to the Container registry

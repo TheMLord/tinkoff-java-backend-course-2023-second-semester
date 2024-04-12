@@ -31,7 +31,7 @@ jobs:
         run: mvn -pl bot -am package
 
       - name: build bot image
-        run: docker build -t bot-image -f bot.Dockerfile .
+        run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -f bot.Dockerfile .
         working-directory: ${{ github.workspace }}/bot
 
       - name: Log in to the Container registry
