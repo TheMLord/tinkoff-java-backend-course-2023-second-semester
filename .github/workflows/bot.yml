@@ -26,6 +26,10 @@ jobs:
       - name: maven build
         run: mvn -pl bot -am package
 
+      - name: build bot image
+        run: docker build -t bot-image -f bot.Dockerfile .
+        working-directory: ${{ github.workspace }}/bot
+
       - id: jacoco
         uses: madrapps/jacoco-report@v1.6.1
         if: ( github.event_name != 'workflow_dispatch' )
