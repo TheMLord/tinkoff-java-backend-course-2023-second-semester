@@ -47,14 +47,14 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester11");
 
         jdbcTgChatRepository.add(idChat).block();
-        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat).block()).isEmpty();
+        assertThat(jdbcLinkDao.getAllLinksInRelation(idChat).collectList().block()).isEmpty();
 
         var actualLinkName = jdbcLinkDao.add(idChat, exceptedLinkName).block();
         var actualLinkInDB = jdbcLinkRepository.findLinkByName(exceptedLinkName).block();
 
         assertThat(actualLinkName.getLinkUri()).isEqualTo(exceptedLinkName);
-        assertThat(actualLinkInDB).isPresent();
-        assertThat(actualLinkInDB.get().getLinkUri()).isEqualTo(exceptedLinkName);
+        assertThat(actualLinkInDB).isNotNull();
+        assertThat(actualLinkInDB.getLinkUri()).isEqualTo(exceptedLinkName);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         jdbcTgChatRepository.add(idChat).block();
         jdbcLinkDao.add(idChat, exceptedLinkName).block();
 
-        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName).block()).isPresent();
+        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName).block()).isNotNull();
 
         assertThatThrownBy(() -> jdbcLinkDao.add(
             idChat,
@@ -123,7 +123,7 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester15");
 
         jdbcTgChatRepository.add(idChat).block();
-        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat).block()).isEmpty();
+        assertThat(jdbcLinkDao.getAllLinksInRelation(idChat).collectList().block()).isEmpty();
 
             /*
             Adding another user with a link so that the link entity appears in the database,
@@ -132,7 +132,7 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         jdbcTgChatRepository.add(16L).block();
         jdbcLinkDao.add(16L, exceptedLinkName).block();
 
-        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName).block()).isPresent();
+        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName).block()).isNotNull();
 
         assertThatThrownBy(() -> jdbcLinkDao.remove(
             idChat,
@@ -152,9 +152,10 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester17");
 
         jdbcTgChatRepository.add(idChat).block();
-        assertThat(jdbcLinkDao.getAllLinkInRelation(idChat).block()).isEmpty();
+        assertThat(jdbcLinkDao.getAllLinksInRelation(idChat).collectList().block()).isEmpty();
 
-        assertThat(jdbcLinkRepository.findLinkByName(exceptedLinkName).block()).isEmpty();
+        assertThatThrownBy(() -> jdbcLinkRepository.findLinkByName(exceptedLinkName).block())
+            .isInstanceOf(NotExistLinkException.class);
 
         assertThatThrownBy(() -> jdbcLinkDao.remove(
             idChat,
@@ -185,14 +186,15 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var actualLink1 = jdbcLinkRepository.findLinkByName(exceptedLinkName1).block();
         var actualLink2 = jdbcLinkRepository.findLinkByName(exceptedLinkName2).block();
 
-        assertThat(actualLink1).isPresent();
-        assertThat(actualLink2).isPresent();
+        assertThat(actualLink1).isNotNull();
+        assertThat(actualLink2).isNotNull();
 
-        assertThat(jdbcLinkDao.findAllIdTgChatWhoTrackLink(actualLink1.get().getId()).block()).containsOnly(
+        assertThat(jdbcLinkDao.findAllIdTgChatWhoTrackLink(actualLink1.getId()).collectList().block()).containsOnly(
             idChat1,
             idChat2
         );
-        assertThat(jdbcLinkDao.findAllIdTgChatWhoTrackLink(actualLink2.get().getId()).block()).containsOnly(idChat1);
+        assertThat(jdbcLinkDao.findAllIdTgChatWhoTrackLink(actualLink2.getId()).collectList().block()).containsOnly(
+            idChat1);
     }
 
     private void setUpServer() {

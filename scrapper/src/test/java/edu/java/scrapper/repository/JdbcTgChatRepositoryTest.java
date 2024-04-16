@@ -32,8 +32,8 @@ public class JdbcTgChatRepositoryTest extends IntegrationEnvironment {
         jdbcTgChatRepository.add(exceptedId).block();
         var actualChatEntity = jdbcTgChatRepository.findById(exceptedId).block();
 
-        assertThat(actualChatEntity).isPresent();
-        assertThat(actualChatEntity.get().getId()).isEqualTo(exceptedId);
+        assertThat(actualChatEntity).isNotNull();
+        assertThat(actualChatEntity.getId()).isEqualTo(exceptedId);
     }
 
     @Test
@@ -57,10 +57,12 @@ public class JdbcTgChatRepositoryTest extends IntegrationEnvironment {
         var idChatToDelete = 32L;
 
         jdbcTgChatRepository.add(idChatToDelete).block();
-        assertThat(jdbcTgChatRepository.findById(idChatToDelete).block()).isPresent();
+
+        assertThat(jdbcTgChatRepository.findById(idChatToDelete).block()).isNotNull();
 
         jdbcTgChatRepository.remove(idChatToDelete).block();
-        assertThat(jdbcTgChatRepository.findById(idChatToDelete).block()).isEmpty();
+        assertThatThrownBy(() -> jdbcTgChatRepository.findById(idChatToDelete).block())
+            .isInstanceOf(NotExistTgChatException.class);
     }
 
     @Test
@@ -70,7 +72,8 @@ public class JdbcTgChatRepositoryTest extends IntegrationEnvironment {
     void testThatItIsImpossibleToDeleteANonExistentChatAndReturnedTheCorrectError() {
         var idChatToDelete = 33L;
 
-        assertThat(jdbcTgChatRepository.findById(idChatToDelete).block()).isEmpty();
+        assertThatThrownBy(() -> jdbcTgChatRepository.findById(idChatToDelete).block())
+            .isInstanceOf(NotExistTgChatException.class);
 
         assertThatThrownBy(() -> jdbcTgChatRepository.remove(idChatToDelete).block())
             .isInstanceOf(NotExistTgChatException.class);

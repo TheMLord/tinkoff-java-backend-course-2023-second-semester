@@ -1,15 +1,15 @@
 package edu.java.repository.jdbc;
 
+import edu.java.exceptions.NotExistLinkException;
 import edu.java.models.entities.Link;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -21,15 +21,15 @@ public class JdbcLinkRepository implements LinkRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Mono<List<Link>> findAll() {
-        return Mono.just(jdbcTemplate.query(
+    public Flux<Link> findAll() {
+        return Flux.fromIterable(jdbcTemplate.query(
             "SELECT * FROM links",
             JdbcRowMapperUtil::mapRowToLink
         ));
     }
 
     @Override
-    public Mono<Optional<Link>> findById(Long id) {
+    public Mono<Link> findById(Long id) {
         return Mono.defer(() -> {
             var resultLinks = jdbcTemplate.query(
                 "SELECT * FROM links WHERE id = (?)",
@@ -37,14 +37,14 @@ public class JdbcLinkRepository implements LinkRepository {
                 id
             );
             return resultLinks.isEmpty()
-                ? Mono.just(Optional.empty())
-                : Mono.just(Optional.of(resultLinks.getFirst()));
+                ? Mono.error(new NotExistLinkException())
+                : Mono.just(resultLinks.getFirst());
         });
     }
 
     @Override
-    public Mono<List<Link>> findAllByTime(OffsetDateTime time) {
-        return Mono.just(jdbcTemplate.query(
+    public Flux<Link> findAllByTime(OffsetDateTime time) {
+        return Flux.fromIterable(jdbcTemplate.query(
             "SELECT * FROM links WHERE last_modifying < (?)",
             JdbcRowMapperUtil::mapRowToLink,
             time
@@ -59,7 +59,7 @@ public class JdbcLinkRepository implements LinkRepository {
                 newLastModifyingTime,
                 linkId
             );
-            return findById(linkId).map(Optional::get);
+            return findById(linkId);
         });
     }
 
@@ -71,12 +71,12 @@ public class JdbcLinkRepository implements LinkRepository {
                 newContent,
                 linkId
             );
-            return findById(linkId).map(Optional::get);
+            return findById(linkId);
         });
     }
 
     @Override
-    public Mono<Optional<Link>> findLinkByName(URI linkName) {
+    public Mono<Link> findLinkByName(URI linkName) {
         return Mono.defer(() -> {
             var resultLinks = jdbcTemplate.query(
                 "SELECT * FROM links WHERE link_uri = (?)",
@@ -84,8 +84,8 @@ public class JdbcLinkRepository implements LinkRepository {
                 linkName.toString()
             );
             return resultLinks.isEmpty()
-                ? Mono.just(Optional.empty())
-                : Mono.just(Optional.of(resultLinks.getFirst()));
+                ? Mono.error(new NotExistLinkException())
+                : Mono.just(resultLinks.getFirst());
         });
     }
 }

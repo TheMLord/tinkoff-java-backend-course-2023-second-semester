@@ -166,9 +166,9 @@ public class UriProcessorsTest {
             var unsupportedLink = URI.create("https://habr.com/ru/companies/otus/articles/687004/");
             var revContent = "";
 
-            var actualLinkChanges = uriProcessor.compareContent(unsupportedLink, revContent);
+            var actualLinkChanges = uriProcessor.compareContent(unsupportedLink, revContent).block();
 
-            assertThat(actualLinkChanges).isEmpty();
+            assertThat(actualLinkChanges).isNull();
         }
 
         @Test
@@ -178,9 +178,9 @@ public class UriProcessorsTest {
             setUpServer("/repos/.*", GITHUB_ANSWER_BODY);
             var githubRepositoryLink = URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff");
 
-            var actualLinkChanges = uriProcessor.compareContent(githubRepositoryLink, GITHUB_ANSWER_BODY);
+            var actualLinkChanges = uriProcessor.compareContent(githubRepositoryLink, GITHUB_ANSWER_BODY).block();
 
-            assertThat(actualLinkChanges).isEmpty();
+            assertThat(actualLinkChanges).isNull();
         }
 
         @Test
@@ -191,9 +191,10 @@ public class UriProcessorsTest {
             var stackoverflowQuestionLink =
                 URI.create("https://stackoverflow.com/questions/78171066/lravel-inertiajs-vue-3-file-upload-not-working");
 
-            var actualLinkChanges = uriProcessor.compareContent(stackoverflowQuestionLink, STACKOVERFLOW_ANSWER_BODY);
+            var actualLinkChanges =
+                uriProcessor.compareContent(stackoverflowQuestionLink, STACKOVERFLOW_ANSWER_BODY).block();
 
-            assertThat(actualLinkChanges).isEmpty();
+            assertThat(actualLinkChanges).isNull();
         }
 
         @Test
@@ -204,13 +205,12 @@ public class UriProcessorsTest {
             var githubRepositoryLink = URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff");
             var exceptedChangesDescription = "Есть изменения";
 
-            var actualLinkChanges = uriProcessor.compareContent(githubRepositoryLink, GITHUB_CONTENT_PREV);
+            var actualLinkChanges = uriProcessor.compareContent(githubRepositoryLink, GITHUB_CONTENT_PREV).block();
 
-            assertThat(actualLinkChanges).isPresent();
-            var actualChanges = actualLinkChanges.get();
+            assertThat(actualLinkChanges).isNotNull();
 
-            assertThat(actualChanges.descriptionChanges()).isEqualTo(exceptedChangesDescription);
-            assertThat(actualChanges.linkName()).isEqualTo(githubRepositoryLink);
+            assertThat(actualLinkChanges.descriptionChanges()).isEqualTo(exceptedChangesDescription);
+            assertThat(actualLinkChanges.linkName()).isEqualTo(githubRepositoryLink);
         }
 
         @Test
@@ -222,13 +222,13 @@ public class UriProcessorsTest {
                 URI.create("https://stackoverflow.com/questions/78171066/lravel-inertiajs-vue-3-file-upload-not-working");
             var exceptedChangesDescription = "Есть изменения";
 
-            var actualLinkChanges = uriProcessor.compareContent(stackoverflowQuestionLink, STACKOVERFLOW_PREV_CONTENT);
+            var actualLinkChanges =
+                uriProcessor.compareContent(stackoverflowQuestionLink, STACKOVERFLOW_PREV_CONTENT).block();
 
-            assertThat(actualLinkChanges).isPresent();
-            var actualChanges = actualLinkChanges.get();
+            assertThat(actualLinkChanges).isNotNull();
 
-            assertThat(actualChanges.descriptionChanges()).isEqualTo(exceptedChangesDescription);
-            assertThat(actualChanges.linkName()).isEqualTo(stackoverflowQuestionLink);
+            assertThat(actualLinkChanges.descriptionChanges()).isEqualTo(exceptedChangesDescription);
+            assertThat(actualLinkChanges.linkName()).isEqualTo(stackoverflowQuestionLink);
         }
     }
 

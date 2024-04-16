@@ -7,8 +7,8 @@ import edu.java.models.pojo.LinkChanges;
 import edu.java.proxies.GithubProxy;
 import java.net.URI;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.SneakyThrows;
+import reactor.core.publisher.Mono;
 
 public class GithubProcessor extends UriProcessor {
     private final GithubProxy githubProxy;
@@ -38,19 +38,17 @@ public class GithubProcessor extends UriProcessor {
 
     @SneakyThrows
     @Override
-    protected Optional<LinkChanges> prepareUpdate(URI nameLink, String prevContent) {
+    protected Mono<LinkChanges> prepareUpdate(URI nameLink, String prevContent) {
         var prevDto = objectMapper.readValue(prevContent, GithubDTO.class);
         var newDto = (GithubDTO) processUri(nameLink);
 
         if (!prevDto.pushedAt().equals(Objects.requireNonNull(newDto).pushedAt())) {
-            return Optional.of(
-                new LinkChanges(
-                    nameLink,
-                    "Есть изменения",
+            return Mono.just(
+                new LinkChanges(nameLink, "Есть изменения",
                     objectMapper.writeValueAsString(newDto)
                 )
             );
         }
-        return Optional.empty();
+        return Mono.empty();
     }
 }

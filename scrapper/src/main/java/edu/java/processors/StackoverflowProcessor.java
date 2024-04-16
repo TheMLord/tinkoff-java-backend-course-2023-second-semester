@@ -7,8 +7,8 @@ import edu.java.models.pojo.StackoverflowUriArg;
 import edu.java.proxies.StackoverflowProxy;
 import java.net.URI;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.SneakyThrows;
+import reactor.core.publisher.Mono;
 
 public class StackoverflowProcessor extends UriProcessor {
     private final StackoverflowProxy stackoverflowProxy;
@@ -42,13 +42,13 @@ public class StackoverflowProcessor extends UriProcessor {
 
     @SneakyThrows
     @Override
-    protected Optional<LinkChanges> prepareUpdate(URI nameLink, String prevContent) {
+    protected Mono<LinkChanges> prepareUpdate(URI nameLink, String prevContent) {
         var prevDto = objectMapper.readValue(prevContent, StackoverflowDTO.class);
         var newDto = (StackoverflowDTO) processUri(nameLink);
 
         if (prevDto.items().getFirst().answerCount()
             != Objects.requireNonNull(newDto).items().getFirst().answerCount()) {
-            return Optional.of(
+            return Mono.just(
                 new LinkChanges(
                     nameLink,
                     "Есть изменения",
@@ -56,6 +56,6 @@ public class StackoverflowProcessor extends UriProcessor {
                 )
             );
         }
-        return Optional.empty();
+        return Mono.empty();
     }
 }

@@ -42,10 +42,8 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional
     public Mono<ListLinksResponse> getListLinks(long chatId) {
-        return linkDao.getAllLinkInRelation(chatId)
-            .flatMap(links -> Mono.just(new ListLinksResponse(
-                links.stream().map(link -> new LinkResponse(link.getId(), link.getLinkUri())).toList(),
-                links.size()
-            )));
+        return linkDao.getAllLinksInRelation(chatId).collectList()
+            .map(links -> links.stream().map(link -> new LinkResponse(link.getId(), link.getLinkUri())).toList())
+            .flatMap(linkResponses -> Mono.just(new ListLinksResponse(linkResponses, linkResponses.size())));
     }
 }

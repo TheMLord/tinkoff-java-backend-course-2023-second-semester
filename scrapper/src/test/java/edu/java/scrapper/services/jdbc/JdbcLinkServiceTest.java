@@ -33,7 +33,7 @@ public class JdbcLinkServiceTest extends IntegrationEnvironment {
         var exceptedLinkResponseURI =
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff2");
         var exceptedLinkResponseId = jdbcLinkRepository
-            .findLinkByName(exceptedLinkResponseURI).block().get().getId();
+            .findLinkByName(exceptedLinkResponseURI).block().getId();
 
         var actualLinkResponse = jdbcLinkService.addLink(2L, exceptedLinkResponseURI).block();
 
@@ -50,7 +50,7 @@ public class JdbcLinkServiceTest extends IntegrationEnvironment {
         var exceptedLinkResponseURI =
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff2");
         var exceptedLinkResponseId = jdbcLinkRepository
-            .findLinkByName(exceptedLinkResponseURI).block().get().getId();
+            .findLinkByName(exceptedLinkResponseURI).block().getId();
 
         var actualLinkResponse = jdbcLinkService.removeLink(1L, exceptedLinkResponseURI).block();
 
