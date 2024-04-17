@@ -1,5 +1,6 @@
 package edu.java.scrapper.services.jdbc;
 
+import edu.java.exceptions.NotExistTgChatException;
 import edu.java.repository.TgChatRepository;
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.ChatService;
@@ -15,6 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @DirtiesContext
@@ -34,9 +36,10 @@ public class JdbcTgChatServiceTest extends IntegrationEnvironment {
     void testThatTheServiceDoesNotReturnErrorsWhenAddingANewChatCorrectly() {
         var newChatId = 4L;
 
-        assertThat(jdbcTgChatRepository.findById(newChatId).block()).isEmpty();
+        assertThatThrownBy(() -> jdbcTgChatRepository.findById(newChatId).block())
+            .isInstanceOf(NotExistTgChatException.class);
         jdbcChatService.register(newChatId).block();
-        assertThat(jdbcTgChatRepository.findById(newChatId).block()).isPresent();
+        assertThat(jdbcTgChatRepository.findById(newChatId).block()).isNotNull();
     }
 
     @Test
@@ -46,9 +49,10 @@ public class JdbcTgChatServiceTest extends IntegrationEnvironment {
     void testThatTheServiceDoesNotReturnErrorsIfTheChatIsDeletedCorrectly() {
         var existChat = 1L;
 
-        assertThat(jdbcTgChatRepository.findById(existChat).block()).isPresent();
+        assertThat(jdbcTgChatRepository.findById(existChat).block()).isNotNull();
         jdbcChatService.unRegister(existChat).block();
-        assertThat(jdbcTgChatRepository.findById(existChat).block()).isEmpty();
+        assertThatThrownBy(() -> jdbcTgChatRepository.findById(existChat).block())
+            .isInstanceOf(NotExistTgChatException.class);
     }
 
     @DynamicPropertySource

@@ -8,8 +8,8 @@ import edu.java.models.pojo.LinkChanges;
 import edu.java.proxies.GithubProxy;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Optional;
 import lombok.SneakyThrows;
+import reactor.core.publisher.Mono;
 
 public class GithubProcessor extends UriProcessor {
     private final GithubProxy githubProxy;
@@ -56,12 +56,12 @@ public class GithubProcessor extends UriProcessor {
 
     @SneakyThrows
     @Override
-    protected Optional<LinkChanges> prepareUpdate(URI nameLink, String prevContent) {
+    protected Mono<LinkChanges> prepareUpdate(URI nameLink, String prevContent) {
         var prevDto = objectMapper.readValue(prevContent, GithubContent.class);
         var newDto = (GithubContent) processUri(nameLink);
 
         if (!isChangedBranches(prevDto.getGithubBranchesDTO(), newDto.getGithubBranchesDTO())) {
-            return Optional.of(
+            return Mono.just(
                 new LinkChanges(
                     nameLink,
                     prepareChangesDescription(prevDto, newDto),
@@ -69,7 +69,7 @@ public class GithubProcessor extends UriProcessor {
                 )
             );
         }
-        return Optional.empty();
+        return Mono.empty();
     }
 
     private boolean isChangedBranches(GithubBranchesDTO[] prevBranches, GithubBranchesDTO[] newBranches) {

@@ -3,6 +3,9 @@ package edu.java.scrapper.repository.jooq;
 import edu.java.domain.pojos.Links;
 import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +17,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -39,7 +37,7 @@ public class JooqLinkRepositoryTest extends IntegrationEnvironment {
     void testThatTheMethodOfSearchingForAllLinksWorksCorrectlyReturnedTheCorrectNumberOfLinks() {
         var exceptedCountLinks = 3;
 
-        var actualAllLinks = jdbcLinkRepository.findAll().block();
+        var actualAllLinks = jdbcLinkRepository.findAll().collectList().block();
 
         assertThat(actualAllLinks.size()).isEqualTo(exceptedCountLinks);
 
@@ -63,7 +61,7 @@ public class JooqLinkRepositoryTest extends IntegrationEnvironment {
         );
         var exceptedContLink = 2;
 
-        var actualLinks = jdbcLinkRepository.findAllByTime(timePredicate).block();
+        var actualLinks = jdbcLinkRepository.findAllByTime(timePredicate).collectList().block();
 
         assertThat(actualLinks.size()).isEqualTo(exceptedContLink);
 
@@ -86,11 +84,11 @@ public class JooqLinkRepositoryTest extends IntegrationEnvironment {
         );
         var idLink = jdbcLinkRepository.findLinkByName(
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff1")
-        ).block().get().getId();
+        ).block().getId();
 
-        assertThat(jdbcLinkRepository.findById(idLink).block()).isPresent();
+        assertThat(jdbcLinkRepository.findById(idLink).block()).isNotNull();
         jdbcLinkRepository.updateLastModifying(idLink, exceptedLastModifyingTime).block();
-        var actualLinkLAtModifying = jdbcLinkRepository.findById(idLink).block().get().getLastModifying();
+        var actualLinkLAtModifying = jdbcLinkRepository.findById(idLink).block().getLastModifying();
         assertThat(actualLinkLAtModifying).isEqualTo(exceptedLastModifyingTime);
     }
 
@@ -106,11 +104,11 @@ public class JooqLinkRepositoryTest extends IntegrationEnvironment {
             """;
         var idLink = jdbcLinkRepository.findLinkByName(
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff1")
-        ).block().get().getId();
+        ).block().getId();
 
-        assertThat(jdbcLinkRepository.findById(idLink).block()).isPresent();
+        assertThat(jdbcLinkRepository.findById(idLink).block()).isNotNull();
         jdbcLinkRepository.updateContent(idLink, exceptedContent).block();
-        var actualContent = jdbcLinkRepository.findById(idLink).block().get().getContent();
+        var actualContent = jdbcLinkRepository.findById(idLink).block().getContent();
 
         assertThat(exceptedContent).isEqualTo(actualContent);
     }

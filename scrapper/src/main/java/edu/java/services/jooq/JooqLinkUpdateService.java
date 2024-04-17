@@ -8,7 +8,6 @@ import edu.java.repository.LinkRepository;
 import edu.java.services.LinkUpdateService;
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
@@ -21,22 +20,24 @@ public class JooqLinkUpdateService implements LinkUpdateService {
 
     @Override
     @Transactional
-    public Mono<Optional<LinkUpdate>> prepareLinkUpdate(Links link) {
+    public Mono<LinkUpdate> prepareLinkUpdate(Links link) {
         var linkId = link.getId();
 
-        return Mono.defer(() -> {
-            var updates = uriProcessor.compareContent(URI.create(link.getLinkUri()), link.getContent());
-            return updates.map(linkChanges -> linkRepository.updateLastModifying(linkId, OffsetDateTime.now())
-                .flatMap(linkWithUpdateModifying -> linkRepository.updateContent(linkId, linkChanges.newContent()))
-                .flatMap(linkWithUpdateContent ->
-                    linkDao.findAllIdTgChatWhoTrackLink(linkWithUpdateContent.getId()))
-                .flatMap(listSubscribers -> Mono.just(Optional.of(new LinkUpdate(
-                    linkId,
-                    updates.get().linkName(),
-                    updates.get().descriptionChanges(),
-                    listSubscribers
-                ))))).orElseGet(() -> linkRepository.updateLastModifying(linkId, OffsetDateTime.now())
-                .flatMap(linkWithUpdateModifying -> Mono.just(Optional.empty())));
-        });
+        return linkRepository.updateLastModifying(linkId, OffsetDateTime.now()).flatMap(updateTimeLink ->
+            uriProcessor.compareContent(URI.create(link.getLinkUri()), link.getContent())
+                .flatMap(linkChanges -> linkDao.findAllIdTgChatWhoTrackLink(linkId)
+                    .collectList()
+                    .map(listSubscribers -> new LinkUpdate(
+                        linkId,
+                        linkChanges.linkName(),
+                        linkChanges.descriptionChanges(),
+                        listSubscribers
+                    ))
+                    .flatMap(linkUpdate ->
+                        linkRepository.updateContent(linkId, linkChanges.newContent())
+                            .map(link2 -> linkUpdate)
+                    )
+                )
+        );
     }
 }

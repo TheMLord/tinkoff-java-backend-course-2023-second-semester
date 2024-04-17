@@ -6,7 +6,6 @@ import edu.java.exceptions.NotExistTgChatException;
 import edu.java.repository.TgChatRepository;
 import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
 import java.time.OffsetDateTime;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import reactor.core.publisher.Mono;
@@ -34,7 +33,7 @@ public class JdbcTgChatRepository implements TgChatRepository {
     }
 
     @Override
-    public Mono<Optional<Tgchats>> findById(Long chatId) {
+    public Mono<Tgchats> findById(Long chatId) {
         return Mono.defer(() -> {
             var resultChats = jdbcTemplate.query(
                 "SELECT * FROM tgchats WHERE id = (?)",
@@ -42,22 +41,16 @@ public class JdbcTgChatRepository implements TgChatRepository {
                 chatId
             );
             return resultChats.isEmpty()
-                ? Mono.just(Optional.empty())
-                : Mono.just(Optional.of(resultChats.getFirst()));
+                ? Mono.error(new NotExistTgChatException())
+                : Mono.just(resultChats.getFirst());
         });
     }
 
     @Override
     public Mono<Void> remove(Long chatId) {
-        return findById(chatId)
-            .flatMap(chatOptional -> {
-                if (chatOptional.isEmpty()) {
-                    return Mono.error(new NotExistTgChatException());
-                } else {
-                    return Mono.fromRunnable(() -> {
-                        jdbcTemplate.update("DELETE FROM tgchats WHERE id = (?)", chatId);
-                    });
-                }
-            });
+        return findById(chatId).flatMap(tgChat -> Mono.fromRunnable(() -> jdbcTemplate.update(
+            "DELETE FROM tgchats WHERE id = (?)",
+            chatId
+        )));
     }
 }

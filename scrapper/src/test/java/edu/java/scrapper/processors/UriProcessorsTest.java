@@ -153,9 +153,9 @@ public class UriProcessorsTest {
             var unsupportedLink = URI.create("https://habr.com/ru/companies/otus/articles/687004/");
             var revContent = "";
 
-            var actualLinkChanges = uriProcessor.compareContent(unsupportedLink, revContent);
+            var actualLinkChanges = uriProcessor.compareContent(unsupportedLink, revContent).block();
 
-            assertThat(actualLinkChanges).isEmpty();
+            assertThat(actualLinkChanges).isNull();
         }
 
         @Test
@@ -169,13 +169,12 @@ public class UriProcessorsTest {
                 Added 1 branch(es):
                 createdAccount""";
 
-            var actualLinkChanges = uriProcessor.compareContent(githubRepositoryLink, GITHUB_CONTENT_PREV);
+            var actualLinkChanges = uriProcessor.compareContent(githubRepositoryLink, GITHUB_CONTENT_PREV).block();
 
-            assertThat(actualLinkChanges).isPresent();
-            var actualChanges = actualLinkChanges.get();
+            assertThat(actualLinkChanges).isNotNull();
 
-            assertThat(actualChanges.descriptionChanges()).isEqualTo(exceptedChangesDescription);
-            assertThat(actualChanges.linkName()).isEqualTo(githubRepositoryLink);
+            assertThat(actualLinkChanges.descriptionChanges()).isEqualTo(exceptedChangesDescription);
+            assertThat(actualLinkChanges.linkName()).isEqualTo(githubRepositoryLink);
         }
 
         @Test
@@ -193,13 +192,12 @@ public class UriProcessorsTest {
                 Author: BigJump (reputations: 15809)
                 ed more clearly as XML.""";
 
-            var actualLinkChanges = uriProcessor.compareContent(stackoverflowQuestionLink, STACKOVERFLOW_PREV_CONTENT);
+            var actualLinkChanges = uriProcessor.compareContent(stackoverflowQuestionLink, STACKOVERFLOW_PREV_CONTENT).block();
 
-            assertThat(actualLinkChanges).isPresent();
-            var actualChanges = actualLinkChanges.get();
+            assertThat(actualLinkChanges).isNotNull();
 
-            assertThat(actualChanges.descriptionChanges()).isEqualTo(exceptedChangesDescription);
-            assertThat(actualChanges.linkName()).isEqualTo(stackoverflowQuestionLink);
+            assertThat(actualLinkChanges.descriptionChanges()).isEqualTo(exceptedChangesDescription);
+            assertThat(actualLinkChanges.linkName()).isEqualTo(stackoverflowQuestionLink);
         }
     }
 
