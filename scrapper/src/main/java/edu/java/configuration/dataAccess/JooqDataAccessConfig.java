@@ -22,15 +22,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jooq")
 public class JooqDataAccessConfig {
-    @Bean LinkRepository joocLinkRepository(DSLContext dslContext) {
+    @Bean LinkRepository jooqLinkRepository(DSLContext dslContext) {
         return new JooqLinkRepository(dslContext);
     }
 
-    @Bean TgChatRepository joocTgChatRepository(DSLContext dslContext) {
+    @Bean TgChatRepository jooqTgChatRepository(DSLContext dslContext) {
         return new JooqTgChatRepository(dslContext);
     }
 
-    @Bean LinkDao joocLinkDao(
+    @Bean LinkDao jooqLinkDao(
         DSLContext dslContext,
         LinkRepository linkRepository,
         TgChatRepository tgChatRepository,
@@ -40,11 +40,11 @@ public class JooqDataAccessConfig {
         return new JooqLinkDao(linkRepository, tgChatRepository, dslContext, objectMapper, uriProcessor);
     }
 
-    @Bean LinkService joocLinkService(LinkDao linkDao) {
+    @Bean LinkService jooqLinkService(LinkDao linkDao) {
         return new JooqLinkService(linkDao);
     }
 
-    @Bean ChatService joocChatService(TgChatRepository tgChatRepository) {
+    @Bean ChatService jooqChatService(TgChatRepository tgChatRepository) {
         return new JooqChatService(tgChatRepository);
     }
 
