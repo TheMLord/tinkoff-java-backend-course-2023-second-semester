@@ -165,19 +165,6 @@
 
         <plugins>
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>edu.java.configuration/**</exclude>
-                        <exclude>edu.java.domain/**</exclude>
-                        <exclude>edu.java.exceptions/**</exclude>
-                        <exclude>edu.java.schedulers/**</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
