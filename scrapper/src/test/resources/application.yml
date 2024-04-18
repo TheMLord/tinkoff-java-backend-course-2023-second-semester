@@ -14,12 +14,12 @@ app:
   useQueue: false
 
   kafka:
-    bootstrapServers: localhost:29091, localhost:29092, localhost:29093
+    bootstrapServers: localhost:29091
     update-topic-name: scrapper.link_update
     topics-property:
       - topicName: scrapper.link_update
-        number-partitions: 3
-        replication-factor: 3
+        number-partitions: 1
+        replication-factor: 1
 
 spring:
   application:

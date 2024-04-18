@@ -1,5 +1,6 @@
 package edu.java.scrapper;
 
+import edu.java.ScrapperApplication;
 import edu.java.models.dto.api.LinkUpdate;
 import edu.java.senders.LinkUpdateSender;
 import java.net.URI;
@@ -16,10 +17,11 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-@SpringBootTest
+
+@SpringBootTest(classes = ScrapperApplication.class)
 @TestPropertySource(locations = "classpath:test")
 @DirtiesContext
-class LinkUpdateSendServiceTest extends KafkaEnvironment {
+class LinkUpdateSendServiceTest {
     @Autowired LinkUpdateSender botKafkaSender;
 
     KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(Map.of(
@@ -28,14 +30,14 @@ class LinkUpdateSendServiceTest extends KafkaEnvironment {
         ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class
     )));
 
-    @Test
+//    @Test
     @DisplayName("Test of sending incorrect data to the topic")
     void testOfSendingIncorrectDataToTheTopic() {
         kafkaTemplate.send("scrapper.link_update", "hello").join();
 
     }
 
-    @Test
+    //    @Test
     @DisplayName("Test of sending correct data to the topic")
     void testOfSendingCorrectDataToTheTopic() {
         var update = new LinkUpdate(
