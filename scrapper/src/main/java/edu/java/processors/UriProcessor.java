@@ -2,9 +2,9 @@ package edu.java.processors;
 
 import edu.java.models.pojo.LinkChanges;
 import java.net.URI;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 /**
  * link processing contract.
@@ -42,7 +42,7 @@ public abstract class UriProcessor {
      * @return an LinkChanges with information about changes or an empty Optional
      *     if there are no changes in the content of the link.
      */
-    protected abstract Optional<LinkChanges> prepareUpdate(URI nameLink, String prevContent);
+    protected abstract Mono<LinkChanges> prepareUpdate(URI nameLink, String prevContent);
 
     /**
      * Method of splitting the link path by /.
@@ -81,7 +81,7 @@ public abstract class UriProcessor {
      * @param nameLink    the uri of the link to check for content updates.
      * @param prevContent current content.
      */
-    public final Optional<LinkChanges> compareContent(URI nameLink, String prevContent) {
+    public final Mono<LinkChanges> compareContent(URI nameLink, String prevContent) {
         log.info("checking for {} updates", nameLink.toString());
         if (isProcessingUri(nameLink)) {
             return prepareUpdate(nameLink, prevContent);
@@ -89,6 +89,6 @@ public abstract class UriProcessor {
         if (this.nextProcessor != null) {
             return nextProcessor.compareContent(nameLink, prevContent);
         }
-        return Optional.empty();
+        return Mono.empty();
     }
 }

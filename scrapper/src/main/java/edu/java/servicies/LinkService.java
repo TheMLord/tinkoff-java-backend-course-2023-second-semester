@@ -1,4 +1,4 @@
-package edu.java.services;
+package edu.java.servicies;
 
 import edu.java.models.dto.api.response.LinkResponse;
 import edu.java.models.dto.api.response.ListLinksResponse;

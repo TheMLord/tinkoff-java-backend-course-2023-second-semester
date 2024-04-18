@@ -2,7 +2,7 @@ package edu.java.scrapper.services.jdbc;
 
 import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
-import edu.java.services.ChatService;
+import edu.java.servicies.ChatService;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -4,7 +4,7 @@ import edu.java.models.dto.api.request.AddLinkRequest;
 import edu.java.models.dto.api.request.RemoveLinkRequest;
 import edu.java.models.dto.api.response.LinkResponse;
 import edu.java.models.dto.api.response.ListLinksResponse;
-import edu.java.services.LinkService;
+import edu.java.servicies.LinkService;
 import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

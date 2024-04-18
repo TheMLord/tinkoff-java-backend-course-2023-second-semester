@@ -1,10 +1,10 @@
-package edu.java.services.jpa;
+package edu.java.servicies.jpa;
 
 import edu.java.domain.jpa.TgChats;
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
 import edu.java.repository.jpa.JpaTgChatRepository;
-import edu.java.services.ChatService;
+import edu.java.servicies.ChatService;
 import java.time.OffsetDateTime;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;

@@ -1,4 +1,4 @@
-package edu.java.services;
+package edu.java.servicies;
 
 import edu.java.models.dto.api.LinkUpdate;
 import edu.java.senders.LinkUpdateSender;

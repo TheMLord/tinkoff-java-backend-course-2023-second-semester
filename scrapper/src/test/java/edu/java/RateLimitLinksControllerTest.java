@@ -2,7 +2,7 @@ package edu.java;
 
 import edu.java.controller.LinksController;
 import edu.java.schedulers.LinkUpdaterScheduler;
-import edu.java.services.LinkService;
+import edu.java.servicies.LinkService;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
