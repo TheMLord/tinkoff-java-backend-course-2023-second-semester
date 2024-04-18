@@ -1,7 +1,7 @@
-package edu.java.services.jdbc;
+package edu.java.servicies.jooq;
 
 import edu.java.repository.TgChatRepository;
-import edu.java.services.ChatService;
+import edu.java.servicies.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * Implementation of the jdbc chat service.
  */
 @RequiredArgsConstructor
-public class JdbcChatService implements ChatService {
+public class JooqChatService implements ChatService {
     private final TgChatRepository tgChatRepository;
 
     @Override

@@ -8,7 +8,6 @@ import edu.java.exceptions.NotTrackLinkException;
 import edu.java.repository.LinkDao;
 import edu.java.repository.LinkRepository;
 import edu.java.repository.TgChatRepository;
-import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
 import java.net.URI;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -39,11 +38,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Sql(value = "classpath:sql/clearDB.sql",
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 public class JdbcLinkDaoTest extends IntegrationEnvironment {
+    @MockBean AdminClient adminClient;
     @MockBean KafkaAdmin kafkaAdmin;
 
-    @MockBean AdminClient adminClient;
-
-    @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
     @Autowired TgChatRepository tgChatRepository;
     @Autowired LinkDao linkDao;
     @Autowired LinkRepository linkRepository;
@@ -60,14 +57,14 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester11");
 
         tgChatRepository.add(idChat).block();
-        assertThat(linkDao.getAllLinkInRelation(idChat).block()).isEmpty();
+        assertThat(linkDao.getAllLinksInRelation(idChat).collectList().block()).isEmpty();
 
         var actualLinkName = linkDao.add(idChat, exceptedLinkName).block();
         var actualLinkInDB = linkRepository.findLinkByName(exceptedLinkName).block();
 
         assertThat(actualLinkName.getLinkUri()).isEqualTo(exceptedLinkName.toString());
-        assertThat(actualLinkInDB).isPresent();
-        assertThat(actualLinkInDB.get().getLinkUri()).isEqualTo(exceptedLinkName.toString());
+        assertThat(actualLinkInDB).isNotNull();
+        assertThat(actualLinkInDB.getLinkUri()).isEqualTo(exceptedLinkName.toString());
     }
 
     @Test
@@ -99,7 +96,7 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         tgChatRepository.add(idChat).block();
         linkDao.add(idChat, exceptedLinkName).block();
 
-        assertThat(linkRepository.findLinkByName(exceptedLinkName).block()).isPresent();
+        assertThat(linkRepository.findLinkByName(exceptedLinkName).block()).isNotNull();
 
         assertThatThrownBy(() -> linkDao.add(
             idChat,
@@ -158,9 +155,10 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
             URI.create("https://github.com/TheMLord/tinkoff-java-backend-course-2023-second-semester17");
 
         tgChatRepository.add(idChat).block();
-        assertThat(linkDao.getAllLinkInRelation(idChat).block()).isEmpty();
+        assertThat(linkDao.getAllLinksInRelation(idChat).collectList().block()).isEmpty();
 
-        assertThat(linkRepository.findLinkByName(exceptedLinkName).block()).isEmpty();
+        assertThatThrownBy(() -> linkRepository.findLinkByName(exceptedLinkName).block())
+            .isInstanceOf(NotExistLinkException.class);
 
         assertThatThrownBy(() -> linkDao.remove(
             idChat,
@@ -191,14 +189,15 @@ public class JdbcLinkDaoTest extends IntegrationEnvironment {
         var actualLink1 = linkRepository.findLinkByName(exceptedLinkName1).block();
         var actualLink2 = linkRepository.findLinkByName(exceptedLinkName2).block();
 
-        assertThat(actualLink1).isPresent();
-        assertThat(actualLink2).isPresent();
+        assertThat(actualLink1).isNotNull();
+        assertThat(actualLink2).isNotNull();
 
-        assertThat(linkDao.findAllIdTgChatWhoTrackLink(actualLink1.get().getId()).block()).containsOnly(
+        assertThat(linkDao.findAllIdTgChatWhoTrackLink(actualLink1.getId()).collectList().block()).containsOnly(
             idChat1,
             idChat2
         );
-        assertThat(linkDao.findAllIdTgChatWhoTrackLink(actualLink2.get().getId()).block()).containsOnly(idChat1);
+        assertThat(linkDao.findAllIdTgChatWhoTrackLink(actualLink2.getId()).collectList()
+            .block()).containsOnly(idChat1);
     }
 
     private void setUpServer() {

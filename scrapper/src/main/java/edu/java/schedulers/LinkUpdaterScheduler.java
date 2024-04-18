@@ -1,7 +1,7 @@
 package edu.java.schedulers;
 
-import edu.java.services.LinkUpdateCheckService;
-import edu.java.services.SendUpdateService;
+import edu.java.servicies.LinkUpdateCheckService;
+import edu.java.servicies.SendUpdateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,7 +27,6 @@ public final class LinkUpdaterScheduler {
         log.info("executing the update method");
 
         linkUpdateService.prepareLinkUpdate()
-            .subscribe(
-                optionalUpdate -> optionalUpdate.ifPresent(linkUpdateSendService::sendUpdate));
+            .subscribe(linkUpdateSendService::sendUpdate);
     }
 }
