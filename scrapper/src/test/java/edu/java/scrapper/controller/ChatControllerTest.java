@@ -4,7 +4,7 @@ import edu.java.controller.ChatController;
 import edu.java.controller.advice.ExceptionScrapperControllerAdvice;
 import edu.java.exceptions.DoubleRegistrationException;
 import edu.java.exceptions.NotExistTgChatException;
-import edu.java.services.ChatService;
+import edu.java.servicies.ChatService;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

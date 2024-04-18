@@ -2,7 +2,7 @@ package edu.java.scrapper.services.jooq;
 
 import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
-import edu.java.services.LinkService;
+import edu.java.servicies.LinkService;
 import java.net.URI;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +42,7 @@ public class JooqLinkServiceTest extends IntegrationEnvironment {
     void testThatTheAddLinkBetweenChatAndLinkMethodWorksCorrectlyAndReturnsTheCorrectLinkResponse() {
         var exceptedLinkResponseURI =
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff2");
+
         var exceptedLinkResponseId = 2L;
 
         var actualLinkResponse = linkService.addLink(2L, exceptedLinkResponseURI).block();
@@ -87,8 +88,6 @@ public class JooqLinkServiceTest extends IntegrationEnvironment {
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff3"
         );
     }
-
-
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {

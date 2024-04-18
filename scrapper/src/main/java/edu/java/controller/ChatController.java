@@ -1,6 +1,6 @@
 package edu.java.controller;
 
-import edu.java.services.ChatService;
+import edu.java.servicies.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;

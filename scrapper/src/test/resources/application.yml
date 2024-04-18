@@ -1,7 +1,7 @@
 app:
   scheduler:
-    enable: true
-    interval: 5s
+    enable: false
+    interval: 10s
     force-check-delay: 10s
 
   database-access-type: jpa # JPA, JOOQ
@@ -11,7 +11,7 @@ app:
     stackoverflow-uri: http://localhost:8080/2.3
     bot-url: http://localhost:8090
 
-  useQueue: true
+  useQueue: false
 
   kafka:
     bootstrapServers: localhost:29091, localhost:29092, localhost:29093

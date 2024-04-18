@@ -1,9 +1,9 @@
-package edu.java.services.jdbc;
+package edu.java.servicies.jooq;
 
 import edu.java.models.dto.api.response.LinkResponse;
 import edu.java.models.dto.api.response.ListLinksResponse;
 import edu.java.repository.LinkDao;
-import edu.java.services.LinkService;
+import edu.java.servicies.LinkService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
  */
 
 @RequiredArgsConstructor
-public class JdbcLinkService implements LinkService {
+public class JooqLinkService implements LinkService {
     private final LinkDao linkDao;
 
     @Override
@@ -41,10 +41,9 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional
     public Mono<ListLinksResponse> getListLinks(long chatId) {
-        return linkDao.getAllLinkInRelation(chatId)
-            .flatMap(links -> Mono.just(new ListLinksResponse(
-                links.stream().map(link -> new LinkResponse(link.getId(), URI.create(link.getLinkUri()))).toList(),
-                links.size()
-            )));
+        return linkDao.getAllLinksInRelation(chatId).collectList()
+            .map(links -> links.stream().map(link -> new LinkResponse(link.getId(), URI.create(link.getLinkUri())))
+                .toList())
+            .flatMap(linkResponses -> Mono.just(new ListLinksResponse(linkResponses, linkResponses.size())));
     }
 }

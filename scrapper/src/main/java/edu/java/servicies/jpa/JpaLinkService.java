@@ -1,4 +1,4 @@
-package edu.java.services.jpa;
+package edu.java.servicies.jpa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +14,7 @@ import edu.java.processors.UriProcessor;
 import edu.java.repository.jpa.JpaLinkRepository;
 import edu.java.repository.jpa.JpaSubscriptionRepository;
 import edu.java.repository.jpa.JpaTgChatRepository;
-import edu.java.services.LinkService;
+import edu.java.servicies.LinkService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import lombok.RequiredArgsConstructor;

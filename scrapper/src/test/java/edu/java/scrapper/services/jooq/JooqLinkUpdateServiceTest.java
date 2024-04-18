@@ -3,7 +3,7 @@ package edu.java.scrapper.services.jooq;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.schedulers.LinkUpdaterScheduler;
 import edu.java.scrapper.IntegrationEnvironment;
-import edu.java.services.LinkUpdateCheckService;
+import edu.java.servicies.LinkUpdateCheckService;
 import java.net.URI;
 import java.util.List;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -26,17 +26,16 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@DirtiesContext
 @Sql(value = "classpath:sql/insert-for-link-update-service.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @Sql(value = "classpath:sql/clearDB.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
-@DirtiesContext
 @WireMockTest(httpPort = 8080)
 public class JooqLinkUpdateServiceTest extends IntegrationEnvironment {
     @MockBean AdminClient adminClient;
     @MockBean KafkaAdmin kafkaAdmin;
 
+    @Autowired LinkUpdateCheckService linkUpdateService;
     @MockBean LinkUpdaterScheduler linkUpdaterScheduler;
-    @Autowired
-    LinkUpdateCheckService updateService;
 
     private static final String GITHUB_BRANCHES =
         """
@@ -106,15 +105,14 @@ public class JooqLinkUpdateServiceTest extends IntegrationEnvironment {
             """;
         var exceptedLinkUpdateChats = List.of(1L, 3L);
 
-        var actualLinkUpdateOptional = updateService.prepareLinkUpdate().blockFirst();
+        var actualLinkUpdate = linkUpdateService.prepareLinkUpdate().blockFirst();
 
-        assertThat(actualLinkUpdateOptional).isPresent();
-        var linkUpdate = actualLinkUpdateOptional.get();
+        assertThat(actualLinkUpdate).isNotNull();
 
-        assertThat(linkUpdate.getId()).isEqualTo(exceptedLinkUpdateId);
-        assertThat(linkUpdate.getUrl()).isEqualTo(exceptedLinkUpdateURI);
-        assertThat(linkUpdate.getDescription()).isEqualTo(exceptedLinkUpdateDescription);
-        assertThat(linkUpdate.getTgChatIds()).containsAll(exceptedLinkUpdateChats);
+        assertThat(actualLinkUpdate.getId()).isEqualTo(exceptedLinkUpdateId);
+        assertThat(actualLinkUpdate.getUrl()).isEqualTo(exceptedLinkUpdateURI);
+        assertThat(actualLinkUpdate.getDescription()).isEqualTo(exceptedLinkUpdateDescription);
+        assertThat(actualLinkUpdate.getTgChatIds()).containsAll(exceptedLinkUpdateChats);
     }
 
     @Test
@@ -124,9 +122,9 @@ public class JooqLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatReceivingUpdatesWorksCorrectlyAndReturnedAnEmptyLinkUpdateInTheAbsenceOfUpdates() {
         setUpServer(GITHUB_BRANCHES);
-        var actualLinkUpdateOptional = updateService.prepareLinkUpdate().blockFirst();
+        var actualLinkUpdate = linkUpdateService.prepareLinkUpdate().blockFirst();
 
-        assertThat(actualLinkUpdateOptional).isEmpty();
+        assertThat(actualLinkUpdate).isNull();
     }
 
     private void setUpServer(String body) {
@@ -161,7 +159,7 @@ public class JooqLinkUpdateServiceTest extends IntegrationEnvironment {
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
+        registry.add("app.database-access-type", () -> "jpa");
     }
 
 }
