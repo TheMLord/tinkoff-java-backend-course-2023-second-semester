@@ -9,7 +9,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>scrapper-jooq</artifactId>
+    <artifactId>jooq-codegen</artifactId>
     <version>${revision}</version>
 
 
@@ -23,13 +23,13 @@
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq-codegen</artifactId>
-            <version>3.18.7 </version>
+            <version>3.18.7</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.jooq/jooq-meta-extensions-liquibase -->
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq-meta-extensions-liquibase</artifactId>
-            <version>3.18.7 </version>
+            <version>3.18.7</version>
         </dependency>
 
 
@@ -38,13 +38,6 @@
             <artifactId>liquibase-core</artifactId>
         </dependency>
 
-
-        <!-- Tests -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
 
     </dependencies>
 

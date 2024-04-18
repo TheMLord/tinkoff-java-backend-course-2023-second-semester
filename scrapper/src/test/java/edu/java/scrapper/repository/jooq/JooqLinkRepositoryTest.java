@@ -3,6 +3,9 @@ package edu.java.scrapper.repository.jooq;
 import edu.java.domain.jooq.pojos.Links;
 import edu.java.repository.LinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +17,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.net.URI;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -28,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
      executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @TestPropertySource(locations = "classpath:test")
 public class JooqLinkRepositoryTest extends IntegrationEnvironment {
-    @Autowired LinkRepository linkRepository;
+    @Autowired LinkRepository jdbcLinkRepository;
 
     @Test
     @DisplayName(
@@ -38,7 +36,7 @@ public class JooqLinkRepositoryTest extends IntegrationEnvironment {
     void testThatTheMethodOfSearchingForAllLinksWorksCorrectlyReturnedTheCorrectNumberOfLinks() {
         var exceptedCountLinks = 3;
 
-        var actualAllLinks = linkRepository.findAll().block();
+        var actualAllLinks = jdbcLinkRepository.findAll().collectList().block();
 
         assertThat(actualAllLinks.size()).isEqualTo(exceptedCountLinks);
 
@@ -62,7 +60,7 @@ public class JooqLinkRepositoryTest extends IntegrationEnvironment {
         );
         var exceptedContLink = 2;
 
-        var actualLinks = linkRepository.findAllByTime(timePredicate).block();
+        var actualLinks = jdbcLinkRepository.findAllByTime(timePredicate).collectList().block();
 
         assertThat(actualLinks.size()).isEqualTo(exceptedContLink);
 
@@ -83,13 +81,13 @@ public class JooqLinkRepositoryTest extends IntegrationEnvironment {
             "2024-03-15 17:49:14 +00:00",
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss XXX")
         );
-        var idLink = linkRepository.findLinkByName(
+        var idLink = jdbcLinkRepository.findLinkByName(
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff1")
-        ).block().get().getId();
+        ).block().getId();
 
-        assertThat(linkRepository.findById(idLink).block()).isPresent();
-        linkRepository.updateLastModifying(idLink, exceptedLastModifyingTime).block();
-        var actualLinkLAtModifying = linkRepository.findById(idLink).block().get().getLastModifying();
+        assertThat(jdbcLinkRepository.findById(idLink).block()).isNotNull();
+        jdbcLinkRepository.updateLastModifying(idLink, exceptedLastModifyingTime).block();
+        var actualLinkLAtModifying = jdbcLinkRepository.findById(idLink).block().getLastModifying();
         assertThat(actualLinkLAtModifying).isEqualTo(exceptedLastModifyingTime);
     }
 
@@ -103,21 +101,19 @@ public class JooqLinkRepositoryTest extends IntegrationEnvironment {
                 "example": "json"
             }
             """;
-        var idLink = linkRepository.findLinkByName(
+        var idLink = jdbcLinkRepository.findLinkByName(
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff1")
-        ).block().get().getId();
+        ).block().getId();
 
-        assertThat(linkRepository.findById(idLink).block()).isPresent();
-        linkRepository.updateContent(idLink, exceptedContent).block();
-        var actualContent = linkRepository.findById(idLink).block().get().getContent();
+        assertThat(jdbcLinkRepository.findById(idLink).block()).isNotNull();
+        jdbcLinkRepository.updateContent(idLink, exceptedContent).block();
+        var actualContent = jdbcLinkRepository.findById(idLink).block().getContent();
 
         assertThat(exceptedContent).isEqualTo(actualContent);
     }
 
-
-
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jdbc");
+        registry.add("app.database-access-type", () -> "jooq");
     }
 }

@@ -6,8 +6,6 @@ import edu.java.domain.jooq.pojos.Links;
 import edu.java.domain.jooq.pojos.Subscriptions;
 import edu.java.domain.jooq.pojos.Tgchats;
 import edu.java.exceptions.AlreadyTrackLinkException;
-import edu.java.exceptions.NotExistLinkException;
-import edu.java.exceptions.NotExistTgChatException;
 import edu.java.exceptions.NotTrackLinkException;
 import edu.java.processors.UriProcessor;
 import edu.java.repository.LinkDao;
@@ -16,11 +14,11 @@ import edu.java.repository.TgChatRepository;
 import edu.java.repository.jdbc.utilities.JdbcRowMapperUtil;
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.jdbc.core.JdbcTemplate;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -81,8 +79,8 @@ public class JdbcLinkDao implements LinkDao {
     }
 
     @Override
-    public Mono<List<Links>> getAllLinkInRelation(Long chatId) {
-        return getChatIfExist(chatId).map(chat -> jdbcTemplate.query(
+    public Flux<Links> getAllLinksInRelation(Long chatId) {
+        return getChatIfExist(chatId).flatMapIterable(chat -> jdbcTemplate.query(
             "SELECT * FROM links WHERE id IN (SELECT link_id FROM subscriptions WHERE chat_id = (?))",
             JdbcRowMapperUtil::mapRowToLink,
             chat.getId()
@@ -90,8 +88,8 @@ public class JdbcLinkDao implements LinkDao {
     }
 
     @Override
-    public Mono<List<Long>> findAllIdTgChatWhoTrackLink(Long uriId) {
-        return Mono.just(jdbcTemplate.query(
+    public Flux<Long> findAllIdTgChatWhoTrackLink(Long uriId) {
+        return Flux.fromIterable(jdbcTemplate.query(
             "SELECT id FROM tgchats WHERE id IN (SELECT chat_id FROM subscriptions WHERE link_id = (?))",
             JdbcRowMapperUtil::mapRowToChatId,
             uriId
@@ -110,8 +108,7 @@ public class JdbcLinkDao implements LinkDao {
      */
 
     private Mono<Tgchats> getChatIfExist(Long id) {
-        return chatRepository.findById(id).flatMap(tgChat ->
-            tgChat.map(Mono::just).orElse(Mono.error(new NotExistTgChatException())));
+        return chatRepository.findById(id);
     }
 
     /**
@@ -120,9 +117,9 @@ public class JdbcLinkDao implements LinkDao {
      * @param uri link name.
      * @return Link by id if it exists, otherwise throws a NotExistLinkException.
      */
+
     private Mono<Links> getLinkIfExist(URI uri) {
-        return linkRepository.findLinkByName(uri).flatMap(link ->
-            link.map(Mono::just).orElse(Mono.error(new NotExistLinkException())));
+        return linkRepository.findLinkByName(uri);
     }
 
     /**
@@ -137,7 +134,7 @@ public class JdbcLinkDao implements LinkDao {
     }
 
     private Mono<Boolean> isLinkTrack(Long id) {
-        return findAllIdTgChatWhoTrackLink(id).map(List::isEmpty);
+        return findAllIdTgChatWhoTrackLink(id).hasElements();
     }
 
     /*

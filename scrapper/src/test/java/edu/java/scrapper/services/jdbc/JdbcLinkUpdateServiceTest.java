@@ -97,15 +97,14 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
             """;
         var exceptedLinkUpdateChats = List.of(1L, 3L);
 
-        var actualLinkUpdateOptional = linkUpdateService.prepareLinkUpdate().blockFirst();
+        var actualLinkUpdate = linkUpdateService.prepareLinkUpdate().blockFirst();
 
-        assertThat(actualLinkUpdateOptional).isPresent();
-        var linkUpdate = actualLinkUpdateOptional.get();
+        assertThat(actualLinkUpdate).isNotNull();
 
-        assertThat(linkUpdate.getId()).isEqualTo(exceptedLinkUpdateId);
-        assertThat(linkUpdate.getUrl()).isEqualTo(exceptedLinkUpdateURI);
-        assertThat(linkUpdate.getDescription()).isEqualTo(exceptedLinkUpdateDescription);
-        assertThat(linkUpdate.getTgChatIds()).containsAll(exceptedLinkUpdateChats);
+        assertThat(actualLinkUpdate.getId()).isEqualTo(exceptedLinkUpdateId);
+        assertThat(actualLinkUpdate.getUrl()).isEqualTo(exceptedLinkUpdateURI);
+        assertThat(actualLinkUpdate.getDescription()).isEqualTo(exceptedLinkUpdateDescription);
+        assertThat(actualLinkUpdate.getTgChatIds()).containsAll(exceptedLinkUpdateChats);
     }
 
     @Test
@@ -115,9 +114,9 @@ public class JdbcLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatReceivingUpdatesWorksCorrectlyAndReturnedAnEmptyLinkUpdateInTheAbsenceOfUpdates() {
         setUpServer(GITHUB_BRANCHES);
-        var actualLinkUpdateOptional = linkUpdateService.prepareLinkUpdate().blockFirst();
+        var actualLinkUpdate = linkUpdateService.prepareLinkUpdate().blockFirst();
 
-        assertThat(actualLinkUpdateOptional).isEmpty();
+        assertThat(actualLinkUpdate).isNull();
     }
 
     private void setUpServer(String body) {

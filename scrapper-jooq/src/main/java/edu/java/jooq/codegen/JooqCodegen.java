@@ -1,4 +1,4 @@
-package edu.java.scrapperjooq;
+package edu.java.jooq.codegen;
 
 import java.io.File;
 import org.jooq.codegen.GenerationTool;
@@ -8,10 +8,9 @@ import org.jooq.meta.jaxb.Generate;
 import org.jooq.meta.jaxb.Generator;
 import org.jooq.meta.jaxb.Property;
 import org.jooq.meta.jaxb.Target;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
-public class ScrapperJooqApplication {
+@SuppressWarnings(value = {"HideUtilityClassConstructor", "UncommentedMain"})
+public class JooqCodegen {
     public static void main(String[] args) throws Exception {
         Database database = new Database()
             .withName("org.jooq.meta.extensions.liquibase.LiquibaseDatabase")
