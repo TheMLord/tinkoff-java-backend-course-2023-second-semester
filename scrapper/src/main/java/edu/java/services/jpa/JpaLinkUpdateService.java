@@ -9,7 +9,6 @@ import edu.java.repository.jpa.JpaSubscriptionRepository;
 import edu.java.services.LinkUpdateService;
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -21,34 +20,29 @@ public class JpaLinkUpdateService implements LinkUpdateService {
     private final JpaSubscriptionRepository jpaSubscriptionRepository;
 
     @Override
-    public Flux<Optional<LinkUpdate>> prepareLinkUpdate() {
+    public Flux<LinkUpdate> prepareLinkUpdate() {
         return Mono.just(jpaLinkRepository.findAllByLastModifyingBefore(OffsetDateTime.now().minusHours(1)))
             .flatMapMany(Flux::fromIterable)
             .flatMap(link -> {
-                    var linkId = link.getId();
-                    var updates = uriProcessor.compareContent(URI.create(link.getLinkUri()), link.getContent());
-                    return updates.map(linkChanges -> {
-                        link.setLastModifying(OffsetDateTime.now());
-                        return Mono.just(jpaLinkRepository.saveAndFlush(link))
-                            .flatMapMany(updatedLink -> {
-                                link.setContent(linkChanges.newContent());
-                                return Mono.just(jpaLinkRepository.saveAndFlush(link))
-                                    .thenMany(Mono.just(jpaSubscriptionRepository.findAllByLink(link).stream()
-                                        .map(Subscriptions::getChat).map(TgChats::getId)
-                                        .toList()).map(subscribers -> Optional.of(new LinkUpdate(
-                                        linkId,
-                                        linkChanges.linkName(),
-                                        linkChanges.descriptionChanges(),
-                                        subscribers
-                                    ))));
+                    link.setLastModifying(OffsetDateTime.now());
+                    jpaLinkRepository.saveAndFlush(link);
 
-                            });
-                    }).orElseGet(() -> {
-                            link.setLastModifying(OffsetDateTime.now());
-                            return Mono.just(jpaLinkRepository.saveAndFlush(link))
-                                .flatMapMany(updatedLink -> Mono.just(Optional.empty()));
-                        }
-                    );
+                    return uriProcessor.compareContent(URI.create(link.getLinkUri()), link.getContent())
+                        .flatMapMany(linkChanges -> {
+                            link.setContent(linkChanges.newContent());
+                            jpaLinkRepository.saveAndFlush(link);
+
+                            return Flux.just(new LinkUpdate(
+                                    link.getId(),
+                                    linkChanges.linkName(),
+                                    linkChanges.descriptionChanges(),
+                                    jpaSubscriptionRepository.findAllByLink(link).stream()
+                                        .map(Subscriptions::getChat)
+                                        .map(TgChats::getId)
+                                        .toList()
+                                )
+                            );
+                        });
                 }
             );
     }

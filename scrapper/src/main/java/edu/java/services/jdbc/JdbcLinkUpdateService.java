@@ -5,13 +5,11 @@ import edu.java.processors.UriProcessor;
 import edu.java.repository.LinkDao;
 import edu.java.repository.LinkRepository;
 import edu.java.services.LinkUpdateService;
+import jakarta.transaction.Transactional;
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
 public class JdbcLinkUpdateService implements LinkUpdateService {
@@ -21,24 +19,23 @@ public class JdbcLinkUpdateService implements LinkUpdateService {
 
     @Override
     @Transactional
-    public Flux<Optional<LinkUpdate>> prepareLinkUpdate() {
+    public Flux<LinkUpdate> prepareLinkUpdate() {
         return linkRepository.findAllByTime(OffsetDateTime.now().minusHours(1))
-            .flatMapMany(Flux::fromIterable)
             .flatMap(link -> {
-                var linkId = link.getId();
-                var updates = uriProcessor.compareContent(URI.create(link.getLinkUri()), link.getContent());
-                return updates.map(linkChanges -> linkRepository.updateLastModifying(linkId, OffsetDateTime.now())
-                    .flatMapMany(updatedLink -> linkRepository.updateContent(linkId, linkChanges.newContent())
-                        .thenMany(linkDao.findAllIdTgChatWhoTrackLink(linkId)
-                            .map(listSubscribers -> Optional.of(new LinkUpdate(
-                                linkId,
-                                linkChanges.linkName(),
-                                linkChanges.descriptionChanges(),
-                                listSubscribers
-                            )))
-                        )
-                    )).orElseGet(() -> linkRepository.updateLastModifying(linkId, OffsetDateTime.now())
-                    .flatMapMany(updatedLink -> Mono.just(Optional.empty())));
-            });
+                    var linkId = link.getId();
+                    linkRepository.updateLastModifying(linkId, OffsetDateTime.now());
+                    return uriProcessor.compareContent(URI.create(link.getLinkUri()), link.getContent())
+                        .flatMapMany(linkChanges -> linkRepository.updateContent(linkId, linkChanges.newContent())
+                            .thenMany(linkDao.findAllIdTgChatWhoTrackLink(linkId)
+                                .collectList()
+                                .flatMapMany(subscribers -> Flux.just(new LinkUpdate(
+                                    linkId,
+                                    linkChanges.linkName(),
+                                    linkChanges.descriptionChanges(),
+                                    subscribers
+                                )))));
+
+                }
+            );
     }
 }

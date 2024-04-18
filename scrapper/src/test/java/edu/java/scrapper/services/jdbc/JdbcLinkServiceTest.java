@@ -2,6 +2,7 @@ package edu.java.scrapper.services.jdbc;
 
 import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.services.LinkService;
+import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.net.URI;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -36,6 +34,7 @@ public class JdbcLinkServiceTest extends IntegrationEnvironment {
     void testThatTheAddLinkBetweenChatAndLinkMethodWorksCorrectlyAndReturnsTheCorrectLinkResponse() {
         var exceptedLinkResponseURI =
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff2");
+
         var exceptedLinkResponseId = 2L;
 
         var actualLinkResponse = linkService.addLink(2L, exceptedLinkResponseURI).block();
@@ -81,8 +80,6 @@ public class JdbcLinkServiceTest extends IntegrationEnvironment {
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff3"
         );
     }
-
-
 
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {

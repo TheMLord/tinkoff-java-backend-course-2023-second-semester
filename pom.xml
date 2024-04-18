@@ -131,6 +131,18 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>edu.java.schedulers</exclude>
+                        <exclude>edu.java.domain</exclude>
+                        <exclude>edu.java.exceptions</exclude>
+                        <exclude>edu.java.bot.exceptions</exclude>
+                        <exclude>edu.java.bot.domain</exclude>
+                        <exclude>edu.java.bot.listener</exclude>
+                        <exclude>edu.java.bot.sender</exclude>
+                        <exclude>edu.java.jooq.codegen.JooqCodegen.class</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
         </plugins>

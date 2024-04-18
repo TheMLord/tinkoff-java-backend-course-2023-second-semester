@@ -27,6 +27,6 @@ public final class LinkUpdaterScheduler {
         log.info("executing the update method");
 
         linkUpdateService.prepareLinkUpdate()
-            .subscribe(optionalUpdate -> optionalUpdate.map(botProxy::pushLinkUpdate));
+            .subscribe(botProxy::pushLinkUpdate);
     }
 }

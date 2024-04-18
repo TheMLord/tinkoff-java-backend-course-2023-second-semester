@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 @WireMockTest(httpPort = 8080)
 public class JooqLinkUpdateServiceTest extends IntegrationEnvironment {
-    @Autowired LinkUpdateService updateService;
+    @Autowired LinkUpdateService linkUpdateService;
 
     private static final String GITHUB_BRANCHES =
         """
@@ -97,15 +97,14 @@ public class JooqLinkUpdateServiceTest extends IntegrationEnvironment {
             """;
         var exceptedLinkUpdateChats = List.of(1L, 3L);
 
-        var actualLinkUpdateOptional = updateService.prepareLinkUpdate().blockFirst();
+        var actualLinkUpdate = linkUpdateService.prepareLinkUpdate().blockFirst();
 
-        assertThat(actualLinkUpdateOptional).isPresent();
-        var linkUpdate = actualLinkUpdateOptional.get();
+        assertThat(actualLinkUpdate).isNotNull();
 
-        assertThat(linkUpdate.getId()).isEqualTo(exceptedLinkUpdateId);
-        assertThat(linkUpdate.getUrl()).isEqualTo(exceptedLinkUpdateURI);
-        assertThat(linkUpdate.getDescription()).isEqualTo(exceptedLinkUpdateDescription);
-        assertThat(linkUpdate.getTgChatIds()).containsAll(exceptedLinkUpdateChats);
+        assertThat(actualLinkUpdate.getId()).isEqualTo(exceptedLinkUpdateId);
+        assertThat(actualLinkUpdate.getUrl()).isEqualTo(exceptedLinkUpdateURI);
+        assertThat(actualLinkUpdate.getDescription()).isEqualTo(exceptedLinkUpdateDescription);
+        assertThat(actualLinkUpdate.getTgChatIds()).containsAll(exceptedLinkUpdateChats);
     }
 
     @Test
@@ -115,9 +114,9 @@ public class JooqLinkUpdateServiceTest extends IntegrationEnvironment {
     @Rollback
     void testThatReceivingUpdatesWorksCorrectlyAndReturnedAnEmptyLinkUpdateInTheAbsenceOfUpdates() {
         setUpServer(GITHUB_BRANCHES);
-        var actualLinkUpdateOptional = updateService.prepareLinkUpdate().blockFirst();
+        var actualLinkUpdate = linkUpdateService.prepareLinkUpdate().blockFirst();
 
-        assertThat(actualLinkUpdateOptional).isEmpty();
+        assertThat(actualLinkUpdate).isNull();
     }
 
     private void setUpServer(String body) {

@@ -36,6 +36,7 @@ public class JpaLinkServiceTest extends IntegrationEnvironment {
     void testThatTheAddLinkBetweenChatAndLinkMethodWorksCorrectlyAndReturnsTheCorrectLinkResponse() {
         var exceptedLinkResponseURI =
             URI.create("https://github.com/TheMLord/java-backend-course-2023-tinkoff2");
+
         var exceptedLinkResponseId = 2L;
 
         var actualLinkResponse = linkService.addLink(2L, exceptedLinkResponseURI).block();
@@ -81,7 +82,6 @@ public class JpaLinkServiceTest extends IntegrationEnvironment {
             "https://github.com/TheMLord/java-backend-course-2023-tinkoff3"
         );
     }
-
 
 
     @DynamicPropertySource
