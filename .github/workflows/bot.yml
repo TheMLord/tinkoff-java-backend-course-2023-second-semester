@@ -27,8 +27,11 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: maven build
-        run: mvn -pl bot -am package && mvn -pl bot -am install
+      - name: maven build-package
+        run: mvn -pl bot -am package
+
+      - name: maven build-install
+        run: mvn -pl bot -am install
 
       - name: build bot image
         run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -f bot.Dockerfile .
