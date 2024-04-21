@@ -32,7 +32,7 @@ jobs:
         run: mvn -pl scrapper -am package
 
       - name: maven build-install
-        run: mvm -pl scrapper -am install
+        run: mvn -pl scrapper -am install
 
       - name: build scrapper image
         run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -f scrapper.Dockerfile .
