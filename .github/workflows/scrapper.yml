@@ -28,10 +28,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: maven build-package
-        run: mvn -pl scrapper -am package
-
-      - name: maven build-install
+      - name: maven build
         run: mvn -pl scrapper -am install
 
       - name: build scrapper image

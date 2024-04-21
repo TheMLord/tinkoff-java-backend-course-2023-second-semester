@@ -27,10 +27,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: maven build-package
-        run: mvn -pl bot -am package
-
-      - name: maven build-install
+      - name: maven build
         run: mvn -pl bot -am install
 
       - name: build bot image
